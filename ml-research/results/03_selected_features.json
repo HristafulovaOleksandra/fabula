@@ -1,0 +1,24 @@
+{
+  "model": "Random Forest",
+  "labels": "max",
+  "params": {
+    "max_depth": 12,
+    "min_samples_leaf": 1,
+    "class_weight": "balanced_subsample"
+  },
+  "features": [
+    "n_syllables",
+    "min_zipf",
+    "chars_per_word",
+    "share_oov",
+    "n_words",
+    "share_a1",
+    "tree_depth",
+    "max_word_level",
+    "n_passive",
+    "mean_word_level",
+    "lexical_density",
+    "type_token_ratio",
+    "share_b1"
+  ]
+}
