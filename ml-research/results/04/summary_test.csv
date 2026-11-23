@@ -1,0 +1,8 @@
+,test_macro_f1,test_macro_f1,test_macro_f1_lenient,test_macro_f1_lenient,test_accuracy,test_accuracy,test_adjacent_accuracy,test_adjacent_accuracy,test_qwk,test_qwk,test_f1_A1,test_f1_A1,test_f1_C,test_f1_C
+,mean,std,mean,std,mean,std,mean,std,mean,std,mean,std,mean,std
+name,,,,,,,,,,,,,,
+M3,0.619,0.003,0.746,0.026,0.665,0.003,0.997,0.001,0.815,0.003,0.426,0.016,0.718,0.01
+M3_weighted,0.606,0.009,0.769,0.016,0.641,0.015,0.994,0.002,0.816,0.006,0.43,0.042,0.723,0.003
+M4_rf13,0.623,0.005,0.749,0.007,0.676,0.01,0.996,0.0,0.819,0.003,0.406,0.019,0.719,0.009
+M4_all33,0.619,0.009,0.751,0.004,0.672,0.005,0.996,0.0,0.817,0.003,0.4,0.016,0.725,0.003
+M4_final,0.626,0.006,0.745,0.009,0.676,0.005,0.996,0.0,0.82,0.004,0.411,0.01,0.731,0.011

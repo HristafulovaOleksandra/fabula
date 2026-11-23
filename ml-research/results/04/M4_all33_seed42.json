@@ -1,0 +1,89 @@
+{
+  "name": "M4_all33",
+  "seed": 42,
+  "features": [
+    "n_words",
+    "chars_per_word",
+    "n_syllables",
+    "syllables_per_word",
+    "share_a1",
+    "share_a2",
+    "share_b1",
+    "share_b2",
+    "share_c",
+    "share_oov",
+    "max_word_level",
+    "mean_word_level",
+    "mean_zipf",
+    "min_zipf",
+    "type_token_ratio",
+    "lexical_density",
+    "tree_depth",
+    "n_subordinate_clauses",
+    "n_finite_verbs",
+    "has_past",
+    "has_present",
+    "has_future",
+    "has_perfect",
+    "has_progressive",
+    "n_passive",
+    "n_modals",
+    "n_contractions",
+    "n_interjections",
+    "is_question",
+    "is_exclamation",
+    "has_vocative",
+    "is_fragment",
+    "share_personal_pronouns"
+  ],
+  "class_weighted": false,
+  "minutes": 1.1,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 1.0161216223079863,
+      "val_macro_f1": 0.5340032301669309
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.6668584716640108,
+      "val_macro_f1": 0.5471586391365661
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.4956823941453189,
+      "val_macro_f1": 0.6092511140284024
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.3676022224104837,
+      "val_macro_f1": 0.6252327565754829
+    }
+  ],
+  "validation": {
+    "macro_f1": 0.6252327565754829,
+    "accuracy": 0.682,
+    "adjacent_accuracy": 0.992,
+    "qwk": 0.818346206870503,
+    "f1_A1": 0.4,
+    "f1_A2": 0.6086956521739131,
+    "f1_B1": 0.6699900299102692,
+    "f1_B2": 0.6806387225548902,
+    "f1_C": 0.7668393782383419,
+    "macro_f1_lenient": 0.7551549113065914,
+    "accuracy_lenient": 0.8246666666666667
+  },
+  "test": {
+    "macro_f1": 0.6256247475159804,
+    "accuracy": 0.6748834110592938,
+    "adjacent_accuracy": 0.9960026648900733,
+    "qwk": 0.8197558381322912,
+    "f1_A1": 0.4166666666666667,
+    "f1_A2": 0.6481012658227848,
+    "f1_B1": 0.6819085487077535,
+    "f1_B2": 0.6560951437066402,
+    "f1_C": 0.7253521126760564,
+    "macro_f1_lenient": 0.7467765949483253,
+    "accuracy_lenient": 0.8254497001998667
+  }
+}

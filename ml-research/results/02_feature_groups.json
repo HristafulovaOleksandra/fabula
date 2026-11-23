@@ -1,0 +1,43 @@
+{
+  "length": [
+    "n_words",
+    "chars_per_word",
+    "n_syllables",
+    "syllables_per_word"
+  ],
+  "lexical": [
+    "share_a1",
+    "share_a2",
+    "share_b1",
+    "share_b2",
+    "share_c",
+    "share_oov",
+    "max_word_level",
+    "mean_word_level",
+    "mean_zipf",
+    "min_zipf",
+    "type_token_ratio",
+    "lexical_density"
+  ],
+  "grammar": [
+    "tree_depth",
+    "n_subordinate_clauses",
+    "n_finite_verbs",
+    "has_past",
+    "has_present",
+    "has_future",
+    "has_perfect",
+    "has_progressive",
+    "n_passive",
+    "n_modals"
+  ],
+  "dialogue": [
+    "n_contractions",
+    "n_interjections",
+    "is_question",
+    "is_exclamation",
+    "has_vocative",
+    "is_fragment",
+    "share_personal_pronouns"
+  ]
+}

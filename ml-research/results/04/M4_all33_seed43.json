@@ -1,0 +1,89 @@
+{
+  "name": "M4_all33",
+  "seed": 43,
+  "features": [
+    "n_words",
+    "chars_per_word",
+    "n_syllables",
+    "syllables_per_word",
+    "share_a1",
+    "share_a2",
+    "share_b1",
+    "share_b2",
+    "share_c",
+    "share_oov",
+    "max_word_level",
+    "mean_word_level",
+    "mean_zipf",
+    "min_zipf",
+    "type_token_ratio",
+    "lexical_density",
+    "tree_depth",
+    "n_subordinate_clauses",
+    "n_finite_verbs",
+    "has_past",
+    "has_present",
+    "has_future",
+    "has_perfect",
+    "has_progressive",
+    "n_passive",
+    "n_modals",
+    "n_contractions",
+    "n_interjections",
+    "is_question",
+    "is_exclamation",
+    "has_vocative",
+    "is_fragment",
+    "share_personal_pronouns"
+  ],
+  "class_weighted": false,
+  "minutes": 1.1,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 1.0071897996353851,
+      "val_macro_f1": 0.529945238532591
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.6689010904162859,
+      "val_macro_f1": 0.644842807108964
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.4984355341942097,
+      "val_macro_f1": 0.6369710149995564
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.3771969249710905,
+      "val_macro_f1": 0.6439379383616537
+    }
+  ],
+  "validation": {
+    "macro_f1": 0.644842807108964,
+    "accuracy": 0.6746666666666666,
+    "adjacent_accuracy": 0.994,
+    "qwk": 0.8170887634490074,
+    "f1_A1": 0.5185185185185185,
+    "f1_A2": 0.628140703517588,
+    "f1_B1": 0.6686686686686687,
+    "f1_B2": 0.6647000983284169,
+    "f1_C": 0.7441860465116279,
+    "macro_f1_lenient": 0.7814446080588681,
+    "accuracy_lenient": 0.8293333333333334
+  },
+  "test": {
+    "macro_f1": 0.62305474323575,
+    "accuracy": 0.6755496335776149,
+    "adjacent_accuracy": 0.9966688874083944,
+    "qwk": 0.8175702503989959,
+    "f1_A1": 0.4,
+    "f1_A2": 0.649616368286445,
+    "f1_B1": 0.6786786786786787,
+    "f1_B2": 0.664756446991404,
+    "f1_C": 0.7222222222222222,
+    "macro_f1_lenient": 0.7513765920581666,
+    "accuracy_lenient": 0.8341105929380414
+  }
+}

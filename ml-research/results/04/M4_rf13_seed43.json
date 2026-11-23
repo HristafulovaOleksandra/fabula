@@ -1,0 +1,69 @@
+{
+  "name": "M4_rf13",
+  "seed": 43,
+  "features": [
+    "n_syllables",
+    "min_zipf",
+    "chars_per_word",
+    "share_oov",
+    "n_words",
+    "share_a1",
+    "tree_depth",
+    "max_word_level",
+    "n_passive",
+    "mean_word_level",
+    "lexical_density",
+    "type_token_ratio",
+    "share_b1"
+  ],
+  "class_weighted": false,
+  "minutes": 1.1,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 1.022960700739523,
+      "val_macro_f1": 0.5200977502627933
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.6690839529548227,
+      "val_macro_f1": 0.6648080528528071
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.5017383948151503,
+      "val_macro_f1": 0.6334115291716214
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.375949378100098,
+      "val_macro_f1": 0.6236127846163864
+    }
+  ],
+  "validation": {
+    "macro_f1": 0.6648080528528071,
+    "accuracy": 0.6913333333333334,
+    "adjacent_accuracy": 0.9946666666666667,
+    "qwk": 0.8229614514010402,
+    "f1_A1": 0.5714285714285714,
+    "f1_A2": 0.625,
+    "f1_B1": 0.6982591876208898,
+    "f1_B2": 0.6798029556650246,
+    "f1_C": 0.7495495495495496,
+    "macro_f1_lenient": 0.7911312919550547,
+    "accuracy_lenient": 0.8353333333333334
+  },
+  "test": {
+    "macro_f1": 0.6236309416388999,
+    "accuracy": 0.6842105263157895,
+    "adjacent_accuracy": 0.9960026648900733,
+    "qwk": 0.8181851306570026,
+    "f1_A1": 0.38461538461538464,
+    "f1_A2": 0.6376021798365122,
+    "f1_B1": 0.7030651340996169,
+    "f1_B2": 0.667964946445959,
+    "f1_C": 0.724907063197026,
+    "macro_f1_lenient": 0.7572863071619661,
+    "accuracy_lenient": 0.8361092604930047
+  }
+}

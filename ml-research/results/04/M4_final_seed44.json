@@ -1,0 +1,79 @@
+{
+  "name": "M4_final",
+  "seed": 44,
+  "features": [
+    "chars_per_word",
+    "n_syllables",
+    "share_a1",
+    "share_a2",
+    "share_b1",
+    "share_c",
+    "share_oov",
+    "max_word_level",
+    "mean_word_level",
+    "mean_zipf",
+    "min_zipf",
+    "type_token_ratio",
+    "lexical_density",
+    "tree_depth",
+    "n_finite_verbs",
+    "has_past",
+    "has_present",
+    "has_progressive",
+    "n_modals",
+    "n_contractions",
+    "is_question",
+    "has_vocative",
+    "share_personal_pronouns"
+  ],
+  "class_weighted": false,
+  "minutes": 1.1,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 1.0085047046241336,
+      "val_macro_f1": 0.5162525225046908
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.6687668271318091,
+      "val_macro_f1": 0.63823764167614
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.5004412098395351,
+      "val_macro_f1": 0.6402921664224361
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.3817267043612338,
+      "val_macro_f1": 0.6497242179757937
+    }
+  ],
+  "validation": {
+    "macro_f1": 0.6497242179757937,
+    "accuracy": 0.6853333333333333,
+    "adjacent_accuracy": 0.9933333333333333,
+    "qwk": 0.8263564604390207,
+    "f1_A1": 0.5,
+    "f1_A2": 0.6334164588528678,
+    "f1_B1": 0.6761710794297352,
+    "f1_B2": 0.671356783919598,
+    "f1_C": 0.7676767676767676,
+    "macro_f1_lenient": 0.7847719568993434,
+    "accuracy_lenient": 0.8253333333333334
+  },
+  "test": {
+    "macro_f1": 0.632132325279817,
+    "accuracy": 0.681545636242505,
+    "adjacent_accuracy": 0.9953364423717521,
+    "qwk": 0.8246430873346486,
+    "f1_A1": 0.4166666666666667,
+    "f1_A2": 0.6583541147132169,
+    "f1_B1": 0.6860581745235708,
+    "f1_B2": 0.657314629258517,
+    "f1_C": 0.7422680412371134,
+    "macro_f1_lenient": 0.7477678304516997,
+    "accuracy_lenient": 0.8254497001998667
+  }
+}

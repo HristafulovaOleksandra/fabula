@@ -1,0 +1,28 @@
+{
+  "features": [
+    "chars_per_word",
+    "n_syllables",
+    "share_a1",
+    "share_a2",
+    "share_b1",
+    "share_c",
+    "share_oov",
+    "max_word_level",
+    "mean_word_level",
+    "mean_zipf",
+    "min_zipf",
+    "type_token_ratio",
+    "lexical_density",
+    "tree_depth",
+    "n_finite_verbs",
+    "has_past",
+    "has_present",
+    "has_progressive",
+    "n_modals",
+    "n_contractions",
+    "is_question",
+    "has_vocative",
+    "share_personal_pronouns"
+  ],
+  "rule": "mean > 0 and positive in >= 2 of 3 seeds"
+}
