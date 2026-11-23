@@ -1,0 +1,301 @@
+item_id,dialogue_id,utt_idx,topic,context,utterance,n_words,length_bin,in_round2,level_original,unsure,comment,level_final,level_id,level_class
+I001,dailydialog-test-872,5,Relationship,I read that story too. They seem to be able to understand men.,They sure can. Maybe they can interact with men better than monkeys and apes.,14,10-14,True,B1,,,B1,2,B1
+I002,dailydialog-test-134,6,Ordinary Life,It's still too much. Can't you make it any cheaper than that?,"Sorry, but this is the best price. You can't get it any cheaper than here.",15,15-30,True,A2,,,A2,1,A2
+I003,dailydialog-test-582,3,Finance,I took out a life insurance policy and made your mother the beneficiary.,Can you tell me why you want to buy it?,10,10-14,False,A1,,,A1,0,A1
+I004,dailydialog-test-724,2,Attitude & Emotion,"But not as good as your mother's, right?","Actually, it's better ...",3,3-5,True,A1,,,A1,0,A1
+I005,dailydialog-test-507,5,School Life,"More or less. I go to three different buildings, and always get there late. I feel so hopeless. I don't know why I am late all the time. No one else seems to be.",That's because you don't know the short cuts. You'll learn them after a while. I can show you the ropes.,20,15-30,False,B1,,,B1,2,B1
+I006,dailydialog-test-521,5,Politics,"It's so small. The fact that there is public interest, doesn't say much for us as the public.",Have you ever listened to AM radio? It's quite a different experience than the traditional news stations on TV and FM radio.,22,15-30,False,B1,,,B1,2,B1
+I007,dailydialog-test-308,6,Ordinary Life,How is that?,You can use it however many times you need to.,10,10-14,False,B1,,,B1,2,B1
+I008,dailydialog-test-227,4,Ordinary Life,This one is 1500 yuan.,It looks pretty good. I think I'll take it.,9,6-9,True,A2,,,A2,1,A2
+I009,dailydialog-test-782,1,School Life,May I ask a question?,"Yes, what's it?",3,3-5,False,A1,,,A1,0,A1
+I010,dailydialog-test-451,2,Work,May I see your ticket please?,Here you are. Do you need to see my passport?,10,10-14,False,A1,,,A1,0,A1
+I011,dailydialog-test-861,8,Attitude & Emotion,Did he leave when you left?,Yes. Then I noticed he was on the sidewalk behind me. He was following me.,15,15-30,False,B2,True,,B2,3,B2
+I012,dailydialog-test-651,2,Relationship,Sure! Are you okay? You seem a bit worried. What's on your mind?,We need to talk.,4,3-5,False,A1,,,A1,0,A1
+I013,dailydialog-test-940,1,Relationship,"Hey Rachael, what's up? How is your day?","Not bad. We have had a big meeting today, remember?",10,10-14,True,A2,,,A2,1,A2
+I014,dailydialog-test-834,0,Ordinary Life,— початок діалогу —,I am so busy today.,5,3-5,False,A1,,,A1,0,A1
+I015,dailydialog-test-189,14,Ordinary Life,Accessories? Do you carry polarizing filters?,"Polarizing filter um we should! I'm sorry, ma'am. It looks like we're sold out.",14,10-14,True,B2,True,,B2,3,B2
+I016,dailydialog-test-806,13,Relationship,"My ex-girlfriend's here. If she sees me, my goose is cooked.",I wannafinish my drink first. I'll meet you at Sammy's.,10,10-14,False,A2,True,,A2,1,A2
+I017,dailydialog-test-248,16,Relationship,"sure, where would you like to go?",perhaps we could go to the library festival that's going on at the local bookshop.,15,15-30,True,B2,,,B2,3,B2
+I018,dailydialog-test-807,10,Relationship,"But of course! Well, it's been great talking to you, but I have to get going.","Same here! We will catch up soon, maybe over coffee!",10,10-14,False,B1,,,B1,2,B1
+I019,dailydialog-test-915,5,Relationship,Do you eat a lot of vegetables?,"Oh yes, and fruit, I love fruit.",7,6-9,False,A2,,,A2,1,A2
+I020,dailydialog-test-501,9,Tourism,"Ah ... I see. Hey, look the sign here, No climbing.",We put many signs with English translations for foreign visitors.,10,10-14,False,B1,,,B1,2,B1
+I021,dailydialog-test-292,9,Finance,"In that case, I'll get you to fill out this paperwork. I'll need your social insurance number, and two pieces of government ID. If you could just sign here, and here, and here. we'll be all set. Would you like to make a deposit today?","Yes, I'd like to deposit one billion dollars.",8,6-9,False,A2,,,A2,1,A2
+I022,dailydialog-test-458,0,Ordinary Life,— початок діалогу —,"You have a lovely house, Jack.",6,6-9,False,A1,,,A1,0,A1
+I023,dailydialog-test-2,4,Work,What does that mean exactly?,"Well, we use the exhaust gases from our printing presses to provide energy to heat our dryers.",17,15-30,True,C1,,,C1,4,C
+I024,dailydialog-test-392,0,Work,— початок діалогу —,Could you do me a favor and proofread my resume before I send it out to the human resources department?,20,15-30,False,B2,,,B2,3,B2
+I025,dailydialog-test-33,6,Work,"Well, to begin with, I would say she needs to be diligent, and the second point is that she has to do a lot of things on her own initiative. Finally, she can make notes in shorthand and types and has the skills in report writing, summary writing, keep minutes at meetings, and so on. Most important of all is that she seems to have a better memory than average.",Have you had any experience with computer?,7,6-9,True,A2,,,A2,1,A2
+I026,dailydialog-test-530,9,Ordinary Life,Believe me. Everything will be ok.,I hope so.,3,3-5,True,A1,True,,A1,0,A1
+I027,dailydialog-test-812,2,Relationship,"A friend and I are planing to go out, why? what's up?","There is a special exhibition of french sculptures at the museum, I was hoping you' d like to come with me.",21,15-30,False,B2,,,B2,3,B2
+I028,dailydialog-test-797,3,Relationship,I didn't know you had a brother.,"Oh, yes, he is two years older than me. He lives in New Zealand so I don't see him that often.",21,15-30,False,B1,,,B1,2,B1
+I029,dailydialog-test-983,3,School Life,Where should I go after I arrived at the university?,The first place you should go is the International Center.,10,10-14,True,A2,,,A2,1,A2
+I030,dailydialog-test-186,0,Tourism,— початок діалогу —,"I have to check out now. My name is Ruth Carson. Can I have my bill, please?",17,15-30,True,A2,,,A2,1,A2
+I031,dailydialog-test-234,1,Tourism,"May I see your passport, please?",Certainly. Here it is.,4,3-5,True,C1,True,,A2,1,A2
+I032,dailydialog-test-538,2,Tourism,"Yes, what kind of room do you want?","I prefer one facing the sea. Besides, it should have a shower.",12,10-14,True,C1,,,C1,4,C
+I033,dailydialog-test-301,3,Ordinary Life,But I want to watch TV now.,That's out of the question.,5,3-5,False,B2,,,B2,3,B2
+I034,dailydialog-test-89,7,Work,"All right, I'll leave her the message, Mary. Thanks for calling.",Thank you. Bye.,3,3-5,False,A1,,,A1,0,A1
+I035,dailydialog-test-938,3,Relationship,And all their movements are so elegant. It seems like dancing in the water.,"Exactly, you know, water ballet puts dancing, music and swimming together.",11,10-14,False,B2,,,B2,3,B2
+I036,dailydialog-test-528,10,Ordinary Life,That's nice.,It's a lot better than paying someone $60.,8,6-9,True,B1,,,B1,2,B1
+I037,dailydialog-test-607,2,School Life,"Oh, yes, I am. I have always wanted to go to the States. I love meeting new people. And making new friends.","Well, I'm sure you will.",5,3-5,False,B1,,,B1,2,B1
+I038,dailydialog-test-442,5,Tourism,OK.,"Please be careful with the suitcase, it's very heavy.",9,6-9,False,A2,,,A2,1,A2
+I039,dailydialog-test-302,0,Ordinary Life,— початок діалогу —,"Where's Sally, Jack?",3,3-5,True,A1,,,A1,0,A1
+I040,dailydialog-test-684,2,Relationship,"Yeah, I'm worried. If it's like this tomorrow, our big outdoor party will have to be canceled.",Let's hope it clears up.,5,3-5,True,B2,,,B2,3,B2
+I041,dailydialog-test-165,5,Tourism,"Put your luggage on the scale, please. Oh, your luggage is overweight.",How much is the excess baggage part charge?,8,6-9,False,C1,,,C1,4,C
+I042,dailydialog-test-69,8,Politics,I haven't checked yet.,Why do you think there was a break-in?,9,6-9,False,B2,True,,B2,3,B2
+I043,dailydialog-test-786,3,Relationship,"Tell me about it, will you?","Well, we drove through the valley on our way there in the morning. It was a magnificent sight.",18,15-30,True,B2,,,B2,3,B2
+I044,dailydialog-test-698,6,Relationship,The longest race we run is the 1500 meters. A few of the boys and one girls can do it in less than five minutes.,How are they at swimming?,5,3-5,False,A2,,,A2,1,A2
+I045,dailydialog-test-68,5,Finance,"Just that in effect, a basic Letter of Credit is a financial contract between the bank, the bank's customer, and the beneficiary, and this contract involves the transfer of goods or services against funds.","That sounds fine, thanks for that. Let's go ahead!",9,6-9,True,A2,,,A2,1,A2
+I046,dailydialog-test-981,0,Relationship,— початок діалогу —,Tim's always bothering me.,4,3-5,True,A2,,,A2,1,A2
+I047,dailydialog-test-673,0,Attitude & Emotion,— початок діалогу —,"So, you're applying for a B2 visa, where is your final destination and what's the purpose of your trip to the United States?",23,15-30,False,B2,,,B2,3,B2
+I048,dailydialog-test-342,5,Health,Can't you just tell me now?,I don't know anything for certain. We always do a double check if there is a question.,17,15-30,True,B1,True,,B1,2,B1
+I049,dailydialog-test-182,7,Ordinary Life,"No, it isn't. It's 1199866. It seems that you have misdialed.","Oh, I'm sorry I bothered you. I'm really sorry.",9,6-9,True,B1,,,B1,2,B1
+I050,dailydialog-test-823,2,School Life,"Sure. But it's a very difficult one, you need to have a dictionary at your elbow.",But I'm not used to looking up every new word when I'm reading a novel. I only look up the most necessary ones.,23,15-30,False,B2,,,B2,3,B2
+I051,dailydialog-test-400,6,Ordinary Life,"Oh, how awful! Let me have a look, I'm terribly sorry. It was most thoughtless of me. Would you excuse me, please?","Oh, It's quite all right, I suppose. It can't be helped sometimes.",12,10-14,True,B2,,,B2,3,B2
+I052,dailydialog-test-687,3,Relationship,"It's nice to meet you, Mr. Stevens.","Please call me Jack. Have a seat, please.",8,6-9,False,A1,,,A1,0,A1
+I053,dailydialog-test-198,5,Tourism,I knew you'd see it my way.,"Sir, I deleted the $10, but I had to add a $2 service charge to your bill.",17,15-30,False,B1,,,B1,2,B1
+I054,dailydialog-test-957,9,Culture & Education,Are you okay?,I really wanted to get into NYU.,7,6-9,True,A2,,,A2,1,A2
+I055,dailydialog-test-898,8,Relationship,That's not true. Dark Angel is a good show.,It's story is just an excuse to get the girl dressed up in different tight outfits.,16,15-30,False,B2,,,B2,3,B2
+I056,dailydialog-test-671,1,Relationship,"what was your wedding ceremony like, Abigail?",my husband and I got married in a registry office with just two friends there as witnesses. But then we had three parties to celebrate.,25,15-30,False,B1,True,,B1,2,B1
+I057,dailydialog-test-446,0,Work,— початок діалогу —,"Okay, so we're agreed on 900.",6,6-9,False,A2,,,A2,1,A2
+I058,dailydialog-test-536,4,Tourism,Next Monday.,Will that be first class or economy seat?,8,6-9,False,A2,,,A2,1,A2
+I059,dailydialog-test-46,12,Ordinary Life,Thank you for your praise.,"Besides steamed fish, what else are you good at cooking?",10,10-14,False,B1,True,,B1,2,B1
+I060,dailydialog-test-568,2,Work,"Yes, I am James Mason from Anderson and Associates. I would like to see Mr. Smith.",Do you have an appointment?,5,3-5,False,A2,,,A2,1,A2
+I061,dailydialog-test-676,7,School Life,Have fun while it lasts. The excitement wears off real quick. Especially after you see how much homework you get. Where are you from?,"I'm from Korea. My parents wanted me to go to an American university, so I came here.",17,15-30,False,A2,,,A2,1,A2
+I062,dailydialog-test-820,1,Relationship,Let's play a game!,OK! How about Scrabble?,4,3-5,False,A1,,,A1,0,A1
+I063,dailydialog-test-669,11,School Life,And that's for each book that is late.,That shouldn't be a problem.,5,3-5,False,A2,,,A2,1,A2
+I064,dailydialog-test-267,1,Ordinary Life,It's so great to be here! I'm so excited to help you and my daughter with your new home!,We're glad that you're here. Would you like a tour of the house?,13,10-14,False,B1,,,B1,2,B1
+I065,dailydialog-test-291,0,Work,— початок діалогу —,I have some great news! I was able to switch to the night shift!,14,10-14,False,B1,,,B1,2,B1
+I066,dailydialog-test-286,8,Ordinary Life,I'm sorry. That's the only available time.,Are you available this Saturday?,5,3-5,False,A1,,,A1,0,A1
+I067,dailydialog-test-205,3,Work,May we once more remind you that the contract should be canceled by one month notice.,"Yes, I got it. Thanks.",5,3-5,False,A1,,,A1,0,A1
+I068,dailydialog-test-266,6,Ordinary Life,That's a bit more than I wanted to pay. Can you cut the price down a bit?,I'm sorry. Ours is a fixed price shop and I can assure you this is the best price you can get for a mural like this.,26,15-30,True,B2,True,,B2,3,B2
+I069,dailydialog-test-829,2,Relationship,Unbelievable! How do people go through it?,"That's what I'm wondering, too.",5,3-5,True,B1,,,B1,2,B1
+I070,dailydialog-test-410,0,Ordinary Life,— початок діалогу —,Excuse me. Is this where I catch the bus for the zoo?,12,10-14,False,A2,,,A2,1,A2
+I071,dailydialog-test-17,1,Ordinary Life,"Good evening, madam. Can I help you?",Yes. I bought this sheet here yesterday.,7,6-9,False,A2,,,A2,1,A2
+I072,dailydialog-test-790,0,Relationship,— початок діалогу —,"Ann, do you have time next Monday?",7,6-9,False,A1,,,A1,0,A1
+I073,dailydialog-test-303,6,Health,"Ok, go ahead.",Open your mouth and show me your tongue. Say ah... You have a bad cold. So you must stay in bed for a week.,24,15-30,False,B1,,,B1,2,B1
+I074,dailydialog-test-100,6,Ordinary Life,"Don't count on it, Babe. eBay is always full of surprises.",Well... guess how low the bidding starts on the tennis racket?,11,10-14,False,B1,,,B1,2,B1
+I075,dailydialog-test-663,8,Relationship,I would recommend a day at the zoo. It's fun for all the family. There is also a water park just outside the city if you would like a day trip.,It sounds marvelous. Thank you for your help.,8,6-9,False,C1,,,B1,2,B1
+I076,dailydialog-test-391,4,Relationship,How's your father?,He's fine. He retired last week. It's a turning point in his life. Now he can relax and enjoy his retirement.,21,15-30,False,B2,,,B2,3,B2
+I077,dailydialog-test-702,9,School Life,I'll show you where to find your article.,I get lost in this library.,6,6-9,True,A2,,,A2,1,A2
+I078,dailydialog-test-860,4,Attitude & Emotion,Yeah ... I know. But I'm sick and tired of all the office power struggles!,What kind of power struggles are you talking about?,9,6-9,False,B1,,,B1,2,B1
+I079,dailydialog-test-654,1,Relationship,My friend Jean is very beautiful.,What's her figure?,3,3-5,False,A2,,,A2,1,A2
+I080,dailydialog-test-727,2,Relationship,"No, I didn't. And you? Was it good?","Yes. I did. I enjoyed it a lot. There was a folk singer, a violinist and a pianist.",18,15-30,False,A2,,,A2,1,A2
+I081,dailydialog-test-128,0,Tourism,— початок діалогу —,Good afternoon! Trans Pacific Airline. How can I help you?,10,10-14,True,A1,,,A1,0,A1
+I082,dailydialog-test-483,0,Health,— початок діалогу —,"Excuse me, could you help me pick out a lotion?",10,10-14,False,A2,,,A2,1,A2
+I083,dailydialog-test-132,7,Work,Do people respond well to you?,"Yes, I'm good with people.",5,3-5,False,A1,,,A1,0,A1
+I084,dailydialog-test-435,2,Ordinary Life,Sure! What do you feel like having?,I really feel like having a big juicy steak!,9,6-9,False,B2,,,B2,3,B2
+I085,dailydialog-test-103,6,Health,"Oh, my God! I hope you are all right.","I have a concussion, but I will be OK.",9,6-9,False,C1,,,C1,4,C
+I086,dailydialog-test-256,0,Ordinary Life,— початок діалогу —,Can I get my dress today?,6,6-9,True,A1,,,A1,0,A1
+I087,dailydialog-test-475,3,Ordinary Life,We have many kinds of different purpose. I wonder whom you are buying for?,My son. He is two years old.,7,6-9,False,A1,,,A1,0,A1
+I088,dailydialog-test-943,0,Relationship,— початок діалогу —,Do you have a minute?,5,3-5,False,A1,,,A1,0,A1
+I089,dailydialog-test-542,5,Tourism,It should be the way out.,OK. Let's go and see.,5,3-5,True,A1,,,A1,0,A1
+I090,dailydialog-test-621,3,Attitude & Emotion,"We have just arrived from Tokyo only... looking for a reserve car of your company. All of above, we cannot find it.",What is your reservation number?,5,3-5,False,A2,,,A2,1,A2
+I091,dailydialog-test-170,4,Ordinary Life,Remember when we were kids? Theaters wouldn't let kids in to PG moves without a parent.,I remember that I never saw an X moves even displayed.,11,10-14,False,B2,,,B2,3,B2
+I092,dailydialog-test-96,0,Work,— початок діалогу —,I need help with the office party.,7,6-9,False,A1,,,A1,0,A1
+I093,dailydialog-test-909,2,Relationship,My mother works in a company as an accountant.,Is she busy?,3,3-5,False,A1,,,A1,0,A1
+I094,dailydialog-test-436,8,Relationship,The service did not help the situation.,Is this a restaurant that you want to come back to?,11,10-14,False,B1,,,B1,2,B1
+I095,dailydialog-test-6,1,Ordinary Life,So how did I do on my driving test?,Do you want the truth?,5,3-5,False,A2,,,A2,1,A2
+I096,dailydialog-test-378,12,Tourism,"Next question, Is a queen-size bed okay?",That sounds fine.,3,3-5,False,A2,,,A2,1,A2
+I097,dailydialog-test-253,4,Work,He's away on a business trip. He won't be back until some time next week.,Is there some way I can get into contact with him?,11,10-14,True,B1,,,B1,2,B1
+I098,dailydialog-test-911,2,Relationship,It sure is.,It's a good day for a picnic.,7,6-9,False,A2,,,A2,1,A2
+I099,dailydialog-test-416,9,Ordinary Life,"I am afraid the sales are over now, madam. And you know we all sold out of the saucepans.","I don't think you did, you know. My neighbor told me she saw some here only yesterday.",17,15-30,True,B1,,,B1,2,B1
+I100,dailydialog-test-602,7,Relationship,"Looks like he won't show up. He's done this before, hasn't he?","Yeah, a number of times.",5,3-5,False,B1,True,,B1,2,B1
+I101,dailydialog-test-231,3,Finance,"Right, OK. That, again, shouldn't be a problem.","And the total ratio of return on assets should not be lower than the average, for that particular industry, for the first two quarters of the year.",27,15-30,False,C1,,,C1,4,C
+I102,dailydialog-test-525,1,Relationship,"Happy birthday, Jim!","Thank you, Lisa.",3,3-5,True,A1,,,A1,0,A1
+I103,dailydialog-test-75,4,Ordinary Life,Outlets have more reasonable prices.,Thank you for your help.,5,3-5,False,A1,,,A1,0,A1
+I104,dailydialog-test-28,6,Ordinary Life,"well, let's get a plate of those then.",sounds good. What are you going to have for your main course?,12,10-14,False,B1,,,B1,2,B1
+I105,dailydialog-test-362,0,Ordinary Life,— початок діалогу —,Can I borrow this magazine from you? It's really interesting and I can't put it down.,16,15-30,False,B1,,,B1,2,B1
+I106,dailydialog-test-656,8,Culture & Education,"You know, Richard isn't such a bad guy. He made the comment out of ignorance, not malice.","So, what did you say when he asked you how long it took you to learn English?",17,15-30,False,B1,,,B1,2,B1
+I107,dailydialog-test-609,6,Relationship,Who invented the electric light bulb?,That's easy. It was invented by Edison.,7,6-9,False,A2,True,,A2,1,A2
+I108,dailydialog-test-520,2,Work,I prefer a sedentary job and I used to work as an operator.,We need an operator now.,5,3-5,False,A1,True,,A1,0,A1
+I109,dailydialog-test-12,4,Ordinary Life,I'll call the lost and found office.,I didn't think of it. Thank you. And I do apologize for being late.,14,10-14,False,B1,,,B1,2,B1
+I110,dailydialog-test-219,1,Work,I didn't receive an unemployment check this week and need to know why.,Did you mail us your last Continued Claim Form?,9,6-9,False,B1,,,B1,2,B1
+I111,dailydialog-test-603,11,Relationship,When is he coming?,He's busy. He said next week.,6,6-9,True,A2,,,A2,1,A2
+I112,dailydialog-test-208,1,Ordinary Life,Have you ever tried shopping online?,"No, never. I prefer to actually see and touch what I'm buying before I pay for it, especially for clothes and shoes.",22,15-30,False,B2,,,B2,3,B2
+I113,dailydialog-test-762,3,Attitude & Emotion,"No, seriously. I am impressed.",Thank you. I appreciate the compliment.,6,6-9,False,B1,,,B1,2,B1
+I114,dailydialog-test-468,3,Work,I think I forgot to send it in!,You need to be very careful to send that form in every two weeks if you want to get paid.,20,15-30,False,B1,,,B1,2,B1
+I115,dailydialog-test-453,0,Work,— початок діалогу —,Marco has fallen off a ladder. I think he's hurt his back. What shall we do?,16,15-30,True,B1,,,B1,2,B1
+I116,dailydialog-test-438,4,Ordinary Life,"I went there to check for problems with the home, so you aren't surprised when you move in.",Wouldn't the owners have told me about any problems?,9,6-9,False,B1,,,B1,2,B1
+I117,dailydialog-test-792,7,Relationship,"I see. Then, what's your favorite winter sport?","Figure skating. In my eye, nothing beats it.",8,6-9,False,C1,True,,C1,4,C
+I118,dailydialog-test-848,5,Relationship,"In Taiwan, prime-time shows are an hour long and most of them aren't comedies.",I think Americans would rather laugh than cry or be scared in their free time.,15,15-30,False,B1,,,B1,2,B1
+I119,dailydialog-test-56,6,Ordinary Life,This is the very thing I've been dreaming of.,It is the best quality porcelain-the famous egg-shell China.,11,10-14,False,B2,,,B2,3,B2
+I120,dailydialog-test-249,1,Relationship,have you seen the new Cosmo magazine that I was reading this morning?,I think I may have seen it on the kitchen table.,11,10-14,False,B2,,,B2,3,B2
+I121,dailydialog-test-690,0,Relationship,— початок діалогу —,"Hey, what's new?",3,3-5,False,A2,,,A2,1,A2
+I122,dailydialog-test-593,0,Work,— початок діалогу —,I'm just calling to see if you have made any decision about the position.,14,10-14,False,B2,,,B2,3,B2
+I123,dailydialog-test-296,5,Ordinary Life,I'd like to know more about it.,Can you come to my office this afternoon at 3 o'clock?,11,10-14,True,A2,,,A2,1,A2
+I124,dailydialog-test-533,3,Tourism,"In my opinion, there are several places you mustn't miss, like Washington D. C, Las Vegas, New York and Los Angeles.",Someone suggests that I should go to Seattle and Hawaii.,10,10-14,False,B2,,,B2,3,B2
+I125,dailydialog-test-809,0,Relationship,— початок діалогу —,"What's the matter with you, then? You look miserable.",9,6-9,False,C1,,,B1,2,B1
+I126,dailydialog-test-79,3,Work,"Christine, I know you're new here and there's a lot to learn, but you are going to have to learn to keep your work in better order. We can't afford to lose an important document.","Yes, sir. I apologize for that. Here's the file you were looking for, Mr. Emory.",15,15-30,False,B1,,,B1,2,B1
+I127,dailydialog-test-154,3,Ordinary Life,"And they're very dear, too.",They're on special offer today.,5,3-5,False,B1,,,B1,2,B1
+I128,dailydialog-test-204,4,Ordinary Life,Do you know what to get?,I don't know what we need.,6,6-9,True,A1,,,A1,0,A1
+I129,dailydialog-test-350,2,Ordinary Life,Okay. Is your hair naturally curly or is it a perm?,It's natural. My friend told me you know how to work with curls.,13,10-14,False,B1,,,B1,2,B1
+I130,dailydialog-test-856,7,Relationship,So did I. I won a prize last week but it was a prize for beginners.,My prize was for the best player in the country. Now let's start playing chess seriously.,16,15-30,False,B2,,,B2,3,B2
+I131,dailydialog-test-764,4,Relationship,I began blogging when I first went to the US for my graduate strides.,what do you usually write about?,6,6-9,True,A2,,,A2,1,A2
+I132,dailydialog-test-405,4,Ordinary Life,Sometimes you can post an advertisement saying that you need a roommate.,What do landlords charge for rent?,6,6-9,True,B2,,,B2,3,B2
+I133,dailydialog-test-418,3,Tourism,"I see. Oh, I know what I wanted to ask. How much should I tip this guy?","People don't usually tip here, but you can. Fifty dollars should be more enough.",14,10-14,False,B2,,,B2,3,B2
+I134,dailydialog-test-497,2,Ordinary Life,I usually have cereal for breakfast.,But isn't it served with cold milk?,7,6-9,False,C1,,,B1,2,B1
+I135,dailydialog-test-717,3,Relationship,What kinds of parades are there?,"The parades are usually military ones, but sometimes there are procession of people carrying flags and singing patriotic songs. What do you do on national day in your country?",29,15-30,False,C1,,,C1,4,C
+I136,dailydialog-test-113,11,Ordinary Life,"Hmm. You know, the problem might be dust. Did you clean the unit often?","Well. No, I didn't clean it. But still, I only had the last one two months, and it broke. I don't trust auto-reverse.",24,15-30,True,B2,,,B2,3,B2
+I137,dailydialog-test-349,5,Health,That's right. Just a simple multi-vitamin that I can take every day.,Okay. Then I recommend this one. It's made especially for men about your age.,14,10-14,False,B1,,,B1,2,B1
+I138,dailydialog-test-111,6,Work,"Don't worry, we'll soon fix them.","Good, I hope you'll make sure that it won't happen again.",11,10-14,True,A2,,,A2,1,A2
+I139,dailydialog-test-63,10,Work,"I advise you not to wear a too casual style when going to an interview. Informal clothes as well as torn jeans and dirty shoes convey the impression that you are not serious about the job, or that you may be casual about your work as you are about your clothes.",It's a pity that I cannot afford more expensive clothes.,10,10-14,True,C1,True,,C1,4,C
+I140,dailydialog-test-214,11,Finance,"I have it on highest authority that this traditional secret recipe has been handed down in the Granger family for generations. I'm sure you can keep a secret. Buttermilk, cacao beans, sugar and Haggis.",Haggis? What's Haggis?,3,3-5,True,A1,,,A1,0,A1
+I141,dailydialog-test-399,3,Ordinary Life,What's your question?,How many hours behind the wheel do I need?,9,6-9,False,B2,,,B2,3,B2
+I142,dailydialog-test-963,4,Relationship,Can't Elvin handle it?,I think he's got too much on his plate.,9,6-9,False,B1,,,B1,2,B1
+I143,dailydialog-test-11,2,Work,I'm free. What's up?,Someone has to pick up the boss at the airport.,10,10-14,True,A2,,,A2,1,A2
+I144,dailydialog-test-78,2,Ordinary Life,Do you have this shirt in a small?,"Let me check. Yes, we have.",6,6-9,False,A1,,,A1,0,A1
+I145,dailydialog-test-692,1,Relationship,What do you think of doctor Thomson?,I feel confident of his ability to cure my daughter's disease.,11,10-14,False,B2,,,B2,3,B2
+I146,dailydialog-test-54,3,Ordinary Life,Sound great. Let's go!,Look at the crystal clear fridge. You can see so many kinds of seafood in it. They all look very fresh and delicious.,23,15-30,True,B2,,,B2,3,B2
+I147,dailydialog-test-736,6,Relationship,"Sunny and mild today, cloudy and rainy tomorrow.",Did they find those bank robbers?,6,6-9,False,B1,,,B1,2,B1
+I148,dailydialog-test-595,2,Relationship,Heard what?,Deborah already had her baby.,5,3-5,True,B1,,,B1,2,B1
+I149,dailydialog-test-101,2,Ordinary Life,Pots and pans are right over there.,"Oh, thank you.",3,3-5,True,A1,,,A1,0,A1
+I150,dailydialog-test-757,8,School Life,The library is next to the Adminstration Building. The Adminstration Building is over there near the school's main entrance. There are school maps for free in the lobby of the Admin.,Thank you. I will go get one.,7,6-9,False,A2,,,A2,1,A2
+I151,dailydialog-test-156,3,Ordinary Life,Either way is good for me.,There are a number of open houses this weekend in your area. Would that okay with you?,17,15-30,True,B2,,,B2,3,B2
+I152,dailydialog-test-180,0,Ordinary Life,— початок діалогу —,"I'm very sorry, sir. My car has broken down.",9,6-9,True,A2,True,,A2,1,A2
+I153,dailydialog-test-916,6,Relationship,We rappelled down the side of 300 - foot cliff. It was very exciting.,Wow! That sounds like a lot of fun. I'm sorry I missed it.,13,10-14,False,B1,,,B1,2,B1
+I154,dailydialog-test-169,8,School Life,"I'll come down and watch you play some day, and see what it's like.",Good idea. I think you'll like it if you give it a chance.,13,10-14,False,A2,,,A2,1,A2
+I155,dailydialog-test-569,2,Relationship,"no, but I heard about that Angelina Jolie and Brad Pitt didn't attend.","yes, that was surprising. I heard that they got into a fight and then decided not to go.",18,15-30,False,B2,,,B2,3,B2
+I156,dailydialog-test-272,0,Work,— початок діалогу —,"Hello, thank you for calling Bradford and Sons. This is Tracy speaking, How may I help you?",17,15-30,False,A2,,,A2,1,A2
+I157,dailydialog-test-718,6,Relationship,My mother died two years ago.,"Oh, I am sorry to hear that. Is your father still working?",12,10-14,False,A2,,,A2,1,A2
+I158,dailydialog-test-659,4,Relationship,I have to work on Saturday all day! I really hate my job!,are you available on Sunday?,5,3-5,False,A2,,,A2,1,A2
+I159,dailydialog-test-153,0,Ordinary Life,— початок діалогу —,"You are an early bird, Tom. What do you do in the morning then?",14,10-14,False,B1,,,B1,2,B1
+I160,dailydialog-test-912,4,Attitude & Emotion,Certainly not.,May I turn on the TV then?,7,6-9,False,A2,,,A2,1,A2
+I161,dailydialog-test-941,3,Relationship,But I never saw them.,"Are you stupid? They are called UFOs, so not everybody can see them.",13,10-14,False,B1,,,B1,2,B1
+I162,dailydialog-test-694,2,Attitude & Emotion,"Personally, I'm not for it. I feel it's bad for kids to watch.","But kids like watching things like that. It's just for fun, would't you say?",14,10-14,True,B2,,,B2,3,B2
+I163,dailydialog-test-201,9,Tourism,OK. Do you have anything to declare?,I think there is nothing.,5,3-5,False,A2,,,A2,1,A2
+I164,dailydialog-test-58,10,Ordinary Life,"I'm afraid it wasn't. And when the police get here, you will also see that it wasn't. But enough of this bickering. I'm going to go find a phone. Don' t move that arm while I'm gone. Alright?",To hell with you.,4,3-5,False,C1,,,C1,4,C
+I165,dailydialog-test-386,4,Work,How do you do? My name is James Green.,Here's my name card.,4,3-5,False,A1,,,A1,0,A1
+I166,dailydialog-test-919,0,Relationship,— початок діалогу —,Do you really have to work today?,7,6-9,False,A1,,,A1,0,A1
+I167,dailydialog-test-591,13,Relationship,"that may be true, but when a woman gets pregnant, it changes her life completely. Men can still carry on with their lives after the birth exactly as they did beforehand.","that might be true, but I think men should have some kind of say in the matter.",17,15-30,False,B2,,,B2,3,B2
+I168,dailydialog-test-217,0,Work,— початок діалогу —,"Lucy, I'd like to fix the light in the corridor, it keeps flashing, which drives me crazy. Would you like to help me with the ladder?",26,15-30,False,B2,,,B2,3,B2
+I169,dailydialog-test-523,3,Work,Really? Did you find any information about a new job?,"Yeah, I just got some good information off the internet.",10,10-14,False,B1,,,B1,2,B1
+I170,dailydialog-test-775,3,Relationship,We met them in Bermuda last May.,They've completely slipped my mind.,5,3-5,False,B2,,,B2,3,B2
+I171,dailydialog-test-274,1,Work,"Well, tell me something of yourself.","What would you like to know, Mr. Green?",8,6-9,False,A2,,,A2,1,A2
+I172,dailydialog-test-799,7,Relationship,Did you go to school here?,"Well, I went to high school here, but I went to college in Texas.",14,10-14,False,A2,,,A2,1,A2
+I173,dailydialog-test-488,4,Work,"Well, I see. And what about the vacation in our company?","As a new-comer, you usually have five days of annual vacation. And remember you have to fill out a request form, if you want to ask for leave.",29,15-30,False,C1,,,C1,4,C
+I174,dailydialog-test-162,3,Ordinary Life,How about 10 percent? That's about 6 dollars.,That sounds about right.,4,3-5,False,B1,,,B1,2,B1
+I175,dailydialog-test-585,3,Tourism,"Ah, thank you. Please bring your luggage here for inspection.",Ok. But is there anything wrong?,6,6-9,False,A2,,,A2,1,A2
+I176,dailydialog-test-199,1,Work,Mr. Carter has asked me to come over to invite you to the banquet held in your honor at the Shangri-La Hotel at 7:00 this evening. Here's an invitation for you.,How nice of him. I'll be delighted to go. But what time would be convenient?,15,15-30,False,C1,,,C1,4,C
+I177,dailydialog-test-968,4,Relationship,"but promise me, you'll keep it a secret.","ok, I promise. So what's troubling you so much?",9,6-9,False,B2,,,B2,3,B2
+I178,dailydialog-test-236,0,Work,— початок діалогу —,May I come in?,4,3-5,True,A2,,,A2,1,A2
+I179,dailydialog-test-793,4,Relationship,The seaside.,That's really a good idea. Taking a walk on the beach and lying in the sun are pretty good. I recommend you Qingdao or Dalian.,25,15-30,True,B2,,,B2,3,B2
+I180,dailydialog-test-827,0,Relationship,— початок діалогу —,Hey Suzie. Guess what? I'm having a baby!,8,6-9,False,B1,,,B1,2,B1
+I181,dailydialog-test-367,7,Ordinary Life,"Well, there are a lot to do, but nothing to worry about. First, make sure they don't go far from the railings.","Oh, yeah, maybe I should ask them just to walk along the railings.",13,10-14,False,B2,,,B2,3,B2
+I182,dailydialog-test-306,3,Politics,"I plan to, but what day is the election?",You should know that.,4,3-5,False,A2,,,A2,1,A2
+I183,dailydialog-test-313,3,Ordinary Life,Who is going to look after a dog or a cat?,"I will! I'll feed it, bathe it and walk it every day! We can get a Labrador or a German Shepard!",21,15-30,False,B2,,,B2,3,B2
+I184,dailydialog-test-472,1,Ordinary Life,"How do you spend your day, Helen?","Well, on weekdays I get up around ten. Then I read the paper for an hour and have lunch at about noon.",22,15-30,False,A2,,,A2,1,A2
+I185,dailydialog-test-541,5,Work,Certainly!,Please ask her to call John.,6,6-9,True,A1,,,A1,0,A1
+I186,dailydialog-test-259,1,Ordinary Life,How much is it all together?,Let me see. The bell-bottom pants are $90 and the coat is $120. It comes to $210.,18,15-30,False,B1,,,B1,2,B1
+I187,dailydialog-test-567,3,Ordinary Life,"He says kick mommy, beat mommy, don't want mommy, very quickly if I do something that he doesn't like. You know, if I wash his face or change his clothes, things like that.","Honey, I don't know what to tell you. Of course Tony is a young child. But do not underestimate his ability to learn and reason.",25,15-30,False,C1,,,C1,4,C
+I188,dailydialog-test-93,2,Work,Yes. Would tomorrow morning be all right with you?,"Sorry, I've got a meeting from nine to ten. What about Monday afternoon?",13,10-14,False,B1,,,B1,2,B1
+I189,dailydialog-test-115,4,Work,"They are keep the documents in chronological order, remove all the chips and pins, punch the documents evenly and place them in the folder.",And what is the most important point?,7,6-9,False,B1,,,B1,2,B1
+I190,dailydialog-test-23,5,Ordinary Life,Is that really all that you eat?,That's basically it.,3,3-5,False,A2,,,A2,1,A2
+I191,dailydialog-test-885,4,Relationship,"Where will we sleep, then?",In the van.,3,3-5,False,A1,,,A1,0,A1
+I192,dailydialog-test-788,4,Culture & Education,Please.,Look. Here are the core classes. Everyone has to take them.,11,10-14,False,B1,,,B1,2,B1
+I193,dailydialog-test-893,4,Attitude & Emotion,"Again? You just went last week! You spend more time at the nail salon than you do here at home! Honestly, why do you need a manicure every week?","Well, first of all, I like to pamper myself, and my nails look great. You should come with me!",19,15-30,False,C1,True,,C1,4,C
+I194,dailydialog-test-894,3,Relationship,"I'm very well, thank you. How are you?","Very well too, thank you very much. Isn' t it a lovely day?",13,10-14,False,B2,,,B2,3,B2
+I195,dailydialog-test-552,0,Tourism,— початок діалогу —,Good afternoon. I come here specially to pick up my tickets. I booked it last month. This is my reservation note.,21,15-30,False,A2,,,A2,1,A2
+I196,dailydialog-test-984,15,Attitude & Emotion,"for a start, we can take the public transport to work. You know, running a car is a big expense.",sounds a good idea.,4,3-5,False,A1,,,A1,0,A1
+I197,dailydialog-test-853,0,Relationship,— початок діалогу —,I see Mike farmer has make it into the Olympic team. He beat the national record by 0. 1 of a second.,22,15-30,True,B2,,,B2,3,B2
+I198,dailydialog-test-470,7,Ordinary Life,What's included in the gift package?,"Some black mascara, moisturizing orion, eye cream crystal lipstick, a two color eye shadow pack, styling hairspray, and a cosmetics bag.",21,15-30,False,B2,,,B2,3,B2
+I199,dailydialog-test-469,1,Work,"Excuse me, are you Mrs. Green from England?","Yes, I am.",3,3-5,False,A1,,,A1,0,A1
+I200,dailydialog-test-614,2,Relationship,"Yeah, some places are very short of water.","Because of pollution and other things, our environment has become worse and worse.",13,10-14,True,B2,,,B2,3,B2
+I201,dailydialog-test-144,0,Health,— початок діалогу —,I have a stomachache.,4,3-5,False,A2,,,A2,1,A2
+I202,dailydialog-test-8,10,Ordinary Life,But you must cook that dinner next time.,"Okay, I'll do it next time.",6,6-9,False,A1,,,A1,0,A1
+I203,dailydialog-test-74,3,Ordinary Life,I'm just coming for that.,She kept bothering me.,4,3-5,True,B1,,,B1,2,B1
+I204,dailydialog-test-887,3,Relationship,I don't think there's any excuse for his acting in some parts.,Don't be too critical. We can't expect it to be perfect.,11,10-14,False,B2,,,B2,3,B2
+I205,dailydialog-test-832,1,Attitude & Emotion,Look! I bought these shoes only three weeks ago and there is a hole in them already.,"If that happen to me, I'll take them back to the shop.",12,10-14,False,B1,,,B1,2,B1
+I206,dailydialog-test-647,8,Relationship,where is that?,not very far from here. We'll fly. It's about one and a half hours.,14,10-14,False,B1,,,B1,2,B1
+I207,dailydialog-test-655,3,Relationship,Why not listen to music online?,"Then I will have to pay quite a lot to listen to music on line, isn't it?",17,15-30,False,B2,,,B2,3,B2
+I208,dailydialog-test-817,1,Relationship,Excuse me. Do you study Chinese at this university?,"Yes, I do. But my characters are very bad.",9,6-9,False,A2,,,A2,1,A2
+I209,dailydialog-test-969,2,Relationship,"Oh, nothing special. I'm just a bit tired.",With the job?,3,3-5,False,A1,,,A1,0,A1
+I210,dailydialog-test-854,2,Relationship,"I may have something on that day, but thanks for inviting me.","Well, drop by if you can.",6,6-9,False,B2,,,B2,3,B2
+I211,dailydialog-test-949,8,Relationship,"Paris is a beautiful city. I have never been there. Have you ever been there, Ken?","Yes, I have. I was there in April.",8,6-9,False,A1,,,A1,0,A1
+I212,dailydialog-test-999,6,Relationship,"yes, it was wonderful but it's already been a year. How time flies!","why not go again to celebrate out one-year anniversary? We can go to the same beach, stay in the same hotel and enjoy a dinner in the same restaurant.",30,15-30,False,B1,,,B1,2,B1
+I213,dailydialog-test-652,11,Attitude & Emotion,That sounds interesting. But I don't know how to do that.,How about a training course?,5,3-5,False,A2,,,A2,1,A2
+I214,dailydialog-test-925,1,Relationship,I'm really mad at Bob.,What for? ( Why? ),3,3-5,False,C1,True,,A2,1,A2
+I215,dailydialog-test-478,1,Ordinary Life,"Hello, sir, what can I do for you today?","Hello, I need a new suit. I have an important interview next week, so I really need to look sharp.",20,15-30,False,A2,,,A2,1,A2
+I216,dailydialog-test-644,0,Relationship,— початок діалогу —,The weather is terrible.,4,3-5,False,A1,,,A1,0,A1
+I217,dailydialog-test-432,4,Ordinary Life,Is that the university next to the Teachers' College?,That's the one.,3,3-5,False,A2,,,A2,1,A2
+I218,dailydialog-test-780,4,Relationship,OK. Then tell me what else you know.,Some movie stars measure their worth by how many millions of dollars they make. Do you know how Jackie Chan measures his worth?,23,15-30,False,B2,,,B2,3,B2
+I219,dailydialog-test-658,8,School Life,Okay. Now what?,"Once a computer is available, I will let you know.",10,10-14,False,C1,True,,C1,4,C
+I220,dailydialog-test-62,0,Ordinary Life,— початок діалогу —,Could I have some fish?,5,3-5,False,A2,,,A2,1,A2
+I221,dailydialog-test-360,5,Ordinary Life,I don't understand why.,I'm going to have to keep your deposit,8,6-9,False,B1,,,B1,2,B1
+I222,dailydialog-test-546,5,Ordinary Life,Hey! I'm the tour guide. I'll take care of the Taiwanese guests.,"You're going to have to tell them what to do in church, what everything means ...",15,15-30,False,B1,,,B1,2,B1
+I223,dailydialog-test-783,0,Relationship,— початок діалогу —,"Look, that bamboo groves are flourishing. Let's go and play there.",11,10-14,False,C1,,,C1,4,C
+I224,dailydialog-test-226,3,Finance,Sure.,Let me just make sure. You want to withdraw one thousand dollars?,12,10-14,False,B1,,,B1,2,B1
+I225,dailydialog-test-4,6,Work,"Yes, in most circumstances.",Are you available for travel?,5,3-5,True,A2,,,A2,1,A2
+I226,dailydialog-test-314,2,Ordinary Life,But I haven't used exercising equipment before. Can you tell us some more details?,"Certainly. We have here the race apparatus, stationary bike, muscle builder set, chest expander, bar bell, dumb bell and so on.",21,15-30,True,C1,,,C1,4,C
+I227,dailydialog-test-21,4,Ordinary Life,Sure.,Besides I want two copies of all the photos.,9,6-9,False,B2,,,B2,3,B2
+I228,dailydialog-test-886,4,School Life,"Next Monday is December 2nd. The buses will leave at 8, but we must begin loading at 7",I will be there half an hour early.,8,6-9,False,A2,,,A2,1,A2
+I229,dailydialog-test-459,1,Relationship,"Hello, Mrs. White! I'm Anne.","Nice to see you with us, Anne. Please make yourself at home.",12,10-14,True,A2,,,A2,1,A2
+I230,dailydialog-test-985,0,Relationship,— початок діалогу —,"OK, everyone. Gather around. Here are the rules. No tackling. No pushing.",12,10-14,False,B2,,,B2,3,B2
+I231,dailydialog-test-562,5,Ordinary Life,B as in boy. You should get off at the last stop in Chinatown.,"Oh, you mean Canal Street?",5,3-5,False,A2,,,A2,1,A2
+I232,dailydialog-test-462,10,Tourism,all right.,"Your luggage is two pounds over. I'm afraid They'll be in excess luggage charge, Sir.",15,15-30,False,B1,,,B1,2,B1
+I233,dailydialog-test-650,2,Relationship,Stay for dinner with us.,"I'm afraid I can't. I have a dinner party at seven tonight. You see, I am going to England the day after tomorrow.",23,15-30,False,B1,,,B1,2,B1
+I234,dailydialog-test-335,2,Ordinary Life,I love this store. The only problem is that it's extremely expensive.,Don't worry. I'Ve decided that for your birthday I'm going to take you shopping for a new dress.,18,15-30,False,B1,,,B1,2,B1
+I235,dailydialog-test-250,4,Ordinary Life,"From a sweet ma? ! It's not worth it. Plus, I'd happily pay more for these things I bought!","F. Y. I. , there is a flea market nearby, but maybe you're done ...",13,10-14,False,B2,,,B2,3,B2
+I236,dailydialog-test-247,7,Tourism,Then I'll come down and pick up the message immediately.,"OK, we wait for you.",5,3-5,False,A1,,,A1,0,A1
+I237,dailydialog-test-52,11,Ordinary Life,It's a beautiful drive.,Where are the keys?,4,3-5,False,A1,,,A1,0,A1
+I238,dailydialog-test-224,2,Work,"Yes, of course. There are many steps. You can apply for the job on the Internet and then send your resume to the e-mail address of the company. And wail the feedback of the company.",What is the qualification needed by the position?,8,6-9,False,B2,,,B2,3,B2
+I239,dailydialog-test-379,5,Ordinary Life,Great! Would you like your second pizza to be the same as the first?,"No, make the second one with ham, pineapple and green peppers. Oh, and make it thin crust.",17,15-30,False,B2,,,B2,3,B2
+I240,dailydialog-test-539,5,Finance,"Yes, there has been a lot of research into RSI's. Something so simple as proper chair height can prevent injuries. Tell me, did anything else influence your decision?","Yes, I noticed that you have professional training and team-building days. I like the idea of working for a company that invests in its staff.",26,15-30,True,B1,,,B1,2,B1
+I241,dailydialog-test-3,0,Ordinary Life,— початок діалогу —,"Believe it or not, tea is the most popular beverage in the world after water.",15,15-30,False,B2,,,B2,3,B2
+I242,dailydialog-test-801,8,Relationship,that's easy. Express possibilities. People will think that you are pretty smart to be able to look at the topic from more than one angle.,I didn't realize that speaking in class could be so easy.,11,10-14,False,B1,,,B1,2,B1
+I243,dailydialog-test-713,4,Attitude & Emotion,"That's right. You know, pink, green and black could also be good for you. Actually, I think that all colors are okay for a person with your complexion. It's just that different colors can give people different impressions. For example, black could make you look mature, while pink could make you look young and energetic.",Thank you for your compliments. It sounds like you're a clothing expert.,12,10-14,False,B2,,,B2,3,B2
+I244,dailydialog-test-27,3,Ordinary Life,"Ok, it comes four dollars twenty cents.",Here is five dollars.,4,3-5,False,A1,,,A1,0,A1
+I245,dailydialog-test-802,2,Relationship,He used to be a policeman.,But Mrs. Smith hired him to find her lost son.,10,10-14,True,B2,,,B2,3,B2
+I246,dailydialog-test-142,3,Relationship,"You're Mr. Stevenson, right?","Yes. And you're Mr. Jones, I remember.",7,6-9,False,A2,,,A2,1,A2
+I247,dailydialog-test-465,2,Ordinary Life,"Sorry, sir. That table has been booked.","Well, in that case, this table is the only choice.",10,10-14,False,B2,,,B2,3,B2
+I248,dailydialog-test-966,1,Relationship,"Hi, Jim. How are you? I haven't seen you for a while.",I'm fine. I'Ve been out of town. I just got back.,11,10-14,True,B1,,,B1,2,B1
+I249,dailydialog-test-359,1,Work,"Hello, I want to apply for the position of an usher in your restaurant.",Welcome. One of your duties is to know the number of the customer and accept reservation.,16,15-30,True,C1,True,,C1,4,C
+I250,dailydialog-test-403,0,Health,— початок діалогу —,I have a terrible toothache.,5,3-5,True,A2,,,A2,1,A2
+I251,dailydialog-test-175,3,Ordinary Life,Have you a pattern in your mind?,"Well, maybe sneakers or rubber shoes.",6,6-9,False,A2,,,A2,1,A2
+I252,dailydialog-test-315,7,Relationship,"You know, now that I think about it, I really don't have much more to say to you at all!",Whatever you say!,3,3-5,False,A2,,,A2,1,A2
+I253,dailydialog-test-796,1,Relationship,"Very glad to know something about you, then what are you going to do when you finish.","Oh, I'll go to shanghai to practice there.",8,6-9,True,A2,,,A2,1,A2
+I254,dailydialog-test-388,2,Finance,"Yes, I need some traveler's checks.",How much do you need?,5,3-5,True,A1,,,A1,0,A1
+I255,dailydialog-test-830,4,Relationship,"Much as we'd like to, but we've booked up already for that time.",What a pity! You can't join us.,7,6-9,False,B1,,,B1,2,B1
+I256,dailydialog-test-433,10,Work,"English, math, commercial and legal studies, and accountancy.",Have you had any working experience.,6,6-9,True,B1,,,B1,2,B1
+I257,dailydialog-test-425,5,Ordinary Life,"Sure. What's your number, please.",519 367 8901.,3,3-5,True,A1,,,A1,0,A1
+I258,dailydialog-test-449,0,Health,— початок діалогу —,"Sarah, you don't look so good. What's the matter?",9,6-9,True,B2,,,B2,3,B2
+I259,dailydialog-test-875,6,Relationship,Can you ride a horse?,"Yes, I can. I don't ride regularly though. How about you?",11,10-14,True,B1,,,B1,2,B1
+I260,dailydialog-test-547,15,Ordinary Life,All right. But you have to clean up everything it messes up.,"I will. Thank you, Mummy.",5,3-5,False,A1,,,A1,0,A1
+I261,dailydialog-test-71,6,Tourism,Thank you. Please get some soap for us.,Just a moment. I will do it right now.,9,6-9,False,A2,,,A2,1,A2
+I262,dailydialog-test-980,8,Relationship,I've got it. I like the feeling of stepping on the ice.,Yes. Very wonderful.,3,3-5,False,A1,,,A1,0,A1
+I263,dailydialog-test-572,4,Tourism,"Oh, I much prefer to go by car, then we don't need to get to the station with our luggage and ...",And I've got to drive. You know I'm not fond of that. I found it much more relaxing to sit in the train.,23,15-30,True,B2,,,B2,3,B2
+I264,dailydialog-test-369,10,Tourism,Yes. So?,Think about it!,3,3-5,False,A1,,,A1,0,A1
+I265,dailydialog-test-419,13,Tourism,No problem. Your ticket is for Trans Pacific Flight 87 from Detroit to Beijing at 3 forty p. m. on April 13. You will arrive at Beijing International Airport at six 35 p. m. on April 14. Your electronic,What time should I arrive at Detroit Airport?,8,6-9,False,A2,,,A2,1,A2
+I266,dailydialog-test-336,4,Tourism,OK. Please do so if it is not troublesome.,No trouble at all. May I know your name and room number?,12,10-14,False,A2,,,A2,1,A2
+I267,dailydialog-test-874,10,Relationship,I guessed it.,"Well, generally speaking, the park is a window on the world history, a window on the world civilization and a window on the world's tourist attractions as well.",28,15-30,False,C1,,,C1,4,C
+I268,dailydialog-test-818,4,Relationship,Stop all this fuss and enjoy the show.,You are right. But what if an avalanche happened?,9,6-9,False,C1,,,C1,4,C
+I269,dailydialog-test-846,1,Relationship,I met a girl in elevator this morning. She works in a company upstairs. She said she envied the casual way we dress for work. She complained about the dress rule in her company. It requires everyone to wear formal clothes from Monday to Friday.,"Well, I was wondering where those people with professional attire come from. Now, I know the answer.",17,15-30,False,C1,,,C1,4,C
+I270,dailydialog-test-166,2,Tourism,Do you have any seats for September 16th?,Let's see ... I'm afraid the 16th is fully booked. But I have seats for the 17th.,16,15-30,False,B1,,,B1,2,B1
+I271,dailydialog-test-287,4,Relationship,"Yes, and I hope that it does.",Why is that?,3,3-5,False,A1,,,A1,0,A1
+I272,dailydialog-test-866,7,Relationship,"Well, it's true. The board man last thirdly and they choice Paul.",Well. Good for him.,4,3-5,True,B1,,,B1,2,B1
+I273,dailydialog-test-137,2,Work,"Yes, do I have to work a whole year before I can take a vacation?","Yes, after you'Ve been here a year, you qualify for a three-day vacation",14,10-14,False,B1,,,B1,2,B1
+I274,dailydialog-test-487,17,Ordinary Life,I'd rather not. They'll raise my rates. It'll cost me more in the long run.,"If you give me cash, do you care if I don't fix the car?",14,10-14,False,B2,,,B2,3,B2
+I275,dailydialog-test-908,4,Relationship,I never understand the meaning of those painting. They are too abstract for me. I didn't pay much attention in art class at school.,Art isn't for everyone. I'm going to an exhibition tomorrow at the national gallery. It's an exhibition of greek and roman sculpture.,22,15-30,False,B1,,,B1,2,B1
+I276,dailydialog-test-277,3,Ordinary Life,What do you mean? It's a scrim.,"Not to me, I wouldn't be caught dead in that.",10,10-14,False,B2,,,B2,3,B2
+I277,dailydialog-test-491,0,Work,— початок діалогу —,I am calling to consult you about the job as a copywriter.,12,10-14,True,B1,,,B1,2,B1
+I278,dailydialog-test-356,1,Relationship,What's up?,"Nothing much, what's going on?",5,3-5,False,A2,,,A2,1,A2
+I279,dailydialog-test-48,1,Ordinary Life,I'd like you to do me a favor.,What is it?,3,3-5,False,A1,,,A1,0,A1
+I280,dailydialog-test-670,1,Attitude & Emotion,This is such a beautiful day! Great for sailing!,It sure is! The water looks so nice! Anchor the boat for a little while. I'm going to take a dip.,21,15-30,True,B2,,,B2,3,B2
+I281,dailydialog-test-191,0,Work,— початок діалогу —,"Mr. Crandall, I'm sorry, but I really don't see the value in doing this entire project over from scratch. It would take a lot of work.",26,15-30,False,B2,,,B2,3,B2
+I282,dailydialog-test-387,2,Work,"Mr. Smith, please.","Sorry, he is out.",4,3-5,False,B1,,,B1,2,B1
+I283,dailydialog-test-605,1,Attitude & Emotion,"I have a complaint to make. The bill you sent me was incorrect. What's more, it isn't the first time","Well, I must apologize, madam. We have new computers here, you know.",12,10-14,False,B1,,,B1,2,B1
+I284,dailydialog-test-726,1,Relationship,"Hello, Tom. Where are you heading for?","I am going to a movie theater. You know there is a new action film produced by Hollywood. A thriller, really.",21,15-30,False,A2,,,A2,1,A2
+I285,dailydialog-test-281,2,Ordinary Life,Do we have to?,"Come on, it's losing needles all the time and the branches are sagging.",13,10-14,False,C1,,,C1,4,C
+I286,dailydialog-test-59,2,Ordinary Life,Hello. I'm thinking about watching a Chinese traditional opera with a foreign girl. What's on this weekend?,"Well, there will be charity performance on Saturday night. And also, there will be a solo concert by an opera star on Sunday night.",24,15-30,False,B1,,,B1,2,B1
+I287,dailydialog-test-961,0,Relationship,— початок діалогу —,"A: : Mr Clinton, it's nice to see you again.",9,6-9,False,A2,,,A2,1,A2
+I288,dailydialog-test-924,10,Relationship,Thank you so much.,What kind of watch is it?,6,6-9,True,A1,,,A1,0,A1
+I289,dailydialog-test-571,1,Politics,Why are you holding me in this jail cell?,We'd like to hear your account of the events of last night.,12,10-14,False,B1,,,B1,2,B1
+I290,dailydialog-test-241,1,Work,"Excuse me, could you please show me the way to the human resource department?","Yeah, but have you made an appointment ahead?",8,6-9,False,B1,,,B1,2,B1
+I291,dailydialog-test-923,1,Attitude & Emotion,"Tom, I won first prize in the poetry contest.",Come on! You're pulling my leg.,6,6-9,False,C1,True,,C1,4,C
+I292,dailydialog-test-897,2,Relationship,How about a movie? We haven't done that for a while.,A movie? Sure. Do you know what's on right now?,10,10-14,False,B1,,,B1,2,B1
+I293,dailydialog-test-223,0,Ordinary Life,— початок діалогу —,"Hey honey, how was your day?",6,6-9,False,A2,,,A2,1,A2
+I294,dailydialog-test-753,1,Relationship,What is life?,Don't ask such a question. You know it has no certain answer. Everyone knows it is in his heart.,19,15-30,False,B2,,,B2,3,B2
+I295,dailydialog-test-347,2,Work,"No problem. Now, do you prefer working with others or flying solo?","Actually, I enjoy both.",4,3-5,False,A2,,,A2,1,A2
+I296,dailydialog-test-202,7,Ordinary Life,"Then I'll come to your place later in the evening, and how late is your shop open?","Until 8 o'clock, ma'am. We are looking forward to seeing you.",11,10-14,False,A2,,,A2,1,A2
+I297,dailydialog-test-9,0,Relationship,— початок діалогу —,"Hello, this is Mike, Kara.",5,3-5,False,A1,,,A1,0,A1
+I298,dailydialog-test-244,5,Ordinary Life,Do you mean the exquisite pearl earrings?,Exactly. How much do you want for them?,8,6-9,False,A2,,,A2,1,A2
+I299,dailydialog-test-426,6,Ordinary Life,"Of course! Everything at Helen's is overpriced, and they sell things that you can find at almost every other clothing store! Why didn't you shop around?","I don't know, I just saw the dress and thought about how pretty it looks and how much I wanted it. I guess I was too impulsive.",27,15-30,False,B1,,,B1,2,B1
+I300,dailydialog-test-143,11,Work,Your mentality is very good and that's great.,Thanks for giving me the opportunity of this interview.,9,6-9,False,B1,,,B1,2,B1

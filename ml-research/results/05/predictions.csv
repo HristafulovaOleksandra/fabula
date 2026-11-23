@@ -1,0 +1,301 @@
+item_id,utterance,length_bin,level_class,M0 rules,M1 Logistic Regression,M2 Random Forest,M3 DistilBERT,M4-13,M4-33,M4-final
+I001,They sure can. Maybe they can interact with men better than monkeys and apes.,10-14,B1,B2,B1,B1,B1,B1,B1,B1
+I002,"Sorry, but this is the best price. You can't get it any cheaper than here.",15-30,A2,B2,B1,B1,B1,B1,B1,B1
+I003,Can you tell me why you want to buy it?,10-14,A1,A2,A2,A2,A2,A2,A2,A2
+I004,"Actually, it's better ...",3-5,A1,A2,A1,A2,A2,A2,A2,A2
+I005,That's because you don't know the short cuts. You'll learn them after a while. I can show you the ropes.,15-30,B1,B2,B1,B1,B1,B1,B1,B1
+I006,Have you ever listened to AM radio? It's quite a different experience than the traditional news stations on TV and FM radio.,15-30,B1,B2,B1,B1,B1,B1,B1,B1
+I007,You can use it however many times you need to.,10-14,B1,B1,A2,A2,A2,A2,B1,A2
+I008,It looks pretty good. I think I'll take it.,6-9,A2,B1,A2,A2,A2,A2,A2,A2
+I009,"Yes, what's it?",3-5,A1,A1,A1,A2,A2,A2,A2,A2
+I010,Here you are. Do you need to see my passport?,10-14,A1,B1,B1,B1,A2,A2,A2,A2
+I011,Yes. Then I noticed he was on the sidewalk behind me. He was following me.,15-30,B2,B2,B1,B1,B1,A2,B1,B1
+I012,We need to talk.,3-5,A1,A2,A2,A1,A2,A2,A1,A2
+I013,"Not bad. We have had a big meeting today, remember?",10-14,A2,A2,A2,B1,A2,A2,A2,A2
+I014,I am so busy today.,3-5,A1,A2,A2,A2,A2,A2,A2,A2
+I015,"Polarizing filter um we should! I'm sorry, ma'am. It looks like we're sold out.",10-14,B2,B2,B1,B2,B2,B1,B1,B2
+I016,I wannafinish my drink first. I'll meet you at Sammy's.,10-14,A2,A2,B1,B1,A2,A2,B1,A2
+I017,perhaps we could go to the library festival that's going on at the local bookshop.,15-30,B2,B2,B1,B1,B1,B1,B1,B1
+I018,"Same here! We will catch up soon, maybe over coffee!",10-14,B1,A2,A2,A2,A2,A2,A2,A2
+I019,"Oh yes, and fruit, I love fruit.",6-9,A2,A2,A2,A2,A2,A2,A2,A2
+I020,We put many signs with English translations for foreign visitors.,10-14,B1,B2,B1,B2,B1,B1,B1,B1
+I021,"Yes, I'd like to deposit one billion dollars.",6-9,A2,B2,B1,B1,B1,B1,B1,B1
+I022,"You have a lovely house, Jack.",6-9,A1,A1,A2,A2,A2,A2,A2,A2
+I023,"Well, we use the exhaust gases from our printing presses to provide energy to heat our dryers.",15-30,C,C,B1,B2,B2,B2,B2,B2
+I024,Could you do me a favor and proofread my resume before I send it out to the human resources department?,15-30,B2,C,B1,B2,B1,B1,B1,B1
+I025,Have you had any experience with computer?,6-9,A2,A2,A2,A2,A2,A2,A2,A2
+I026,I hope so.,3-5,A1,A2,A2,A2,A2,A2,A2,A2
+I027,"There is a special exhibition of french sculptures at the museum, I was hoping you' d like to come with me.",15-30,B2,B2,B1,B2,B1,B1,B1,B1
+I028,"Oh, yes, he is two years older than me. He lives in New Zealand so I don't see him that often.",15-30,B1,B1,B1,B1,A2,B1,B1,B1
+I029,The first place you should go is the International Center.,10-14,A2,A2,B1,B1,A2,B1,A2,A2
+I030,"I have to check out now. My name is Ruth Carson. Can I have my bill, please?",15-30,A2,B2,B1,B1,A2,A2,A2,A2
+I031,Certainly. Here it is.,3-5,A2,A2,A2,A2,A2,A2,A2,A2
+I032,"I prefer one facing the sea. Besides, it should have a shower.",10-14,C,B1,B1,B1,B1,B1,B1,B1
+I033,That's out of the question.,3-5,B2,A1,A2,A2,A2,A2,A2,A2
+I034,Thank you. Bye.,3-5,A1,A1,A2,A1,A2,A2,A2,A2
+I035,"Exactly, you know, water ballet puts dancing, music and swimming together.",10-14,B2,B2,B1,B1,B1,B1,B1,B1
+I036,It's a lot better than paying someone $60.,6-9,B1,B1,A2,A2,B1,B1,B1,B1
+I037,"Well, I'm sure you will.",3-5,B1,A1,A2,A2,A2,A2,A2,A2
+I038,"Please be careful with the suitcase, it's very heavy.",6-9,A2,B1,B1,B1,A2,B1,B1,B1
+I039,"Where's Sally, Jack?",3-5,A1,A1,A1,A2,A2,A2,A2,A2
+I040,Let's hope it clears up.,3-5,B2,A2,B1,B1,A2,B1,B1,B1
+I041,How much is the excess baggage part charge?,6-9,C,B1,B1,B1,B1,B2,B1,B1
+I042,Why do you think there was a break-in?,6-9,B2,B1,A2,A2,A2,A2,B1,A2
+I043,"Well, we drove through the valley on our way there in the morning. It was a magnificent sight.",15-30,B2,B2,B1,B1,B1,B1,B1,B1
+I044,How are they at swimming?,3-5,A2,A1,A2,A1,A2,A2,A2,A2
+I045,"That sounds fine, thanks for that. Let's go ahead!",6-9,A2,B1,A2,A2,A2,A2,A2,A2
+I046,Tim's always bothering me.,3-5,A2,A2,A2,A2,A2,A2,B1,A2
+I047,"So, you're applying for a B2 visa, where is your final destination and what's the purpose of your trip to the United States?",15-30,B2,B2,B1,B2,B1,B1,B1,B1
+I048,I don't know anything for certain. We always do a double check if there is a question.,15-30,B1,B2,B1,B1,B1,B1,B1,B1
+I049,"Oh, I'm sorry I bothered you. I'm really sorry.",6-9,B1,B1,B1,B1,A2,A2,A2,A2
+I050,But I'm not used to looking up every new word when I'm reading a novel. I only look up the most necessary ones.,15-30,B2,B2,B1,B1,B1,B1,B1,B1
+I051,"Oh, It's quite all right, I suppose. It can't be helped sometimes.",10-14,B2,B2,B1,B1,A2,B1,B1,B1
+I052,"Please call me Jack. Have a seat, please.",6-9,A1,A2,A2,A2,A2,A2,A2,A2
+I053,"Sir, I deleted the $10, but I had to add a $2 service charge to your bill.",15-30,B1,B2,A2,B1,B1,B1,B1,B1
+I054,I really wanted to get into NYU.,6-9,A2,A2,A2,A2,A2,A2,A2,A2
+I055,It's story is just an excuse to get the girl dressed up in different tight outfits.,15-30,B2,C,B1,B1,B1,B1,B1,B1
+I056,my husband and I got married in a registry office with just two friends there as witnesses. But then we had three parties to celebrate.,15-30,B1,C,B2,B2,B1,B2,B1,B1
+I057,"Okay, so we're agreed on 900.",6-9,A2,A2,A2,A2,A2,A2,A2,A2
+I058,Will that be first class or economy seat?,6-9,A2,B1,B1,A2,A2,B1,B1,A2
+I059,"Besides steamed fish, what else are you good at cooking?",10-14,B1,B1,B1,B2,B1,B1,B1,B1
+I060,Do you have an appointment?,3-5,A2,A2,A2,A2,A2,A2,A2,A2
+I061,"I'm from Korea. My parents wanted me to go to an American university, so I came here.",15-30,A2,B2,B1,B1,A2,A2,A2,A2
+I062,OK! How about Scrabble?,3-5,A1,A1,C,A2,A2,B1,A2,A2
+I063,That shouldn't be a problem.,3-5,A2,A1,A2,A2,A2,A2,A2,A2
+I064,We're glad that you're here. Would you like a tour of the house?,10-14,B1,B1,B1,B1,A2,B1,A2,A2
+I065,I have some great news! I was able to switch to the night shift!,10-14,B1,B2,B1,B1,A2,B1,B1,B1
+I066,Are you available this Saturday?,3-5,A1,A2,A2,A2,A2,A2,A2,A2
+I067,"Yes, I got it. Thanks.",3-5,A1,A1,A1,A2,A2,A2,A2,A2
+I068,I'm sorry. Ours is a fixed price shop and I can assure you this is the best price you can get for a mural like this.,15-30,B2,C,B2,B2,B1,B1,B1,B1
+I069,"That's what I'm wondering, too.",3-5,B1,A2,A2,A2,A2,A2,A2,B1
+I070,Excuse me. Is this where I catch the bus for the zoo?,10-14,A2,B1,B1,B1,A2,A2,B1,A2
+I071,Yes. I bought this sheet here yesterday.,6-9,A2,B1,A2,B1,A2,A2,A2,A2
+I072,"Ann, do you have time next Monday?",6-9,A1,A2,A2,A2,A2,A2,A2,A2
+I073,Open your mouth and show me your tongue. Say ah... You have a bad cold. So you must stay in bed for a week.,15-30,B1,B2,B1,B1,B1,B1,B1,B1
+I074,Well... guess how low the bidding starts on the tennis racket?,10-14,B1,B2,B1,B1,B1,B1,B1,B1
+I075,It sounds marvelous. Thank you for your help.,6-9,B1,A2,B1,B1,A2,B1,B1,A2
+I076,He's fine. He retired last week. It's a turning point in his life. Now he can relax and enjoy his retirement.,15-30,B2,C,B1,B1,B1,B1,B1,B1
+I077,I get lost in this library.,6-9,A2,A2,A2,A2,A2,A2,A2,A2
+I078,What kind of power struggles are you talking about?,6-9,B1,B1,B1,B1,B1,B1,B1,B1
+I079,What's her figure?,3-5,A2,A2,A2,A2,A2,A2,A2,A2
+I080,"Yes. I did. I enjoyed it a lot. There was a folk singer, a violinist and a pianist.",15-30,A2,B2,B1,B2,B1,B1,B1,B1
+I081,Good afternoon! Trans Pacific Airline. How can I help you?,10-14,A1,A2,A2,A2,A2,A2,A2,A2
+I082,"Excuse me, could you help me pick out a lotion?",10-14,A2,B1,B1,B1,B1,B1,B1,B1
+I083,"Yes, I'm good with people.",3-5,A1,A1,A2,A2,A2,A2,A2,A2
+I084,I really feel like having a big juicy steak!,6-9,B2,B1,B1,B1,A2,A2,B1,B1
+I085,"I have a concussion, but I will be OK.",6-9,C,A2,B1,B1,B1,B1,B1,B1
+I086,Can I get my dress today?,6-9,A1,A1,A2,A2,A2,A2,A2,A2
+I087,My son. He is two years old.,6-9,A1,A2,A2,A2,A2,A2,A2,A2
+I088,Do you have a minute?,3-5,A1,A1,A2,A2,A2,A2,A2,A2
+I089,OK. Let's go and see.,3-5,A1,A1,A2,A2,A2,A2,A2,A2
+I090,What is your reservation number?,3-5,A2,A2,A2,B1,A2,A2,B1,A2
+I091,I remember that I never saw an X moves even displayed.,10-14,B2,B1,B1,B1,B1,B1,B1,B1
+I092,I need help with the office party.,6-9,A1,A2,A2,A2,A2,A2,A2,A2
+I093,Is she busy?,3-5,A1,A1,A2,A1,A2,A2,A2,A2
+I094,Is this a restaurant that you want to come back to?,10-14,B1,A2,A2,B1,A2,A2,A2,A2
+I095,Do you want the truth?,3-5,A2,A2,A2,A2,A2,A2,A2,A2
+I096,That sounds fine.,3-5,A2,A2,A2,A2,A2,A2,A2,A2
+I097,Is there some way I can get into contact with him?,10-14,B1,B1,B1,B1,B1,B1,B1,B1
+I098,It's a good day for a picnic.,6-9,A2,A2,A2,A2,A2,A2,B1,A2
+I099,"I don't think you did, you know. My neighbor told me she saw some here only yesterday.",15-30,B1,B1,B1,B1,A2,B1,B1,A2
+I100,"Yeah, a number of times.",3-5,B1,A2,A2,A2,A2,A2,A2,A2
+I101,"And the total ratio of return on assets should not be lower than the average, for that particular industry, for the first two quarters of the year.",15-30,C,C,B2,B2,B1,B1,B1,B2
+I102,"Thank you, Lisa.",3-5,A1,A1,A1,A1,A2,A2,A2,A2
+I103,Thank you for your help.,3-5,A1,A2,A2,A2,A2,A2,A2,A2
+I104,sounds good. What are you going to have for your main course?,10-14,B1,B1,B1,B1,A2,B1,B1,A2
+I105,Can I borrow this magazine from you? It's really interesting and I can't put it down.,15-30,B1,B2,B1,B1,B1,B1,B1,B1
+I106,"So, what did you say when he asked you how long it took you to learn English?",15-30,B1,B2,B1,B1,B1,B1,B1,B1
+I107,That's easy. It was invented by Edison.,6-9,A2,A2,B1,A2,A2,A2,A2,A2
+I108,We need an operator now.,3-5,A1,B1,A2,B1,A2,A2,A2,A2
+I109,I didn't think of it. Thank you. And I do apologize for being late.,10-14,B1,B1,B1,B1,A2,A2,A2,A2
+I110,Did you mail us your last Continued Claim Form?,6-9,B1,B1,A2,B1,B1,B1,B1,B1
+I111,He's busy. He said next week.,6-9,A2,A2,A2,A2,A2,A2,A2,A2
+I112,"No, never. I prefer to actually see and touch what I'm buying before I pay for it, especially for clothes and shoes.",15-30,B2,B2,B1,B1,B1,B1,B1,B1
+I113,Thank you. I appreciate the compliment.,6-9,B1,A2,B1,B1,A2,A2,B1,A2
+I114,You need to be very careful to send that form in every two weeks if you want to get paid.,15-30,B1,B2,B1,B1,B1,B1,B1,B1
+I115,Marco has fallen off a ladder. I think he's hurt his back. What shall we do?,15-30,B1,B2,B1,B1,B1,B1,B1,B1
+I116,Wouldn't the owners have told me about any problems?,6-9,B1,A2,A2,A2,B1,B1,B1,B1
+I117,"Figure skating. In my eye, nothing beats it.",6-9,C,B1,B1,B1,B1,B1,B1,B1
+I118,I think Americans would rather laugh than cry or be scared in their free time.,15-30,B1,B2,B1,B1,B1,B1,B1,B1
+I119,It is the best quality porcelain-the famous egg-shell China.,10-14,B2,B1,B1,B2,B1,B1,B1,B1
+I120,I think I may have seen it on the kitchen table.,10-14,B2,A2,A2,A2,A2,A2,A2,A2
+I121,"Hey, what's new?",3-5,A2,A2,A1,A2,A2,A2,A2,A2
+I122,I'm just calling to see if you have made any decision about the position.,10-14,B2,B2,B1,B1,B1,B1,B1,B1
+I123,Can you come to my office this afternoon at 3 o'clock?,10-14,A2,A2,A2,A2,A2,A2,A2,A2
+I124,Someone suggests that I should go to Seattle and Hawaii.,10-14,B2,B1,B1,A2,A2,A2,A2,A2
+I125,"What's the matter with you, then? You look miserable.",6-9,B1,B1,B1,B1,B1,B1,B1,B1
+I126,"Yes, sir. I apologize for that. Here's the file you were looking for, Mr. Emory.",15-30,B1,B2,B1,B1,B1,B1,B1,B1
+I127,They're on special offer today.,3-5,B1,A2,A2,A2,A2,A2,B1,A2
+I128,I don't know what we need.,6-9,A1,A2,A2,A2,A2,A2,A2,A2
+I129,It's natural. My friend told me you know how to work with curls.,10-14,B1,B2,B1,B1,B1,B1,B1,B1
+I130,My prize was for the best player in the country. Now let's start playing chess seriously.,15-30,B2,B2,B1,B1,B1,B1,B1,B1
+I131,what do you usually write about?,6-9,A2,A1,A2,A2,A2,A2,A2,A2
+I132,What do landlords charge for rent?,6-9,B2,A2,B1,B1,B1,B1,B1,B1
+I133,"People don't usually tip here, but you can. Fifty dollars should be more enough.",10-14,B2,B2,B1,B1,B1,B1,B1,B1
+I134,But isn't it served with cold milk?,6-9,B1,A2,A2,A2,A2,A2,B1,A2
+I135,"The parades are usually military ones, but sometimes there are procession of people carrying flags and singing patriotic songs. What do you do on national day in your country?",15-30,C,C,C,B2,B2,B2,B1,B2
+I136,"Well. No, I didn't clean it. But still, I only had the last one two months, and it broke. I don't trust auto-reverse.",15-30,B2,C,B1,B1,B1,B1,B1,B1
+I137,Okay. Then I recommend this one. It's made especially for men about your age.,10-14,B1,B2,B1,B1,B1,B1,B1,B1
+I138,"Good, I hope you'll make sure that it won't happen again.",10-14,A2,B2,B1,B1,A2,B1,B1,B1
+I139,It's a pity that I cannot afford more expensive clothes.,10-14,C,B1,B1,B1,B1,B1,B1,B1
+I140,Haggis? What's Haggis?,3-5,A1,A1,C,A2,A2,A2,A2,A2
+I141,How many hours behind the wheel do I need?,6-9,B2,B1,A2,A2,A2,A2,B1,A2
+I142,I think he's got too much on his plate.,6-9,B1,B1,B1,B1,A2,A2,B1,A2
+I143,Someone has to pick up the boss at the airport.,10-14,A2,B1,B1,A2,A2,B1,B1,B1
+I144,"Let me check. Yes, we have.",6-9,A1,A2,A2,A2,A2,A2,A2,A2
+I145,I feel confident of his ability to cure my daughter's disease.,10-14,B2,B2,B1,B1,B1,B1,B1,B1
+I146,Look at the crystal clear fridge. You can see so many kinds of seafood in it. They all look very fresh and delicious.,15-30,B2,B2,B1,B2,B1,B1,B1,B1
+I147,Did they find those bank robbers?,6-9,B1,A1,A2,B1,A2,A2,A2,A2
+I148,Deborah already had her baby.,3-5,B1,A1,A2,A2,A2,A2,A2,A2
+I149,"Oh, thank you.",3-5,A1,A1,A2,A2,A2,A2,A2,A2
+I150,Thank you. I will go get one.,6-9,A2,A2,A2,A2,A2,A2,A2,A2
+I151,There are a number of open houses this weekend in your area. Would that okay with you?,15-30,B2,B2,B1,B1,B1,B1,B1,B1
+I152,"I'm very sorry, sir. My car has broken down.",6-9,A2,B1,A2,A2,A2,A2,A2,A2
+I153,Wow! That sounds like a lot of fun. I'm sorry I missed it.,10-14,B1,B1,B1,B1,A2,A2,A2,A2
+I154,Good idea. I think you'll like it if you give it a chance.,10-14,A2,B1,B1,B1,A2,B1,B1,A2
+I155,"yes, that was surprising. I heard that they got into a fight and then decided not to go.",15-30,B2,B2,B1,B1,B1,B1,B1,B1
+I156,"Hello, thank you for calling Bradford and Sons. This is Tracy speaking, How may I help you?",15-30,A2,B2,B1,B1,A2,A2,A2,A2
+I157,"Oh, I am sorry to hear that. Is your father still working?",10-14,A2,B1,B1,B1,A2,A2,A2,A2
+I158,are you available on Sunday?,3-5,A2,A2,A2,A2,A2,A2,A2,A2
+I159,"You are an early bird, Tom. What do you do in the morning then?",10-14,B1,B1,B1,B1,A2,A2,A2,A2
+I160,May I turn on the TV then?,6-9,A2,A2,A2,A2,A2,A2,A2,A2
+I161,"Are you stupid? They are called UFOs, so not everybody can see them.",10-14,B1,B2,B1,B2,B2,B2,B2,B1
+I162,"But kids like watching things like that. It's just for fun, would't you say?",10-14,B2,B1,A2,B1,A2,B1,B1,B1
+I163,I think there is nothing.,3-5,A2,A1,A2,A2,A2,A2,A2,A2
+I164,To hell with you.,3-5,C,B1,A2,A2,A2,A2,A2,A2
+I165,Here's my name card.,3-5,A1,A1,A2,A2,A2,A2,A2,A2
+I166,Do you really have to work today?,6-9,A1,A2,A2,A2,A2,A2,A2,A2
+I167,"that might be true, but I think men should have some kind of say in the matter.",15-30,B2,C,B1,B1,B1,B1,B1,B1
+I168,"Lucy, I'd like to fix the light in the corridor, it keeps flashing, which drives me crazy. Would you like to help me with the ladder?",15-30,B2,C,B1,B2,B1,B1,B1,B1
+I169,"Yeah, I just got some good information off the internet.",10-14,B1,B1,B1,B1,B1,B1,B1,B1
+I170,They've completely slipped my mind.,3-5,B2,A2,B1,B1,B1,B1,B1,B1
+I171,"What would you like to know, Mr. Green?",6-9,A2,A2,A2,A2,A2,A2,A2,A2
+I172,"Well, I went to high school here, but I went to college in Texas.",10-14,A2,B1,A2,B1,A2,A2,A2,A2
+I173,"As a new-comer, you usually have five days of annual vacation. And remember you have to fill out a request form, if you want to ask for leave.",15-30,C,B2,B2,B2,B1,B1,B1,B1
+I174,That sounds about right.,3-5,B1,A2,A2,A2,A2,A2,A2,A2
+I175,Ok. But is there anything wrong?,6-9,A2,A1,A2,A2,A2,A2,A2,A2
+I176,How nice of him. I'll be delighted to go. But what time would be convenient?,15-30,C,B2,B1,B1,B1,B1,B1,B1
+I177,"ok, I promise. So what's troubling you so much?",6-9,B2,B1,B1,B1,B1,B1,B1,B1
+I178,May I come in?,3-5,A2,A1,A2,A2,A2,A1,A2,A2
+I179,That's really a good idea. Taking a walk on the beach and lying in the sun are pretty good. I recommend you Qingdao or Dalian.,15-30,B2,B2,B1,B1,B1,B1,B1,B1
+I180,Hey Suzie. Guess what? I'm having a baby!,6-9,B1,B1,A2,A2,A2,A2,A2,A2
+I181,"Oh, yeah, maybe I should ask them just to walk along the railings.",10-14,B2,B1,B1,B2,B1,B1,B1,B1
+I182,You should know that.,3-5,A2,A1,A2,A2,A2,A2,A2,A2
+I183,"I will! I'll feed it, bathe it and walk it every day! We can get a Labrador or a German Shepard!",15-30,B2,B2,B1,B2,B1,B1,B1,B1
+I184,"Well, on weekdays I get up around ten. Then I read the paper for an hour and have lunch at about noon.",15-30,A2,B2,B1,B1,B1,B1,B1,B1
+I185,Please ask her to call John.,6-9,A1,A2,A2,A2,A2,A2,A2,A2
+I186,Let me see. The bell-bottom pants are $90 and the coat is $120. It comes to $210.,15-30,B1,B1,B1,B1,B1,B1,B1,B1
+I187,"Honey, I don't know what to tell you. Of course Tony is a young child. But do not underestimate his ability to learn and reason.",15-30,C,C,B1,B2,B1,B1,B1,B2
+I188,"Sorry, I've got a meeting from nine to ten. What about Monday afternoon?",10-14,B1,B1,B1,B1,A2,A2,A2,A2
+I189,And what is the most important point?,6-9,B1,A2,A2,A2,A2,A2,B1,A2
+I190,That's basically it.,3-5,A2,A2,A1,A2,A2,A2,A2,A2
+I191,In the van.,3-5,A1,A2,A2,A2,A2,A2,A2,A2
+I192,Look. Here are the core classes. Everyone has to take them.,10-14,B1,B2,B1,B1,B1,B1,B1,B1
+I193,"Well, first of all, I like to pamper myself, and my nails look great. You should come with me!",15-30,C,B2,B1,B1,B1,B1,B1,B1
+I194,"Very well too, thank you very much. Isn' t it a lovely day?",10-14,B2,B1,B1,B1,A2,B1,B1,A2
+I195,Good afternoon. I come here specially to pick up my tickets. I booked it last month. This is my reservation note.,15-30,A2,B2,B1,B1,B1,B1,B1,B1
+I196,sounds a good idea.,3-5,A1,A2,A2,A1,A2,A2,A2,A2
+I197,I see Mike farmer has make it into the Olympic team. He beat the national record by 0. 1 of a second.,15-30,B2,B2,B1,B1,B1,B1,B1,B1
+I198,"Some black mascara, moisturizing orion, eye cream crystal lipstick, a two color eye shadow pack, styling hairspray, and a cosmetics bag.",15-30,B2,B2,C,C,C,C,C,C
+I199,"Yes, I am.",3-5,A1,A1,A1,A2,A2,A2,A2,A2
+I200,"Because of pollution and other things, our environment has become worse and worse.",10-14,B2,B2,B1,B1,B2,B1,B1,B2
+I201,I have a stomachache.,3-5,A2,A2,A2,A2,B1,B1,B1,B1
+I202,"Okay, I'll do it next time.",6-9,A1,A2,A2,A2,A2,A2,A2,A2
+I203,She kept bothering me.,3-5,B1,A2,A2,A2,A2,A2,B1,A2
+I204,Don't be too critical. We can't expect it to be perfect.,10-14,B2,B2,B1,B1,B1,B1,B1,B1
+I205,"If that happen to me, I'll take them back to the shop.",10-14,B1,B1,A2,A2,B1,B1,B1,B1
+I206,not very far from here. We'll fly. It's about one and a half hours.,10-14,B1,B2,B1,B1,A2,A2,A2,A2
+I207,"Then I will have to pay quite a lot to listen to music on line, isn't it?",15-30,B2,B2,B1,B1,B1,B1,B1,B1
+I208,"Yes, I do. But my characters are very bad.",6-9,A2,A2,A2,A2,A2,A2,A2,A2
+I209,With the job?,3-5,A1,A1,A2,A1,A2,A2,A1,A2
+I210,"Well, drop by if you can.",6-9,B2,A2,A2,A2,A2,A2,A2,A2
+I211,"Yes, I have. I was there in April.",6-9,A1,A2,A2,A2,A2,A2,A2,A2
+I212,"why not go again to celebrate out one-year anniversary? We can go to the same beach, stay in the same hotel and enjoy a dinner in the same restaurant.",15-30,B1,B2,B1,B1,B1,B1,B1,B1
+I213,How about a training course?,3-5,A2,A2,A2,A2,A2,A2,A2,A2
+I214,What for? ( Why? ),3-5,A2,A1,A2,A2,A2,A2,A2,A2
+I215,"Hello, I need a new suit. I have an important interview next week, so I really need to look sharp.",15-30,A2,B2,B1,B1,B1,B1,B1,B1
+I216,The weather is terrible.,3-5,A1,A1,A2,A2,A2,A2,A2,A2
+I217,That's the one.,3-5,A2,A1,A2,A2,A2,A2,A2,A2
+I218,Some movie stars measure their worth by how many millions of dollars they make. Do you know how Jackie Chan measures his worth?,15-30,B2,B2,B1,B1,B1,B1,B1,B1
+I219,"Once a computer is available, I will let you know.",10-14,C,B1,B1,A2,A2,A2,B1,A2
+I220,Could I have some fish?,3-5,A2,A1,A2,A2,A2,A2,A2,A2
+I221,I'm going to have to keep your deposit,6-9,B1,B1,B1,B1,B1,B1,B1,B1
+I222,"You're going to have to tell them what to do in church, what everything means ...",15-30,B1,B1,B1,B1,B1,B1,B1,B1
+I223,"Look, that bamboo groves are flourishing. Let's go and play there.",10-14,C,B2,B2,B2,B1,B1,B1,B1
+I224,Let me just make sure. You want to withdraw one thousand dollars?,10-14,B1,B2,B1,B1,B1,B1,B1,B1
+I225,Are you available for travel?,3-5,A2,A2,A2,A2,A2,A2,A2,A2
+I226,"Certainly. We have here the race apparatus, stationary bike, muscle builder set, chest expander, bar bell, dumb bell and so on.",15-30,C,C,B2,C,B2,B2,B2,B2
+I227,Besides I want two copies of all the photos.,6-9,B2,B1,B1,B1,A2,A2,B1,A2
+I228,I will be there half an hour early.,6-9,A2,A2,A2,A2,A2,A2,A2,A2
+I229,"Nice to see you with us, Anne. Please make yourself at home.",10-14,A2,A2,A2,A2,A2,A2,A2,A2
+I230,"OK, everyone. Gather around. Here are the rules. No tackling. No pushing.",10-14,B2,B1,B1,B2,B1,B1,B1,B1
+I231,"Oh, you mean Canal Street?",3-5,A2,A1,A2,A2,A2,A2,A2,A2
+I232,"Your luggage is two pounds over. I'm afraid They'll be in excess luggage charge, Sir.",15-30,B1,B2,A2,B2,B1,B1,B1,B1
+I233,"I'm afraid I can't. I have a dinner party at seven tonight. You see, I am going to England the day after tomorrow.",15-30,B1,B2,B1,B1,A2,A2,A2,A2
+I234,Don't worry. I'Ve decided that for your birthday I'm going to take you shopping for a new dress.,15-30,B1,B2,B1,B1,A2,B1,B1,B1
+I235,"F. Y. I. , there is a flea market nearby, but maybe you're done ...",10-14,B2,B2,B1,B1,B1,B1,B1,B1
+I236,"OK, we wait for you.",3-5,A1,A1,A1,A1,A2,A2,A2,A2
+I237,Where are the keys?,3-5,A1,A1,A2,A1,A2,A2,A2,A2
+I238,What is the qualification needed by the position?,6-9,B2,B1,B1,B1,B1,B1,B1,B1
+I239,"No, make the second one with ham, pineapple and green peppers. Oh, and make it thin crust.",15-30,B2,B2,B1,B2,B1,B1,B1,B1
+I240,"Yes, I noticed that you have professional training and team-building days. I like the idea of working for a company that invests in its staff.",15-30,B1,B2,B1,B2,B1,B1,B1,B1
+I241,"Believe it or not, tea is the most popular beverage in the world after water.",15-30,B2,B1,B1,B1,B1,B1,B1,B1
+I242,I didn't realize that speaking in class could be so easy.,10-14,B1,B1,B1,A2,B1,B1,B1,B1
+I243,Thank you for your compliments. It sounds like you're a clothing expert.,10-14,B2,B2,B1,B2,B1,B1,B1,B1
+I244,Here is five dollars.,3-5,A1,A1,A2,A2,A2,A2,A2,A2
+I245,But Mrs. Smith hired him to find her lost son.,10-14,B2,B1,B1,A2,A2,B1,B1,B1
+I246,"Yes. And you're Mr. Jones, I remember.",6-9,A2,A2,A2,A2,A2,A2,A2,A2
+I247,"Well, in that case, this table is the only choice.",10-14,B2,B1,A2,A2,B1,B1,B1,B1
+I248,I'm fine. I'Ve been out of town. I just got back.,10-14,B1,A2,A2,A2,A2,A2,A2,A2
+I249,Welcome. One of your duties is to know the number of the customer and accept reservation.,15-30,C,B2,B1,B1,B1,B1,B1,B1
+I250,I have a terrible toothache.,3-5,A2,A2,A2,A2,B1,B1,B1,A2
+I251,"Well, maybe sneakers or rubber shoes.",6-9,A2,A2,B1,B1,A2,B1,B1,A2
+I252,Whatever you say!,3-5,A2,A2,A2,A2,A2,A2,A2,A2
+I253,"Oh, I'll go to shanghai to practice there.",6-9,A2,A2,A2,A2,A2,A2,A2,A2
+I254,How much do you need?,3-5,A1,A2,A2,A2,A2,A2,A2,A2
+I255,What a pity! You can't join us.,6-9,B1,A2,A2,A2,A2,B1,A2,B1
+I256,Have you had any working experience.,6-9,B1,A2,A2,A2,A2,A2,A2,A2
+I257,519 367 8901.,3-5,A1,A1,C,A2,A2,A2,A1,A2
+I258,"Sarah, you don't look so good. What's the matter?",6-9,B2,B1,A2,A2,A2,A2,A2,A2
+I259,"Yes, I can. I don't ride regularly though. How about you?",10-14,B1,B2,B1,B1,A2,A2,A2,A2
+I260,"I will. Thank you, Mummy.",3-5,A1,A1,A2,A2,A2,A2,A2,A2
+I261,Just a moment. I will do it right now.,6-9,A2,A2,A2,A2,A2,A2,A2,A2
+I262,Yes. Very wonderful.,3-5,A1,A1,A2,A2,A2,A2,A2,A2
+I263,And I've got to drive. You know I'm not fond of that. I found it much more relaxing to sit in the train.,15-30,B2,B2,B1,B1,B1,B1,B1,B1
+I264,Think about it!,3-5,A1,A1,A2,A2,A2,A2,A2,A2
+I265,What time should I arrive at Detroit Airport?,6-9,A2,A2,A2,A2,A2,A2,A2,A2
+I266,No trouble at all. May I know your name and room number?,10-14,A2,B1,B1,A2,A2,A2,A2,A2
+I267,"Well, generally speaking, the park is a window on the world history, a window on the world civilization and a window on the world's tourist attractions as well.",15-30,C,B2,B1,B2,B1,B1,B1,B1
+I268,You are right. But what if an avalanche happened?,6-9,C,A2,B1,B1,B1,B1,B1,B1
+I269,"Well, I was wondering where those people with professional attire come from. Now, I know the answer.",15-30,C,B2,B1,B2,B1,B1,B1,B1
+I270,Let's see ... I'm afraid the 16th is fully booked. But I have seats for the 17th.,15-30,B1,B2,B1,B1,B1,B1,B1,B1
+I271,Why is that?,3-5,A1,A1,A2,A2,A2,A2,A2,A2
+I272,Well. Good for him.,3-5,B1,A1,A2,A2,A2,A2,A2,A2
+I273,"Yes, after you'Ve been here a year, you qualify for a three-day vacation",10-14,B1,B2,B1,B1,B1,B1,B1,B1
+I274,"If you give me cash, do you care if I don't fix the car?",10-14,B2,B2,B1,B1,A2,A2,B1,A2
+I275,Art isn't for everyone. I'm going to an exhibition tomorrow at the national gallery. It's an exhibition of greek and roman sculpture.,15-30,B1,B2,B2,B2,B1,B1,B1,B1
+I276,"Not to me, I wouldn't be caught dead in that.",10-14,B2,B1,A2,A2,B1,B1,B1,B1
+I277,I am calling to consult you about the job as a copywriter.,10-14,B1,B2,B1,B2,B1,B1,B1,B1
+I278,"Nothing much, what's going on?",3-5,A2,A1,A2,A2,A2,A2,A2,A2
+I279,What is it?,3-5,A1,A1,A2,A2,A2,A2,A2,A2
+I280,It sure is! The water looks so nice! Anchor the boat for a little while. I'm going to take a dip.,15-30,B2,C,B1,B1,B1,B1,B1,B1
+I281,"Mr. Crandall, I'm sorry, but I really don't see the value in doing this entire project over from scratch. It would take a lot of work.",15-30,B2,C,B2,B2,B1,B1,B1,B1
+I282,"Sorry, he is out.",3-5,B1,A1,A1,A2,A2,A2,A2,A2
+I283,"Well, I must apologize, madam. We have new computers here, you know.",10-14,B1,B1,B1,B1,A2,B1,A2,B1
+I284,"I am going to a movie theater. You know there is a new action film produced by Hollywood. A thriller, really.",15-30,A2,B2,B1,B1,B1,B1,B1,B1
+I285,"Come on, it's losing needles all the time and the branches are sagging.",10-14,C,B2,B1,B2,B2,B2,B1,B2
+I286,"Well, there will be charity performance on Saturday night. And also, there will be a solo concert by an opera star on Sunday night.",15-30,B1,C,B1,B1,B1,B1,B1,B1
+I287,"A: : Mr Clinton, it's nice to see you again.",6-9,A2,A2,A2,A2,A2,A2,A2,A2
+I288,What kind of watch is it?,6-9,A1,A1,A2,A2,A2,A2,A2,A2
+I289,We'd like to hear your account of the events of last night.,10-14,B1,B1,B1,A2,B1,B1,B1,B1
+I290,"Yeah, but have you made an appointment ahead?",6-9,B1,A2,A2,B1,A2,A2,A2,A2
+I291,Come on! You're pulling my leg.,6-9,C,A2,A2,A2,A2,A2,A2,A2
+I292,A movie? Sure. Do you know what's on right now?,10-14,B1,A2,A2,A2,A2,A2,A2,A2
+I293,"Hey honey, how was your day?",6-9,A2,A2,A1,A2,A2,A2,A2,A2
+I294,Don't ask such a question. You know it has no certain answer. Everyone knows it is in his heart.,15-30,B2,B2,B1,B1,B1,B1,B1,B1
+I295,"Actually, I enjoy both.",3-5,A2,A2,A1,A2,A2,A2,A2,A2
+I296,"Until 8 o'clock, ma'am. We are looking forward to seeing you.",10-14,A2,B1,A2,A2,A2,A2,A2,A2
+I297,"Hello, this is Mike, Kara.",3-5,A1,A1,A1,A2,A2,A2,A2,A2
+I298,Exactly. How much do you want for them?,6-9,A2,A2,A2,A2,A2,A2,A2,A2
+I299,"I don't know, I just saw the dress and thought about how pretty it looks and how much I wanted it. I guess I was too impulsive.",15-30,B1,C,B2,B2,B1,B1,B1,B1
+I300,Thanks for giving me the opportunity of this interview.,6-9,B1,B1,B1,B1,B1,B1,B1,B1

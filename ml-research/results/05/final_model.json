@@ -1,0 +1,19 @@
+{
+  "model": "M4-final",
+  "file": "m4_hybrid.pt",
+  "score": "expected level (softmax @ [0..4])",
+  "thresholds": [
+    0.911,
+    1.2478,
+    1.9034,
+    2.2616
+  ],
+  "levels": [
+    "A1",
+    "A2",
+    "B1",
+    "B2",
+    "C"
+  ],
+  "calibrated_on": "300 dialogue utterances annotated by the author"
+}
