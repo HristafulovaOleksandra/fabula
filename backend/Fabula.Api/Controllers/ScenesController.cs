@@ -136,7 +136,7 @@ public class ScenesController(FabulaDbContext db) : ControllerBase
     private static Line BuildLine(Guid sceneId, int index, LineDto request, IReadOnlyDictionary<Guid, Line> previous)
     {
         var text = request.Text.Trim();
-        var line = new Line { SceneId = sceneId, Order = index, Speaker = request.Speaker.Trim(), Text = text };
+        var line = new Line { SceneId = sceneId, Order = index, Speaker = request.Speaker?.Trim() ?? "", Text = text };
         if (request.Id is not null && previous.TryGetValue(request.Id.Value, out var old) && old.Text == text)
         {
             line.Level = old.Level;

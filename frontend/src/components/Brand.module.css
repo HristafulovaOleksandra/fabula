@@ -1,0 +1,18 @@
+.mascot {
+  display: block;
+  height: auto;
+  max-width: 100%;
+  user-select: none;
+}
+
+.logo {
+  display: block;
+  height: 40px;
+  width: auto;
+}
+
+@media (max-width: 560px) {
+  .logo {
+    height: 32px;
+  }
+}

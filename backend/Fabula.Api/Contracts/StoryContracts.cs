@@ -55,7 +55,7 @@ public record CharacterDto(
 
 public record LineDto(
     Guid? Id,
-    [Required, MaxLength(60)] string Speaker,
+    [MaxLength(60)] string? Speaker,
     [Required, MinLength(1), MaxLength(500)] string Text,
     CefrLevel? Level = null,
     double? LevelScore = null);
