@@ -2,6 +2,7 @@ import catCelebrate from '../assets/brand/cat-celebrate.webp'
 import catHappy from '../assets/brand/cat-happy.webp'
 import catSad from '../assets/brand/cat-sad.webp'
 import catThinking from '../assets/brand/cat-thinking.webp'
+import crystal from '../assets/brand/crystal.webp'
 import logo from '../assets/brand/logo.webp'
 import styles from './Brand.module.css'
 
@@ -21,4 +22,14 @@ export function Mascot({ mood = 'happy', size = 180, className }: { mood?: Masco
 
 export function Logo() {
   return <img src={logo} alt="Fabula" className={styles.logo} />
+}
+
+export function Crystals({ amount, size = 18 }: { amount?: number; size?: number }) {
+  return (
+    <span className={styles.crystals}>
+      <img src={crystal} alt={amount === undefined ? 'кристали' : ''} width={size} height={size} className={styles.crystalIcon} />
+      {amount !== undefined && <span>{amount}</span>}
+      {amount !== undefined && <span className={styles.visuallyHidden}> кристалів</span>}
+    </span>
+  )
 }

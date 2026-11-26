@@ -82,6 +82,30 @@ s, story = call("POST", "/stories", {"title": "Lost at the Station", "descriptio
                                      "tagIds": [1, 8], "words": [{"word": "ticket", "translation": "квиток"}, {"word": "platform", "translation": "платформа"}]}, token=tok)
 sid = story["id"]
 ok(f"створення історії ({s})", s == 201 and story["status"] == "Draft" and len(story["words"]) == 2)
+s, tr = call("GET", "/dictionary?word=tickets", token=tok)
+ok(f"переклад зі словника ({s}, {tr and tr['translations'][:1]})", s == 200 and tr["translations"][:1] == ["квиток"])
+s, own = call("POST", "/tags", {"name": f"  smoke   tag {sfx} ", "kind": "Topic"}, token=tok)
+ok(f"власний тег чекає на модерацію ({s})", s == 200 and own["status"] == "Pending" and own["name"] == f"Smoke tag {sfx}")
+s, _ = call("POST", "/tags", {"name": "<b>x</b>", "kind": "Genre"}, token=tok)
+ok(f"некоректну назву тегу відхилено ({s})", s == 400)
+s, public_tags = call("GET", "/tags")
+s2, available = call("GET", "/tags/available", token=tok)
+ok("власний тег не видно публічно, але видно автору",
+   all(t["id"] != own["id"] for t in public_tags) and any(t["id"] == own["id"] for t in available))
+s, framed = call("PUT", f"/stories/{sid}", {"title": "Lost at the Station", "description": "Test", "level": "A2", "priceCrystals": 0,
+                                            "tagIds": [1, 8, own["id"]], "words": story["words"],
+                                            "coverFocusX": 30, "coverFocusY": 70, "coverZoom": 1.5}, token=tok)
+ok(f"обкладинка й власний тег збережені ({s})",
+   s == 200 and (framed["coverFocusX"], framed["coverFocusY"], framed["coverZoom"]) == (30, 70, 1.5) and any(t["id"] == own["id"] for t in framed["tags"]))
+s, econ = call("GET", "/economy")
+ok(f"ліміти економіки з налаштувань ({s}, {econ})", s == 200 and econ == {"choicePriceMin": 10, "choicePriceMax": 30, "storyPriceMin": 50, "storyPriceMax": 150})
+s, _ = call("PUT", f"/stories/{sid}", {"title": "X", "level": "A2", "priceCrystals": 40}, token=tok)
+s2, _ = call("PUT", f"/stories/{sid}", {"title": "X", "level": "A2", "priceCrystals": 200}, token=tok)
+ok(f"ціна історії поза 50–150 відхилена ({s}, {s2})", s == 400 and s2 == 400)
+s, _ = call("PUT", f"/stories/{sid}", {"title": "X", "level": "A2", "priceCrystals": 0, "coverZoom": 5}, token=tok)
+ok(f"масштаб обкладинки поза межами відхилено ({s})", s == 400)
+s, shown = call("GET", "/stories")
+ok("історія без публікації не видна в бібліотеці", all(x["id"] != sid for x in shown))
 s, sc1 = call("POST", f"/stories/{sid}/scenes", {"title": "Arrival"}, token=tok)
 s2, sc2 = call("POST", f"/stories/{sid}/scenes", {"title": "Ticket office"}, token=tok)
 ok(f"створення двох сцен ({s}, {s2})", s == 201 and s2 == 201)
@@ -93,20 +117,72 @@ s, _ = call("POST", "/uploads/covers", raw=form({}, "evil.svg", b"<svg onload=al
 ok(f"svg відхилено ({s})", s == 400)
 img = urllib.request.urlopen("http://localhost:5080" + bg["imagePath"])
 ok(f"картинка віддається ({img.status})", img.status == 200)
+s, anna = call("POST", f"/stories/{sid}/characters", {"name": "Anna"}, token=tok)
+s2, guard = call("POST", f"/stories/{sid}/characters", {"name": "Guard"}, token=tok)
+ok(f"персонажі історії створені ({s}, {s2})", s == 200 and s2 == 200)
+s, _ = call("POST", f"/stories/{sid}/characters", {"name": "anna"}, token=tok)
+ok(f"дубль імені персонажа відхилено ({s})", s == 400)
+s, _ = call("PUT", f"/stories/{sid}/characters/{anna['id']}",
+            {"name": "Anna", "states": [{"key": "neutral", "imagePath": "https://evil.example/x.png"}]}, token=tok)
+ok(f"чужа картинка персонажа відхилена ({s})", s == 400)
+s, up = call("POST", "/uploads/characters", raw=form({}, "anna.png", png()), token=tok, ctype=mp)
+anna_img = up["path"]
+s, anna = call("PUT", f"/stories/{sid}/characters/{anna['id']}",
+               {"name": "Anna", "states": [{"key": "neutral", "imagePath": anna_img}, {"key": "angry", "imagePath": anna_img}]}, token=tok)
+ok(f"власний стан персонажа збережено ({s})", s == 200 and [x["key"] for x in anna["states"]] == ["neutral", "angry"])
+s, _ = call("PUT", f"/stories/{sid}/characters/{anna['id']}",
+            {"name": "Anna", "states": [{"key": "angry", "imagePath": None}, {"key": "Angry", "imagePath": None}]}, token=tok)
+ok(f"повтор назви стану відхилено ({s})", s == 400)
 scene = {"title": "Arrival", "backgroundId": bg["id"],
-         "characters": [{"position": "Left", "name": "Anna", "emotion": "happy"}, {"position": "Right", "name": "Guard"}],
+         "characters": [{"position": "Left", "storyCharacterId": anna["id"], "emotion": "happy"}, {"position": "Right", "storyCharacterId": guard["id"]}],
          "lines": [{"speaker": "Anna", "text": "Excuse me, where can I buy a ticket?"},
                    {"speaker": "Guard", "text": "The ticket office is next to platform two."}],
          "choices": [{"text": "Go to the ticket office", "nextSceneId": sc2["id"], "priceCrystals": 0},
                      {"text": "Ask again", "priceCrystals": 10}]}
 s, saved = call("PUT", f"/stories/{sid}/scenes/{sc1['id']}", scene, token=tok)
 ok(f"збереження сцени одним запитом ({s})", s == 200 and len(saved["lines"]) == 2 and len(saved["choices"]) == 2 and saved["backgroundImagePath"])
-bad = dict(scene, characters=[{"position": "Left", "name": "A"}, {"position": "Left", "name": "B"}])
+bad = dict(scene, characters=[{"position": "Left", "storyCharacterId": anna["id"]}, {"position": "Left", "storyCharacterId": guard["id"]}])
 s, _ = call("PUT", f"/stories/{sid}/scenes/{sc1['id']}", bad, token=tok)
 ok(f"два персонажі на одній позиції відхилено ({s})", s == 400)
 bad = dict(scene, choices=[{"text": "x", "nextSceneId": str(uuid.uuid4()), "priceCrystals": 0}])
 s, _ = call("PUT", f"/stories/{sid}/scenes/{sc1['id']}", bad, token=tok)
 ok(f"вибір у чужу сцену відхилено ({s})", s == 400)
+bad = dict(scene, choices=[{"text": "x", "priceCrystals": 5}])
+s, _ = call("PUT", f"/stories/{sid}/scenes/{sc1['id']}", bad, token=tok)
+bad = dict(scene, choices=[{"text": "x", "priceCrystals": 31}])
+s2, _ = call("PUT", f"/stories/{sid}/scenes/{sc1['id']}", bad, token=tok)
+ok(f"ціна вибору поза 10–30 відхилена ({s}, {s2})", s == 400 and s2 == 400)
+bad = dict(scene, characters=[{"position": "Left", "storyCharacterId": str(uuid.uuid4())}])
+s, _ = call("PUT", f"/stories/{sid}/scenes/{sc1['id']}", bad, token=tok)
+ok(f"невідомий персонаж у сцені відхилений ({s})", s == 400)
+staged = dict(scene, characters=[
+    {"position": "Left", "storyCharacterId": anna["id"], "emotion": "angry", "x": 40, "y": 10, "scale": 1.3, "flip": True},
+    {"position": "Right", "storyCharacterId": guard["id"]}])
+s, placed = call("PUT", f"/stories/{sid}/scenes/{sc1['id']}", staged, token=tok)
+left = placed["characters"][0] if s == 200 else {}
+ok(f"положення і власний стан у сцені ({s})",
+   s == 200 and (left["x"], left["y"], left["scale"], left["flip"], left["emotion"], left["imagePath"]) == (40, 10, 1.3, True, "angry", anna_img)
+   and placed["characters"][1]["x"] == 75)
+bad = dict(scene, characters=[{"position": "Right", "storyCharacterId": guard["id"], "emotion": "angry"}])
+s, _ = call("PUT", f"/stories/{sid}/scenes/{sc1['id']}", bad, token=tok)
+bad = dict(scene, characters=[{"position": "Left", "storyCharacterId": anna["id"], "x": 150}])
+s2, _ = call("PUT", f"/stories/{sid}/scenes/{sc1['id']}", bad, token=tok)
+ok(f"чужий стан і положення поза сценою відхилено ({s}, {s2})", s == 400 and s2 == 400)
+angry_id = anna["states"][1]["id"]
+neutral_id = anna["states"][0]["id"]
+call("PUT", f"/stories/{sid}/characters/{anna['id']}",
+     {"name": "Anna", "states": [{"id": neutral_id, "key": "neutral", "imagePath": anna_img}, {"id": angry_id, "key": "furious", "imagePath": anna_img}]}, token=tok)
+s, after_rename = call("GET", f"/stories/{sid}/scenes/{sc1['id']}", token=tok)
+call("PUT", f"/stories/{sid}/characters/{anna['id']}",
+     {"name": "Anna", "states": [{"id": neutral_id, "key": "neutral", "imagePath": anna_img}]}, token=tok)
+s2, after_delete = call("GET", f"/stories/{sid}/scenes/{sc1['id']}", token=tok)
+ok("перейменування й видалення стану оновлюють сцену",
+   after_rename["characters"][0]["emotion"] == "furious" and after_delete["characters"][0]["emotion"] == "neutral")
+s, _ = call("PUT", f"/stories/{sid}/scenes/{sc1['id']}", scene, token=tok)
+s, renamed = call("PUT", f"/stories/{sid}/characters/{guard['id']}", {"name": "Officer"}, token=tok)
+s2, full_story = call("GET", f"/stories/{sid}", token=tok)
+first = [x for x in full_story["scenes"] if x["id"] == sc1["id"]][0]
+ok(f"перейменування персонажа оновлює репліки й сцену ({s})", s == 200 and first["lines"][1]["speaker"] == "Officer" and first["characters"][1]["name"] == "Officer")
 s, student = call("POST", "/auth/register", {"email": f"student{sfx}@test.local", "username": f"student_{sfx}", "password": "secret-pass-1", "displayName": "Student", "role": "Student"})
 st = student["token"]
 s, _ = call("POST", "/stories", {"title": "X", "level": "A1", "priceCrystals": 0}, token=st)
@@ -228,6 +304,8 @@ try:
 except urllib.error.HTTPError as e:
     gone = e.code
 ok(f"фон автора видалено разом з акаунтом ({gone})", gone == 404)
+s, again = call("POST", "/tags", {"name": f"Smoke tag {sfx}", "kind": "Topic"}, token=other["token"])
+ok(f"власні теги видаленого автора прибрано ({s})", s == 200 and again["id"] != own["id"])
 s, _ = call("DELETE", "/profile", {"password": "new-pass-123"}, token=st)
 s2, _ = call("DELETE", "/profile", {"password": "secret-pass-1"}, token=other["token"])
 ok(f"тестові учень і автор видалені ({s}, {s2})", s == 204 and s2 == 204)

@@ -3,7 +3,11 @@ using Fabula.Api.Entities;
 
 namespace Fabula.Api.Contracts;
 
-public record TagDto(int Id, string Name, TagKind Kind);
+public record TagDto(int Id, string Name, TagKind Kind, ModerationStatus Status);
+
+public record CreateTagRequest([Required, MinLength(2), MaxLength(30)] string Name, TagKind Kind);
+
+public record TranslationDto(string Word, IReadOnlyList<string> Translations);
 
 public record StoryWordDto(
     [Required, MaxLength(64)] string Word,
@@ -14,6 +18,9 @@ public record StorySummaryDto(
     string Title,
     string Description,
     string? CoverImagePath,
+    double CoverFocusX,
+    double CoverFocusY,
+    double CoverZoom,
     CefrLevel Level,
     int PriceCrystals,
     StoryStatus Status,
@@ -29,12 +36,16 @@ public record StoryDetailDto(
     string Title,
     string Description,
     string? CoverImagePath,
+    double CoverFocusX,
+    double CoverFocusY,
+    double CoverZoom,
     CefrLevel Level,
     int PriceCrystals,
     StoryStatus Status,
     Guid? StartSceneId,
     IReadOnlyList<TagDto> Tags,
     IReadOnlyList<StoryWordDto> Words,
+    IReadOnlyList<StoryCharacterDto> Characters,
     IReadOnlyList<SceneDto> Scenes);
 
 public record StoryUpsertRequest(
@@ -45,13 +56,29 @@ public record StoryUpsertRequest(
     [Range(0, 1000)] int PriceCrystals,
     IReadOnlyList<int>? TagIds,
     IReadOnlyList<StoryWordDto>? Words,
-    Guid? StartSceneId);
+    Guid? StartSceneId,
+    [Range(0, 100)] double CoverFocusX = 50,
+    [Range(0, 100)] double CoverFocusY = 50,
+    [Range(1, 3)] double CoverZoom = 1);
 
 public record CharacterDto(
     CharacterPosition Position,
-    [Required, MaxLength(60)] string Name,
-    string? ImagePath,
-    [MaxLength(30)] string? Emotion);
+    Guid StoryCharacterId,
+    string? Name = null,
+    string? ImagePath = null,
+    [MaxLength(30)] string? Emotion = null,
+    [Range(0, 100)] double? X = null,
+    [Range(0, 60)] double? Y = null,
+    [Range(0.4, 2)] double? Scale = null,
+    bool Flip = false);
+
+public record CharacterStateDto(Guid? Id, [Required, MinLength(1), MaxLength(30)] string Key, string? ImagePath);
+
+public record StoryCharacterDto(Guid Id, string Name, IReadOnlyList<CharacterStateDto> States);
+
+public record StoryCharacterUpsertRequest(
+    [Required, MinLength(1), MaxLength(60)] string Name,
+    [MaxLength(16)] IReadOnlyList<CharacterStateDto>? States);
 
 public record LineDto(
     Guid? Id,

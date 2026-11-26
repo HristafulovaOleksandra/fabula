@@ -12,6 +12,8 @@ public class FabulaDbContext(DbContextOptions<FabulaDbContext> options) : DbCont
     public DbSet<Background> Backgrounds => Set<Background>();
     public DbSet<Scene> Scenes => Set<Scene>();
     public DbSet<Character> Characters => Set<Character>();
+    public DbSet<StoryCharacter> StoryCharacters => Set<StoryCharacter>();
+    public DbSet<StoryCharacterState> StoryCharacterStates => Set<StoryCharacterState>();
     public DbSet<Line> Lines => Set<Line>();
     public DbSet<Choice> Choices => Set<Choice>();
     public DbSet<UserWord> UserWords => Set<UserWord>();
@@ -58,6 +60,7 @@ public class FabulaDbContext(DbContextOptions<FabulaDbContext> options) : DbCont
             story.HasMany(s => s.Tags).WithMany(t => t.Stories).UsingEntity(join => join.ToTable("StoryTags"));
             story.HasMany(s => s.Scenes).WithOne(s => s.Story).HasForeignKey(s => s.StoryId);
             story.HasMany(s => s.Words).WithOne().HasForeignKey(w => w.StoryId);
+            story.HasMany(s => s.Cast).WithOne().HasForeignKey(c => c.StoryId);
             story.HasIndex(s => new { s.Status, s.Level });
         });
 
@@ -76,7 +79,25 @@ public class FabulaDbContext(DbContextOptions<FabulaDbContext> options) : DbCont
             scene.HasOne(s => s.Background).WithMany().HasForeignKey(s => s.BackgroundId).OnDelete(DeleteBehavior.SetNull);
         });
 
-        model.Entity<Character>().HasIndex(c => new { c.SceneId, c.Position }).IsUnique();
+        model.Entity<Character>(character =>
+        {
+            character.HasIndex(c => new { c.SceneId, c.Position }).IsUnique();
+            character.HasOne(c => c.StoryCharacter).WithMany().HasForeignKey(c => c.StoryCharacterId);
+            character.Property(c => c.Emotion).HasMaxLength(30);
+        });
+
+        model.Entity<StoryCharacter>(character =>
+        {
+            character.Property(c => c.Name).HasMaxLength(60);
+            character.HasIndex(c => new { c.StoryId, c.Name }).IsUnique();
+            character.HasMany(c => c.States).WithOne().HasForeignKey(s => s.StoryCharacterId);
+        });
+
+        model.Entity<StoryCharacterState>(state =>
+        {
+            state.Property(s => s.Key).HasMaxLength(30);
+            state.HasIndex(s => new { s.StoryCharacterId, s.Key }).IsUnique();
+        });
         model.Entity<UserWord>().HasIndex(w => new { w.UserId, w.Lemma }).IsUnique();
         model.Entity<Streak>().HasKey(s => s.UserId);
         model.Entity<Transaction>().HasIndex(t => new { t.UserId, t.CreatedAt });

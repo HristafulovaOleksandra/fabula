@@ -186,6 +186,13 @@ def main():
     backgrounds = ensure_backgrounds(author)
     status, story = call("POST", "/stories", STORY, token=author)
     story_id = story["id"]
+    cast = {}
+    for scene in SCENES:
+        for character in scene["characters"]:
+            if character["name"] not in cast:
+                status, created = call("POST", f"/stories/{story_id}/characters", {"name": character["name"]}, token=author)
+                cast[character["name"]] = created["id"]
+
     scene_ids = {}
     for scene in SCENES:
         status, created = call("POST", f"/stories/{story_id}/scenes", {"title": scene["title"]}, token=author)
@@ -195,7 +202,9 @@ def main():
         payload = {
             "title": scene["title"],
             "backgroundId": backgrounds[scene["background"]],
-            "characters": scene["characters"],
+            "characters": [
+                {"position": c["position"], "storyCharacterId": cast[c["name"]], "emotion": c["emotion"]} for c in scene["characters"]
+            ],
             "lines": [{"speaker": speaker or None, "text": text} for speaker, text in scene["lines"]],
             "choices": [{"text": text, "nextSceneId": scene_ids[target], "priceCrystals": 0} for text, target in scene["choices"]],
         }

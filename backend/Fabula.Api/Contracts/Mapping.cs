@@ -5,7 +5,11 @@ namespace Fabula.Api.Contracts;
 
 public static class Mapping
 {
-    public static TagDto ToDto(this Tag tag) => new(tag.Id, tag.Name, tag.Kind);
+    public static TagDto ToDto(this Tag tag) => new(tag.Id, tag.Name, tag.Kind, tag.Status);
+
+    private static IReadOnlyList<TagDto> VisibleTags(Story story, bool includePending) => story.Tags
+        .Where(t => t.Status == ModerationStatus.Approved || (includePending && t.Status == ModerationStatus.Pending))
+        .OrderBy(t => t.Kind).ThenBy(t => t.Name).Select(t => t.ToDto()).ToList();
 
     public static SceneDto ToDto(this Scene scene) => new(
         scene.Id,
@@ -13,7 +17,9 @@ public static class Mapping
         scene.Order,
         scene.BackgroundId,
         scene.Background?.ImagePath,
-        scene.Characters.OrderBy(c => c.Position).Select(c => new CharacterDto(c.Position, c.Name, c.ImagePath, c.Emotion)).ToList(),
+        scene.Characters.OrderBy(c => c.Position).Select(c => new CharacterDto(
+            c.Position, c.StoryCharacterId, c.StoryCharacter?.Name, c.StoryCharacter?.ImageFor(c.Emotion), c.Emotion,
+            c.X, c.Y, c.Scale, c.Flip)).ToList(),
         scene.Lines.OrderBy(l => l.Order).Select(l => new LineDto(l.Id, l.Speaker, l.Text, l.Level, l.LevelScore)).ToList(),
         scene.Choices.OrderBy(c => c.Order).Select(c => new ChoiceDto(c.Id, c.Text, c.NextSceneId, c.PriceCrystals)).ToList());
 
@@ -22,28 +28,39 @@ public static class Mapping
         story.Title,
         story.Description,
         story.CoverImagePath,
+        story.CoverFocusX,
+        story.CoverFocusY,
+        story.CoverZoom,
         story.Level,
         story.PriceCrystals,
         story.Status,
         story.Author?.Username ?? "",
         story.Author is null ? null : NamePolicy.PublicName(story.Author),
-        story.Tags.OrderBy(t => t.Kind).ThenBy(t => t.Name).Select(t => t.ToDto()).ToList(),
+        VisibleTags(story, includePending: false),
         story.Scenes.Count,
         story.UpdatedAt);
 
-    public static StoryDetailDto ToDetail(this Story story) => new(
+    public static StoryDetailDto ToDetail(this Story story, bool forEditor = false) => new(
         story.Id,
         story.AuthorId,
         story.Title,
         story.Description,
         story.CoverImagePath,
+        story.CoverFocusX,
+        story.CoverFocusY,
+        story.CoverZoom,
         story.Level,
         story.PriceCrystals,
         story.Status,
         story.StartSceneId,
-        story.Tags.OrderBy(t => t.Kind).ThenBy(t => t.Name).Select(t => t.ToDto()).ToList(),
+        VisibleTags(story, forEditor),
         story.Words.OrderBy(w => w.Word).Select(w => new StoryWordDto(w.Word, w.Translation)).ToList(),
+        story.Cast.OrderBy(c => c.Order).ThenBy(c => c.Name).Select(c => c.ToDto()).ToList(),
         story.Scenes.OrderBy(s => s.Order).Select(s => s.ToDto()).ToList());
+
+    public static StoryCharacterDto ToDto(this StoryCharacter character) =>
+        new(character.Id, character.Name, character.States.OrderBy(s => s.Order)
+            .Select(s => new CharacterStateDto(s.Id, s.Key, s.ImagePath)).ToList());
 
     public static BackgroundDto ToDto(this Background background) =>
         new(background.Id, background.Name, background.ImagePath, background.OwnerId is null);

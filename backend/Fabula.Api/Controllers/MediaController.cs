@@ -15,13 +15,6 @@ public class MediaController(FabulaDbContext db, ImageStorage storage) : Control
 {
     private static readonly string[] UploadFolders = ["covers", "characters"];
 
-    [HttpGet("tags")]
-    public async Task<ActionResult<IReadOnlyList<TagDto>>> Tags(CancellationToken cancellationToken)
-    {
-        var tags = await db.Tags.AsNoTracking().OrderBy(t => t.Kind).ThenBy(t => t.Name).ToListAsync(cancellationToken);
-        return Ok(tags.Select(t => t.ToDto()).ToList());
-    }
-
     [Authorize(Policy = Policies.CanAuthor)]
     [HttpGet("backgrounds")]
     public async Task<ActionResult<IReadOnlyList<BackgroundDto>>> Backgrounds(CancellationToken cancellationToken)

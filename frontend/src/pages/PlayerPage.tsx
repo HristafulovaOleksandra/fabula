@@ -2,8 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, 
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api, ApiError } from '../api/client'
 import type { Character, PlaySession, PlaySummary, Scene, StoryDetail, StoryWord } from '../api/types'
-import { Mascot } from '../components/Brand'
+import { Crystals, Mascot } from '../components/Brand'
 import { COVER_COLORS } from '../components/coverColors'
+import { placementStyle } from '../components/stageLayout'
 import styles from './PlayerPage.module.css'
 
 type Phase = 'loading' | 'lines' | 'choices' | 'summary' | 'error'
@@ -36,8 +37,13 @@ function splitByWords(text: string, words: StoryWord[]): Segment[] {
 
 function CharacterFigure({ character, active }: { character: Character; active: boolean }) {
   return (
-    <figure className={`${styles.character} ${styles[character.position.toLowerCase()]} ${active ? styles.speaking : styles.listening}`}>
-      {character.imagePath && <img src={character.imagePath} alt={character.name} />}
+    <figure
+      className={`${styles.character} ${character.imagePath ? '' : styles.noImage} ${active ? styles.speaking : styles.listening}`}
+      style={placementStyle(character, true)}
+    >
+      {character.imagePath && (
+        <img src={character.imagePath} alt={character.name ?? ''} style={character.flip ? { transform: 'scaleX(-1)' } : undefined} />
+      )}
       <figcaption>{character.name}</figcaption>
     </figure>
   )
@@ -228,9 +234,11 @@ export function PlayerPage() {
       </header>
 
       <div className={styles.stage} role="button" tabIndex={0} aria-label="Далі" onClick={advance} onKeyDown={onKey}>
-        {scene.characters.map((character) => (
-          <CharacterFigure key={character.position} character={character} active={!speakerIsCharacter || character.name === line?.speaker} />
-        ))}
+        <div className={styles.cast}>
+          {scene.characters.map((character) => (
+            <CharacterFigure key={character.position} character={character} active={!speakerIsCharacter || character.name === line?.speaker} />
+          ))}
+        </div>
 
         {phase === 'lines' && line && (
           <div className={`${styles.dialog} ${isNarration ? styles.narration : ''}`} aria-live="polite">
@@ -259,7 +267,7 @@ export function PlayerPage() {
           {scene.choices.map((choice) => (
             <button key={choice.id} className={styles.choice} disabled={busy} onClick={() => choose(choice.id)}>
               <span>{choice.text}</span>
-              {choice.priceCrystals > 0 && <span className={styles.gem}>◆ {choice.priceCrystals}</span>}
+              {choice.priceCrystals > 0 && <span className={styles.gem}><Crystals amount={choice.priceCrystals} /></span>}
             </button>
           ))}
         </div>

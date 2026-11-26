@@ -8,9 +8,11 @@ import { RequireAuth } from './components/RequireAuth'
 import { ForgotPasswordPage, LoginPage, RegisterPage } from './pages/AuthPages'
 import { HomePage } from './pages/HomePage'
 import { LibraryPage } from './pages/LibraryPage'
+import { EditorPage } from './pages/EditorPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { PlayerPage } from './pages/PlayerPage'
 import { StoryIntroPage } from './pages/StoryIntroPage'
+import { StudioPage } from './pages/StudioPage'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -24,6 +26,22 @@ createRoot(document.getElementById('root')!).render(
             <Route path="login" element={<LoginPage />} />
             <Route path="register" element={<RegisterPage />} />
             <Route path="forgot-password" element={<ForgotPasswordPage />} />
+            <Route
+              path="studio"
+              element={
+                <RequireAuth authorOnly>
+                  <StudioPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="studio/stories/:storyId"
+              element={
+                <RequireAuth authorOnly>
+                  <EditorPage />
+                </RequireAuth>
+              }
+            />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
           <Route

@@ -26,6 +26,7 @@ export interface Tag {
   id: number
   name: string
   kind: 'Genre' | 'Topic'
+  status: 'Pending' | 'Approved' | 'Rejected' | 'Appealed'
 }
 
 export interface StorySummary {
@@ -33,6 +34,9 @@ export interface StorySummary {
   title: string
   description: string
   coverImagePath: string | null
+  coverFocusX: number
+  coverFocusY: number
+  coverZoom: number
   level: CefrLevel
   priceCrystals: number
   status: StoryStatus
@@ -48,11 +52,37 @@ export interface StoryWord {
   translation: string
 }
 
+export type Emotion = 'neutral' | 'happy' | 'sad' | 'surprised'
+
 export interface Character {
   position: CharacterPosition
-  name: string
+  storyCharacterId: string
+  name: string | null
   imagePath: string | null
   emotion: string | null
+  x: number
+  y: number
+  scale: number
+  flip: boolean
+}
+
+export interface CharacterState {
+  id: string | null
+  key: string
+  imagePath: string | null
+}
+
+export interface StoryCharacter {
+  id: string
+  name: string
+  states: CharacterState[]
+}
+
+export interface Background {
+  id: string
+  name: string
+  imagePath: string
+  isLibrary: boolean
 }
 
 export interface Line {
@@ -87,12 +117,16 @@ export interface StoryDetail {
   title: string
   description: string
   coverImagePath: string | null
+  coverFocusX: number
+  coverFocusY: number
+  coverZoom: number
   level: CefrLevel
   priceCrystals: number
   status: StoryStatus
   startSceneId: string | null
   tags: Tag[]
   words: StoryWord[]
+  characters: StoryCharacter[]
   scenes: Scene[]
 }
 
@@ -108,4 +142,11 @@ export interface PlaySummary {
   wordsSaved: StoryWord[]
   crystalsEarned: number
   minutes: number
+}
+
+export interface Economy {
+  choicePriceMin: number
+  choicePriceMax: number
+  storyPriceMin: number
+  storyPriceMax: number
 }

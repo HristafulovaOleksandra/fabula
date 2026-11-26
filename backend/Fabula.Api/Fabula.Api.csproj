@@ -21,4 +21,8 @@
     <PackageReference Include="Scalar.AspNetCore" Version="3.2.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Resources\en-uk.tsv" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

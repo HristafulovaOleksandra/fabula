@@ -91,24 +91,35 @@ namespace Fabula.Api.Data.Migrations
 
                     b.Property<string>("Emotion")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
 
-                    b.Property<string>("ImagePath")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<bool>("Flip")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Position")
                         .IsRequired()
                         .HasMaxLength(8)
                         .HasColumnType("character varying(8)");
 
+                    b.Property<double>("Scale")
+                        .HasColumnType("double precision");
+
                     b.Property<Guid>("SceneId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("StoryCharacterId")
+                        .HasColumnType("uuid");
+
+                    b.Property<double>("X")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("Y")
+                        .HasColumnType("double precision");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("StoryCharacterId");
 
                     b.HasIndex("SceneId", "Position")
                         .IsUnique();
@@ -347,8 +358,17 @@ namespace Fabula.Api.Data.Migrations
                     b.Property<Guid>("AuthorId")
                         .HasColumnType("uuid");
 
+                    b.Property<double>("CoverFocusX")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("CoverFocusY")
+                        .HasColumnType("double precision");
+
                     b.Property<string>("CoverImagePath")
                         .HasColumnType("text");
+
+                    b.Property<double>("CoverZoom")
+                        .HasColumnType("double precision");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -388,6 +408,59 @@ namespace Fabula.Api.Data.Migrations
                     b.HasIndex("Status", "Level");
 
                     b.ToTable("Stories");
+                });
+
+            modelBuilder.Entity("Fabula.Api.Entities.StoryCharacter", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("StoryId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StoryId", "Name")
+                        .IsUnique();
+
+                    b.ToTable("StoryCharacters");
+                });
+
+            modelBuilder.Entity("Fabula.Api.Entities.StoryCharacterState", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ImagePath")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("StoryCharacterId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StoryCharacterId", "Key")
+                        .IsUnique();
+
+                    b.ToTable("StoryCharacterStates");
                 });
 
             modelBuilder.Entity("Fabula.Api.Entities.StoryWord", b =>
@@ -444,6 +517,9 @@ namespace Fabula.Api.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Kind")
                         .IsRequired()
                         .HasMaxLength(8)
@@ -453,6 +529,11 @@ namespace Fabula.Api.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(12)
+                        .HasColumnType("character varying(12)");
 
                     b.HasKey("Id");
 
@@ -466,115 +547,134 @@ namespace Fabula.Api.Data.Migrations
                         {
                             Id = 1,
                             Kind = "Genre",
-                            Name = "Adventure"
+                            Name = "Adventure",
+                            Status = "Approved"
                         },
                         new
                         {
                             Id = 2,
                             Kind = "Genre",
-                            Name = "Mystery"
+                            Name = "Mystery",
+                            Status = "Approved"
                         },
                         new
                         {
                             Id = 3,
                             Kind = "Genre",
-                            Name = "Comedy"
+                            Name = "Comedy",
+                            Status = "Approved"
                         },
                         new
                         {
                             Id = 4,
                             Kind = "Genre",
-                            Name = "Romance"
+                            Name = "Romance",
+                            Status = "Approved"
                         },
                         new
                         {
                             Id = 5,
                             Kind = "Genre",
-                            Name = "Fantasy"
+                            Name = "Fantasy",
+                            Status = "Approved"
                         },
                         new
                         {
                             Id = 6,
                             Kind = "Genre",
-                            Name = "Science fiction"
+                            Name = "Science fiction",
+                            Status = "Approved"
                         },
                         new
                         {
                             Id = 7,
                             Kind = "Genre",
-                            Name = "Everyday life"
+                            Name = "Everyday life",
+                            Status = "Approved"
                         },
                         new
                         {
                             Id = 8,
                             Kind = "Topic",
-                            Name = "Travel"
+                            Name = "Travel",
+                            Status = "Approved"
                         },
                         new
                         {
                             Id = 9,
                             Kind = "Topic",
-                            Name = "School"
+                            Name = "School",
+                            Status = "Approved"
                         },
                         new
                         {
                             Id = 10,
                             Kind = "Topic",
-                            Name = "Work"
+                            Name = "Work",
+                            Status = "Approved"
                         },
                         new
                         {
                             Id = 11,
                             Kind = "Topic",
-                            Name = "Food"
+                            Name = "Food",
+                            Status = "Approved"
                         },
                         new
                         {
                             Id = 12,
                             Kind = "Topic",
-                            Name = "Family"
+                            Name = "Family",
+                            Status = "Approved"
                         },
                         new
                         {
                             Id = 13,
                             Kind = "Topic",
-                            Name = "Friends"
+                            Name = "Friends",
+                            Status = "Approved"
                         },
                         new
                         {
                             Id = 14,
                             Kind = "Topic",
-                            Name = "Shopping"
+                            Name = "Shopping",
+                            Status = "Approved"
                         },
                         new
                         {
                             Id = 15,
                             Kind = "Topic",
-                            Name = "Health"
+                            Name = "Health",
+                            Status = "Approved"
                         },
                         new
                         {
                             Id = 16,
                             Kind = "Topic",
-                            Name = "Sport"
+                            Name = "Sport",
+                            Status = "Approved"
                         },
                         new
                         {
                             Id = 17,
                             Kind = "Topic",
-                            Name = "Nature"
+                            Name = "Nature",
+                            Status = "Approved"
                         },
                         new
                         {
                             Id = 18,
                             Kind = "Topic",
-                            Name = "Technology"
+                            Name = "Technology",
+                            Status = "Approved"
                         },
                         new
                         {
                             Id = 19,
                             Kind = "Topic",
-                            Name = "Culture"
+                            Name = "Culture",
+                            Status = "Approved"
                         });
                 });
 
@@ -802,6 +902,14 @@ namespace Fabula.Api.Data.Migrations
                         .HasForeignKey("SceneId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Fabula.Api.Entities.StoryCharacter", "StoryCharacter")
+                        .WithMany()
+                        .HasForeignKey("StoryCharacterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("StoryCharacter");
                 });
 
             modelBuilder.Entity("Fabula.Api.Entities.Choice", b =>
@@ -877,6 +985,24 @@ namespace Fabula.Api.Data.Migrations
                     b.Navigation("Author");
                 });
 
+            modelBuilder.Entity("Fabula.Api.Entities.StoryCharacter", b =>
+                {
+                    b.HasOne("Fabula.Api.Entities.Story", null)
+                        .WithMany("Cast")
+                        .HasForeignKey("StoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Fabula.Api.Entities.StoryCharacterState", b =>
+                {
+                    b.HasOne("Fabula.Api.Entities.StoryCharacter", null)
+                        .WithMany("States")
+                        .HasForeignKey("StoryCharacterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Fabula.Api.Entities.StoryWord", b =>
                 {
                     b.HasOne("Fabula.Api.Entities.Story", null)
@@ -949,9 +1075,16 @@ namespace Fabula.Api.Data.Migrations
 
             modelBuilder.Entity("Fabula.Api.Entities.Story", b =>
                 {
+                    b.Navigation("Cast");
+
                     b.Navigation("Scenes");
 
                     b.Navigation("Words");
+                });
+
+            modelBuilder.Entity("Fabula.Api.Entities.StoryCharacter", b =>
+                {
+                    b.Navigation("States");
                 });
 
             modelBuilder.Entity("Fabula.Api.Entities.User", b =>

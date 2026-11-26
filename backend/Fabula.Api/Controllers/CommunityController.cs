@@ -54,13 +54,18 @@ public class CommunityController(FabulaDbContext db, ImageStorage storage) : Con
 
         var imagePaths = await db.Backgrounds.Where(b => b.OwnerId == user.Id).Select(b => b.ImagePath)
             .Concat(db.Stories.Where(s => s.AuthorId == user.Id && s.CoverImagePath != null).Select(s => s.CoverImagePath!))
-            .Concat(db.Characters.Where(c => c.ImagePath != null && db.Scenes.Any(s => s.Id == c.SceneId && s.Story!.AuthorId == user.Id)).Select(c => c.ImagePath!))
             .ToListAsync(cancellationToken);
+        var cast = await db.StoryCharacters
+            .Where(c => db.Stories.Any(s => s.Id == c.StoryId && s.AuthorId == user.Id))
+            .Include(c => c.States)
+            .ToListAsync(cancellationToken);
+        imagePaths.AddRange(cast.SelectMany(c => c.States).Select(s => s.ImagePath).OfType<string>());
 
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
         await db.GameSessions.Where(g => g.UserId == user.Id).ExecuteDeleteAsync(cancellationToken);
         await db.Transactions.Where(t => t.UserId == user.Id).ExecuteDeleteAsync(cancellationToken);
         await db.Backgrounds.Where(b => b.OwnerId == user.Id).ExecuteDeleteAsync(cancellationToken);
+        await db.Tags.Where(t => t.CreatedById == user.Id && t.Status != ModerationStatus.Approved).ExecuteDeleteAsync(cancellationToken);
         await db.ModerationItems.Where(m => m.ReviewedById == user.Id)
             .ExecuteUpdateAsync(update => update.SetProperty(m => m.ReviewedById, (Guid?)null), cancellationToken);
         db.Users.Remove(user);

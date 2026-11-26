@@ -16,3 +16,24 @@
     height: 32px;
   }
 }
+
+.crystals {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.crystalIcon {
+  display: block;
+  object-fit: contain;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}

@@ -17,6 +17,7 @@ export function Layout() {
           <NavLink to="/library">Бібліотека</NavLink>
           {user ? (
             <>
+              {user.role !== 'Student' && <NavLink to="/studio">Мої історії</NavLink>}
               <span className={styles.user}>
                 @{user.username}
                 {user.isTeacher && <span className={styles.teacher}>Teacher</span>}

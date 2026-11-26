@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { api, ApiError } from '../api/client'
 import type { CefrLevel, StorySummary } from '../api/types'
 import { Mascot } from '../components/Brand'
-import { StoryCover } from '../components/StoryCover'
+import { StoryCard, StoryGrid } from '../components/StoryCard'
 import styles from './LibraryPage.module.css'
 
-const LEVELS: CefrLevel[] = ['A1', 'A2', 'B1', 'B2']
+const LEVELS: CefrLevel[] = ['A1', 'A2', 'B1', 'B2', 'C']
 
 export function LibraryPage() {
   const [level, setLevel] = useState<CefrLevel | null>(null)
@@ -52,22 +51,11 @@ export function LibraryPage() {
         </div>
       )}
 
-      <div className={styles.grid}>
+      <StoryGrid>
         {stories?.map((story) => (
-          <Link key={story.id} to={`/stories/${story.id}`} className={`sticker ${styles.card}`}>
-            <StoryCover story={story} />
-            <div className={styles.meta}>
-              <span className="level-badge">{story.level}</span>
-              {story.priceCrystals > 0 && <span className={styles.price}>◆ {story.priceCrystals}</span>}
-            </div>
-            <h3>{story.title}</h3>
-            <p className={styles.small}>
-              {story.tags.map((tag) => tag.name).join(' · ') || 'Без тегів'} · {story.sceneCount} сцен
-            </p>
-            <p className={styles.small}>@{story.authorUsername}</p>
-          </Link>
+          <StoryCard key={story.id} story={story} to={`/stories/${story.id}`} footer={`@${story.authorUsername}`} />
         ))}
-      </div>
+      </StoryGrid>
     </div>
   )
 }

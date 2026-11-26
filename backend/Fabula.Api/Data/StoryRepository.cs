@@ -11,8 +11,9 @@ public static class StoryRepository
             .Include(s => s.Author)
             .Include(s => s.Tags)
             .Include(s => s.Words)
+            .Include(s => s.Cast).ThenInclude(c => c.States)
             .Include(s => s.Scenes).ThenInclude(s => s.Background)
-            .Include(s => s.Scenes).ThenInclude(s => s.Characters)
+            .Include(s => s.Scenes).ThenInclude(s => s.Characters).ThenInclude(c => c.StoryCharacter).ThenInclude(c => c!.States)
             .Include(s => s.Scenes).ThenInclude(s => s.Lines)
             .Include(s => s.Scenes).ThenInclude(s => s.Choices)
             .AsSplitQuery();

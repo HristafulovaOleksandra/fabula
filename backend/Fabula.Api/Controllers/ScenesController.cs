@@ -1,6 +1,7 @@
 using Fabula.Api.Auth;
 using Fabula.Api.Contracts;
 using Fabula.Api.Data;
+using Fabula.Api.Economy;
 using Fabula.Api.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,7 @@ namespace Fabula.Api.Controllers;
 [ApiController]
 [Authorize(Policy = Policies.CanAuthor)]
 [Route("api/stories/{storyId:guid}/scenes")]
-public class ScenesController(FabulaDbContext db) : ControllerBase
+public class ScenesController(FabulaDbContext db, EconomySettings economy) : ControllerBase
 {
     [HttpPost]
     public async Task<ActionResult<SceneDto>> Create(Guid storyId, CreateSceneRequest request, CancellationToken cancellationToken)
@@ -59,6 +60,23 @@ public class ScenesController(FabulaDbContext db) : ControllerBase
             return ValidationProblem("На кожній позиції може стояти лише один персонаж.");
         }
 
+        var castIds = story.Cast.Select(c => c.Id).ToHashSet();
+        if (request.Characters.Any(c => !castIds.Contains(c.StoryCharacterId)))
+        {
+            return ValidationProblem("Персонажа немає в списку персонажів цієї історії.");
+        }
+
+        var castStates = story.Cast.ToDictionary(c => c.Id, c => c.States.Select(s => s.Key).Concat(Emotions.All).ToHashSet());
+        if (request.Characters.Any(c => c.Emotion is not null && !castStates[c.StoryCharacterId].Contains(c.Emotion)))
+        {
+            return ValidationProblem("Невідомий стан персонажа.");
+        }
+
+        if (request.Choices.Any(c => !economy.IsValidChoicePrice(c.PriceCrystals)))
+        {
+            return ValidationProblem(economy.ChoicePriceRule);
+        }
+
         var storySceneIds = story.Scenes.Select(s => s.Id).ToHashSet();
         if (request.Choices.Any(c => c.NextSceneId is not null && !storySceneIds.Contains(c.NextSceneId.Value)))
         {
@@ -87,9 +105,12 @@ public class ScenesController(FabulaDbContext db) : ControllerBase
         {
             SceneId = scene.Id,
             Position = c.Position,
-            Name = c.Name.Trim(),
-            ImagePath = c.ImagePath,
-            Emotion = string.IsNullOrWhiteSpace(c.Emotion) ? "neutral" : c.Emotion.Trim()
+            StoryCharacterId = c.StoryCharacterId,
+            Emotion = c.Emotion ?? Emotions.Neutral,
+            X = c.X ?? (c.Position == CharacterPosition.Left ? Stage.LeftX : Stage.RightX),
+            Y = c.Y ?? 0,
+            Scale = c.Scale ?? 1,
+            Flip = c.Flip
         }));
         db.Lines.AddRange(request.Lines.Select((l, index) => BuildLine(scene.Id, index, l, previousLines)));
         db.Choices.AddRange(request.Choices.Select((c, index) => new Choice

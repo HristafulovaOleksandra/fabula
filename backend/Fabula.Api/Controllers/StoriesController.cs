@@ -1,6 +1,7 @@
 using Fabula.Api.Auth;
 using Fabula.Api.Contracts;
 using Fabula.Api.Data;
+using Fabula.Api.Economy;
 using Fabula.Api.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ namespace Fabula.Api.Controllers;
 
 [ApiController]
 [Route("api/stories")]
-public class StoriesController(FabulaDbContext db) : ControllerBase
+public class StoriesController(FabulaDbContext db, EconomySettings economy) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<StorySummaryDto>>> List(
@@ -55,7 +56,7 @@ public class StoriesController(FabulaDbContext db) : ControllerBase
             return NotFound();
         }
 
-        return Ok(story.ToDetail());
+        return Ok(story.ToDetail(forEditor: CanEdit(story)));
     }
 
     [Authorize(Policy = Policies.CanAuthor)]
@@ -79,7 +80,7 @@ public class StoriesController(FabulaDbContext db) : ControllerBase
         story.UpdatedAt = now;
         db.Stories.Add(story);
         await db.SaveChangesAsync(cancellationToken);
-        return CreatedAtAction(nameof(Get), new { id = story.Id }, story.ToDetail());
+        return CreatedAtAction(nameof(Get), new { id = story.Id }, story.ToDetail(forEditor: true));
     }
 
     [Authorize(Policy = Policies.CanAuthor)]
@@ -100,7 +101,7 @@ public class StoriesController(FabulaDbContext db) : ControllerBase
 
         story.UpdatedAt = DateTime.UtcNow;
         await db.SaveChangesAsync(cancellationToken);
-        return Ok(story.ToDetail());
+        return Ok(story.ToDetail(forEditor: CanEdit(story)));
     }
 
     [Authorize(Policy = Policies.CanAuthor)]
@@ -121,7 +122,7 @@ public class StoriesController(FabulaDbContext db) : ControllerBase
         story.Status = StoryStatus.Published;
         story.UpdatedAt = DateTime.UtcNow;
         await db.SaveChangesAsync(cancellationToken);
-        return Ok(story.ToDetail());
+        return Ok(story.ToDetail(forEditor: CanEdit(story)));
     }
 
     [Authorize(Policy = Policies.CanAuthor)]
@@ -149,16 +150,26 @@ public class StoriesController(FabulaDbContext db) : ControllerBase
             return ValidationProblem("Початкова сцена має належати цій історії.");
         }
 
+        if (!economy.IsValidStoryPrice(request.PriceCrystals))
+        {
+            return ValidationProblem(economy.StoryPriceRule);
+        }
+
         var tagIds = request.TagIds?.Distinct().ToList() ?? [];
-        var tags = await db.Tags.Where(t => tagIds.Contains(t.Id)).ToListAsync(cancellationToken);
+        var tags = await db.Tags
+            .Where(t => tagIds.Contains(t.Id) && t.Status != ModerationStatus.Rejected)
+            .ToListAsync(cancellationToken);
         if (tags.Count != tagIds.Count)
         {
-            return ValidationProblem("Невідомий тег.");
+            return ValidationProblem("Невідомий або відхилений тег.");
         }
 
         story.Title = request.Title.Trim();
         story.Description = request.Description?.Trim() ?? "";
         story.CoverImagePath = request.CoverImagePath;
+        story.CoverFocusX = request.CoverFocusX;
+        story.CoverFocusY = request.CoverFocusY;
+        story.CoverZoom = request.CoverZoom;
         story.Level = request.Level;
         story.PriceCrystals = request.PriceCrystals;
         story.StartSceneId = request.StartSceneId ?? story.StartSceneId;

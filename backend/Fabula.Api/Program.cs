@@ -1,5 +1,7 @@
 using Fabula.Api.Auth;
 using Fabula.Api.Data;
+using Fabula.Api.Dictionary;
+using Fabula.Api.Economy;
 using Fabula.Api.Email;
 using Fabula.Api.Entities;
 using Fabula.Api.Storage;
@@ -39,6 +41,9 @@ builder.Services.AddDbContext<FabulaDbContext>(options => options.UseNpgsql(conn
 builder.Services.AddSingleton(jwt);
 builder.Services.AddSingleton<TokenService>();
 builder.Services.AddSingleton(new ImageStorage(uploadsPath));
+builder.Services.AddSingleton(builder.Configuration.GetSection("Economy").Get<EconomySettings>()
+    ?? throw new InvalidOperationException("У appsettings.json немає розділу Economy."));
+builder.Services.AddSingleton(new WordDictionary(Path.Combine(AppContext.BaseDirectory, "Resources", "en-uk.tsv")));
 builder.Services.AddSingleton(SmtpSettings.FromEnvironment());
 builder.Services.AddSingleton<EmailSender>();
 builder.Services.AddScoped<PasswordResetService>();
