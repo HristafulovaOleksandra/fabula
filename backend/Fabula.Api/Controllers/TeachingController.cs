@@ -106,7 +106,7 @@ public class TeachingController(FabulaDbContext db) : ControllerBase
         var viewerId = User.UserId();
 
         PublicUserDto ToPublic(User user, bool viewerIsAcceptedTeacher) =>
-            new(user.Id, user.Username, NamePolicy.VisibleName(user, viewerId, viewerIsAcceptedTeacher), teachers.Contains(user.Id));
+            new(user.Id, user.Username, NamePolicy.VisibleName(user, viewerId, viewerIsAcceptedTeacher), teachers.Contains(user.Id), AvatarDto.From(user));
 
         return links.Select(l => new TeachingLinkDto(
             l.Id,

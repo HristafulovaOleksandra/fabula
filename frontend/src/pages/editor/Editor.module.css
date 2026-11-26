@@ -535,61 +535,6 @@
   gap: 14px;
 }
 
-.dialogBackdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  display: grid;
-  place-items: center;
-  padding: 16px;
-  background: rgba(30, 39, 102, 0.45);
-}
-
-.dialog {
-  display: grid;
-  gap: 14px;
-  width: min(560px, 100%);
-  padding: 20px;
-  border: var(--line) solid var(--color-primary);
-  border-radius: var(--radius);
-  background: var(--color-paper);
-  box-shadow: var(--press);
-}
-
-.dialog h3 {
-  margin: 0;
-}
-
-.dialog .zoom {
-  width: 100%;
-}
-
-.dialogFrame {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 22 / 13;
-  border: var(--line) solid var(--color-primary);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface);
-  overflow: hidden;
-  cursor: grab;
-  touch-action: none;
-  user-select: none;
-}
-
-.dialogFrame:active {
-  cursor: grabbing;
-}
-
-.dialogFrame img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  pointer-events: none;
-}
-
 .coverEditButton {
   width: 220px;
   min-height: 40px;
@@ -636,10 +581,10 @@
   gap: 10px;
 }
 
-.stagePreview {
+.stageViewport {
   position: relative;
   width: 100%;
-  aspect-ratio: 2 / 1;
+  aspect-ratio: 2 / 1.22;
   border: var(--line) solid var(--color-primary);
   border-radius: var(--radius-sm);
   background-color: var(--color-surface);
@@ -647,6 +592,32 @@
   background-position: center;
   overflow: hidden;
   touch-action: none;
+}
+
+.stagePreview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  touch-action: none;
+}
+
+.dialogZone {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(100% * 0.22 / 1.22);
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  border-top: 2px dashed var(--color-paper);
+  background: rgba(30, 39, 102, 0.55);
+  color: var(--color-paper);
+  font-size: 0.8rem;
+  font-weight: 800;
+  pointer-events: none;
 }
 
 .stageFigure {

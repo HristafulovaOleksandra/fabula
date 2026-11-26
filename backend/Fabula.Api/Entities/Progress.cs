@@ -103,3 +103,15 @@ public class ModerationItem
     public Guid? ReviewedById { get; set; }
     public DateTime? ReviewedAt { get; set; }
 }
+
+public class EmailChangeCode
+{
+    public Guid Id { get; set; }
+    public Guid UserId { get; set; }
+    public required string NewEmail { get; set; }
+    public required string CodeHash { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime ExpiresAt { get; set; }
+    public int Attempts { get; set; }
+    public DateTime? UsedAt { get; set; }
+}

@@ -54,8 +54,8 @@ export function LoginPage() {
     <AuthCard title="Вхід" mood="happy">
       <form className={styles.form} onSubmit={submit}>
         <label className="field">
-          Пошта
-          <input type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+          Пошта або нік
+          <input autoComplete="username" autoCapitalize="none" spellCheck={false} required value={email} onChange={(e) => setEmail(e.target.value)} />
         </label>
         <label className="field">
           Пароль

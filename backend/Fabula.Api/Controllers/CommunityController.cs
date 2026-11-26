@@ -55,6 +55,10 @@ public class CommunityController(FabulaDbContext db, ImageStorage storage) : Con
         var imagePaths = await db.Backgrounds.Where(b => b.OwnerId == user.Id).Select(b => b.ImagePath)
             .Concat(db.Stories.Where(s => s.AuthorId == user.Id && s.CoverImagePath != null).Select(s => s.CoverImagePath!))
             .ToListAsync(cancellationToken);
+        if (user.AvatarPath is not null)
+        {
+            imagePaths.Add(user.AvatarPath);
+        }
         var cast = await db.StoryCharacters
             .Where(c => db.Stories.Any(s => s.Id == c.StoryId && s.AuthorId == user.Id))
             .Include(c => c.States)
@@ -64,6 +68,7 @@ public class CommunityController(FabulaDbContext db, ImageStorage storage) : Con
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
         await db.GameSessions.Where(g => g.UserId == user.Id).ExecuteDeleteAsync(cancellationToken);
         await db.Transactions.Where(t => t.UserId == user.Id).ExecuteDeleteAsync(cancellationToken);
+        await db.EmailChangeCodes.Where(c => c.UserId == user.Id).ExecuteDeleteAsync(cancellationToken);
         await db.Backgrounds.Where(b => b.OwnerId == user.Id).ExecuteDeleteAsync(cancellationToken);
         await db.Tags.Where(t => t.CreatedById == user.Id && t.Status != ModerationStatus.Approved).ExecuteDeleteAsync(cancellationToken);
         await db.ModerationItems.Where(m => m.ReviewedById == user.Id)
@@ -99,7 +104,8 @@ public class CommunityController(FabulaDbContext db, ImageStorage storage) : Con
         var followers = await db.Follows.CountAsync(f => f.AuthorId == author.Id, cancellationToken);
         var followed = viewerId is not null && await db.Follows.AnyAsync(f => f.AuthorId == author.Id && f.FollowerId == viewerId, cancellationToken);
         var profile = new PublicUserDto(
-            author.Id, author.Username, NamePolicy.VisibleName(author, viewerId, false), await db.IsTeacherAsync(author.Id, cancellationToken));
+            author.Id, author.Username, NamePolicy.VisibleName(author, viewerId, false), await db.IsTeacherAsync(author.Id, cancellationToken),
+            AvatarDto.From(author));
         return Ok(new AuthorProfileDto(profile, followers, followed, stories.Select(s => s.ToSummary()).ToList()));
     }
 
@@ -149,7 +155,7 @@ public class CommunityController(FabulaDbContext db, ImageStorage storage) : Con
             .Select(f => f.Author!)
             .ToListAsync(cancellationToken);
         var teachers = await db.TeacherIdsAsync(authors.Select(a => a.Id), cancellationToken);
-        return Ok(authors.Select(a => new PublicUserDto(a.Id, a.Username, NamePolicy.PublicName(a), teachers.Contains(a.Id))).ToList());
+        return Ok(authors.Select(a => new PublicUserDto(a.Id, a.Username, NamePolicy.PublicName(a), teachers.Contains(a.Id), AvatarDto.From(a))).ToList());
     }
 
     [Authorize]

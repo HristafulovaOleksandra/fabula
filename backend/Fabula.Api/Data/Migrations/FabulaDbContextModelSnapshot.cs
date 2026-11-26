@@ -156,6 +156,43 @@ namespace Fabula.Api.Data.Migrations
                     b.ToTable("Choices");
                 });
 
+            modelBuilder.Entity("Fabula.Api.Entities.EmailChangeCode", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CodeHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NewEmail")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<DateTime?>("UsedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "CreatedAt");
+
+                    b.ToTable("EmailChangeCodes");
+                });
+
             modelBuilder.Entity("Fabula.Api.Entities.Follow", b =>
                 {
                     b.Property<Guid>("FollowerId")
@@ -751,6 +788,18 @@ namespace Fabula.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<double>("AvatarFocusX")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("AvatarFocusY")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("AvatarPath")
+                        .HasColumnType("text");
+
+                    b.Property<double>("AvatarZoom")
+                        .HasColumnType("double precision");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -921,6 +970,15 @@ namespace Fabula.Api.Data.Migrations
                     b.HasOne("Fabula.Api.Entities.Scene", null)
                         .WithMany("Choices")
                         .HasForeignKey("SceneId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Fabula.Api.Entities.EmailChangeCode", b =>
+                {
+                    b.HasOne("Fabula.Api.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

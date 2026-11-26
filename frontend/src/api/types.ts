@@ -15,6 +15,7 @@ export interface User {
   level: CefrLevel | null
   favoriteTopics: string[]
   crystalBalance: number
+  avatar: AvatarImage
 }
 
 export interface AuthResponse {
@@ -179,4 +180,28 @@ export interface LineAnalysis {
   tooShort: boolean
   sentences: AnalyzedSentence[]
   words: AnalyzedWord[]
+}
+
+export interface PublicUser {
+  id: string
+  username: string
+  displayName: string | null
+  isTeacher: boolean
+  avatar: AvatarImage | null
+}
+
+export interface AvatarImage {
+  path: string | null
+  focusX: number
+  focusY: number
+  zoom: number
+}
+
+export interface TeachingLink {
+  id: string
+  teacher: PublicUser
+  student: PublicUser
+  status: 'Pending' | 'Accepted'
+  createdAt: string
+  acceptedAt: string | null
 }

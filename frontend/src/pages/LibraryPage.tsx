@@ -53,7 +53,7 @@ export function LibraryPage() {
 
       <StoryGrid>
         {stories?.map((story) => (
-          <StoryCard key={story.id} story={story} to={`/stories/${story.id}`} footer={`@${story.authorUsername}`} />
+          <StoryCard key={story.id} story={story} to={`/stories/${story.id}`} footer={story.authorUsername} />
         ))}
       </StoryGrid>
     </div>

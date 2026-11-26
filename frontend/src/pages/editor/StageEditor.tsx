@@ -1,7 +1,7 @@
 import { useRef, useState, type PointerEvent } from 'react'
 import type { ScenePlacement } from '../../api/studio'
 import type { CharacterPosition, StoryCharacter } from '../../api/types'
-import { DEFAULT_X, placementStyle, STAGE_MAX_Y } from '../../components/stageLayout'
+import { DEFAULT_X, placementStyle, STAGE_SCALE, STAGE_X, STAGE_Y } from '../../components/stageLayout'
 import { availableStates, stateImage, stateLabel } from './characterStates'
 import styles from './Editor.module.css'
 
@@ -58,8 +58,8 @@ export function StageEditor({ cast, backgroundPath, placements, onChange }: Stag
     const box = stage.current?.getBoundingClientRect()
     if (!current || !box) return
     patch(current.position, {
-      x: Math.round(clamp(current.x + ((event.clientX - current.startX) / box.width) * 100, 0, 100)),
-      y: Math.round(clamp(current.y - ((event.clientY - current.startY) / box.height) * 100, 0, STAGE_MAX_Y)),
+      x: Math.round(clamp(current.x + ((event.clientX - current.startX) / box.width) * 100, STAGE_X.min, STAGE_X.max)),
+      y: Math.round(clamp(current.y - ((event.clientY - current.startY) / box.height) * 100, STAGE_Y.min, STAGE_Y.max)),
     })
   }
 
@@ -70,11 +70,14 @@ export function StageEditor({ cast, backgroundPath, placements, onChange }: Stag
   return (
     <div className={styles.stageEditor}>
       <div
-        ref={stage}
-        className={styles.stagePreview}
+        className={styles.stageViewport}
         style={backgroundPath ? { backgroundImage: `url(${backgroundPath})` } : undefined}
         onPointerDown={(e) => e.target === e.currentTarget && setSelected(null)}
       >
+        <div className={styles.dialogZone} aria-hidden="true">
+          <span>Вікно діалогу</span>
+        </div>
+        <div ref={stage} className={styles.stagePreview} onPointerDown={(e) => e.target === e.currentTarget && setSelected(null)}>
         {placements.map((placement) => {
           const character = cast.find((c) => c.id === placement.storyCharacterId)
           if (!character) return null
@@ -99,8 +102,9 @@ export function StageEditor({ cast, backgroundPath, placements, onChange }: Stag
             </figure>
           )
         })}
+        </div>
       </div>
-      <p className={styles.hint}>Перетягни персонажа мишкою або пальцем. Так само він стоятиме в програвачі над вікном діалогу.</p>
+      <p className={styles.hint}>Перетягни персонажа мишкою або пальцем. Його можна висунути за край кадру: нижня частина зайде за вікно діалогу так само, як у програвачі.</p>
 
       <div className={styles.slots}>
         {SLOTS.map(({ position, label }) => {
@@ -137,8 +141,8 @@ export function StageEditor({ cast, backgroundPath, placements, onChange }: Stag
                     <span>Розмір</span>
                     <input
                       type="range"
-                      min={0.4}
-                      max={2}
+                      min={STAGE_SCALE.min}
+                      max={STAGE_SCALE.max}
                       step={0.05}
                       value={current.scale}
                       onChange={(e) => patch(position, { scale: Number(e.target.value) })}

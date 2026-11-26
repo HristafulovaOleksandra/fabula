@@ -11,7 +11,8 @@ public record RegisterRequest(
     UserRole Role = UserRole.Student);
 
 public record LoginRequest(
-    [Required, EmailAddress] string Email,
+    [MaxLength(256)] string? Login,
+    [MaxLength(256)] string? Email,
     [Required] string Password);
 
 public record PasswordResetRequest([Required, EmailAddress] string Email);
@@ -22,6 +23,17 @@ public record PasswordResetConfirmRequest(
     [Required, MinLength(8), MaxLength(128)] string NewPassword);
 
 public record DeleteAccountRequest([Required] string Password);
+
+public record ChangePasswordRequest(
+    [Required] string CurrentPassword,
+    [Required, MinLength(8), MaxLength(128)] string NewPassword);
+
+public record EmailChangeRequest(
+    [Required, EmailAddress, MaxLength(256)] string NewEmail,
+    [Required] string Password);
+
+public record EmailChangeConfirmRequest(
+    [Required, RegularExpression("^[0-9]{6}$", ErrorMessage = "Код складається з 6 цифр.")] string Code);
 
 public record UpdateProfileRequest(
     [MinLength(2), MaxLength(100)] string? DisplayName,
@@ -37,16 +49,27 @@ public record UserDto(
     bool IsTeacher,
     CefrLevel? Level,
     IReadOnlyList<string> FavoriteTopics,
-    int CrystalBalance)
+    int CrystalBalance,
+    AvatarDto Avatar)
 {
     public static UserDto From(User user, bool isTeacher) => new(
         user.Id, user.Email, user.Username, user.DisplayName, user.NameVisibility, user.Role,
-        isTeacher, user.Level, user.FavoriteTopics, user.CrystalBalance);
+        isTeacher, user.Level, user.FavoriteTopics, user.CrystalBalance, AvatarDto.From(user));
 }
+
+public record AvatarDto(string? Path, double FocusX, double FocusY, double Zoom)
+{
+    public static AvatarDto From(User user) => new(user.AvatarPath, user.AvatarFocusX, user.AvatarFocusY, user.AvatarZoom);
+}
+
+public record AvatarFramingRequest(
+    [Range(0, 100)] double FocusX,
+    [Range(0, 100)] double FocusY,
+    [Range(1, 3)] double Zoom);
 
 public record AuthResponse(string Token, UserDto User);
 
-public record PublicUserDto(Guid Id, string Username, string? DisplayName, bool IsTeacher);
+public record PublicUserDto(Guid Id, string Username, string? DisplayName, bool IsTeacher, AvatarDto? Avatar = null);
 
 public record AuthorProfileDto(PublicUserDto Author, int FollowerCount, bool IsFollowedByMe, IReadOnlyList<StorySummaryDto> Stories);
 

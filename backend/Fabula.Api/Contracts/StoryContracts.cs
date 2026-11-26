@@ -70,9 +70,9 @@ public record CharacterDto(
     string? Name = null,
     string? ImagePath = null,
     [MaxLength(30)] string? Emotion = null,
-    [Range(0, 100)] double? X = null,
-    [Range(0, 60)] double? Y = null,
-    [Range(0.4, 2)] double? Scale = null,
+    [Range(-30, 130)] double? X = null,
+    [Range(-60, 60)] double? Y = null,
+    [Range(0.4, 3)] double? Scale = null,
     bool Flip = false);
 
 public record CharacterStateDto(Guid? Id, [Required, MinLength(1), MaxLength(30)] string Key, string? ImagePath);

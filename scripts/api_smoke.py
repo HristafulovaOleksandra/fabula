@@ -14,6 +14,15 @@ checks = 0
 
 
 def call(method, path, body=None, token=None, raw=None, ctype="application/json"):
+    status, payload = send(method, path, body, token, raw, ctype)
+    if status == 429:
+        print("…  ліміт частоти запитів, чекаємо хвилину")
+        time.sleep(61)
+        status, payload = send(method, path, body, token, raw, ctype)
+    return status, payload
+
+
+def send(method, path, body=None, token=None, raw=None, ctype="application/json"):
     data = raw if raw is not None else (json.dumps(body).encode() if body is not None else None)
     req = urllib.request.Request(B + path, data=data, method=method)
     if data is not None:
@@ -74,6 +83,10 @@ ok(f"неправильний пароль ({s})", s == 401)
 s, login = call("POST", "/auth/login", {"email": f"author{sfx}@test.local", "username": f"author_{sfx}", "password": "secret-pass-1"})
 tok = login["token"]
 ok(f"вхід ({s})", s == 200)
+s, _ = call("POST", "/auth/login", {"login": f"author_{sfx}", "password": "secret-pass-1"})
+s2, _ = call("POST", "/auth/login", {"login": f"@Author_{sfx}", "password": "secret-pass-1"})
+s3, _ = call("POST", "/auth/login", {"login": f"author_{sfx}", "password": "wrong-password"})
+ok(f"вхід за ніком, з «@» і великими літерами; неправильний пароль відхилено ({s}, {s2}, {s3})", s == 200 and s2 == 200 and s3 == 401)
 s, me = call("GET", "/auth/me", token=tok)
 ok(f"/auth/me без хешу пароля ({s})", s == 200 and "passwordHash" not in json.dumps(me))
 s, tags = call("GET", "/tags")
@@ -304,6 +317,30 @@ ok(f"старий пароль не працює, новий працює ({s}, 
 s, _ = call("POST", "/auth/password-reset/request", {"email": email_s})
 time.sleep(1.0)
 ok(f"новий код не надсилається частіше ніж раз на хвилину", latest_code(email_s) == code)
+s, me_avatar = call("POST", "/profile/avatar", raw=form({}, "me.png", png()), token=st, ctype=mp)
+avatar = me_avatar["avatar"]["path"] if s == 200 else ""
+ok(f"фото профілю завантажено ({s})", s == 200 and avatar.startswith("/uploads/avatars/")
+   and urllib.request.urlopen("http://localhost:5080" + avatar).status == 200)
+s, framed_avatar = call("PUT", "/profile/avatar/framing", {"focusX": 30, "focusY": 60, "zoom": 1.5}, token=st)
+s2, _ = call("PUT", "/profile/avatar/framing", {"focusX": 30, "focusY": 60, "zoom": 9}, token=st)
+ok(f"кадр фото профілю збережено, масштаб поза межами відхилено ({s}, {s2})",
+   s == 200 and (framed_avatar["avatar"]["focusX"], framed_avatar["avatar"]["zoom"]) == (30, 1.5) and s2 == 400)
+s, _ = call("POST", "/profile/password", {"currentPassword": "wrong-pass-0", "newPassword": "changed-pass-1"}, token=st)
+s2, _ = call("POST", "/profile/password", {"currentPassword": "new-pass-123", "newPassword": "changed-pass-1"}, token=st)
+s3, _ = call("POST", "/auth/login", {"email": email_s, "password": "changed-pass-1"})
+ok(f"зміна пароля: неправильний поточний відхилено, правильний змінює ({s}, {s2}, {s3})", s == 400 and s2 == 204 and s3 == 200)
+new_email = f"moved{sfx}@test.local"
+s, _ = call("POST", "/profile/email", {"newEmail": f"author{sfx}@test.local", "password": "changed-pass-1"}, token=st)
+s2, _ = call("POST", "/profile/email", {"newEmail": new_email, "password": "wrong-pass-0"}, token=st)
+ok(f"нову пошту не можна взяти чужу або без пароля ({s}, {s2})", s == 400 and s2 == 400)
+s, _ = call("POST", "/profile/email", {"newEmail": new_email, "password": "changed-pass-1"}, token=st)
+time.sleep(1.5)
+email_code = latest_code(new_email)
+s2, _ = call("POST", "/profile/email/confirm", {"code": "000000" if email_code != "000000" else "111111"}, token=st)
+s3, moved = call("POST", "/profile/email/confirm", {"code": email_code}, token=st)
+s4, _ = call("POST", "/auth/login", {"email": new_email, "password": "changed-pass-1"})
+ok(f"зміна пошти через код на нову адресу ({s}, {s2}, {s3}, {s4})",
+   s == 202 and email_code is not None and s2 == 400 and s3 == 200 and moved["email"] == new_email and s4 == 200)
 s, _ = call("DELETE", f"/stories/{sid}", token=tok)
 ok(f"видалення історії ({s})", s == 204)
 s, _ = call("DELETE", "/profile", {"password": "wrong-password"}, token=tok)
@@ -318,8 +355,13 @@ except urllib.error.HTTPError as e:
 ok(f"фон автора видалено разом з акаунтом ({gone})", gone == 404)
 s, again = call("POST", "/tags", {"name": f"Smoke tag {sfx}", "kind": "Topic"}, token=other["token"])
 ok(f"власні теги видаленого автора прибрано ({s})", s == 200 and again["id"] != own["id"])
-s, _ = call("DELETE", "/profile", {"password": "new-pass-123"}, token=st)
+s, _ = call("DELETE", "/profile", {"password": "changed-pass-1"}, token=st)
+try:
+    avatar_gone = urllib.request.urlopen("http://localhost:5080" + avatar).status
+except urllib.error.HTTPError as e:
+    avatar_gone = e.code
 s2, _ = call("DELETE", "/profile", {"password": "secret-pass-1"}, token=other["token"])
 ok(f"тестові учень і автор видалені ({s}, {s2})", s == 204 and s2 == 204)
+ok(f"фото профілю видалено разом з акаунтом ({avatar_gone})", avatar_gone == 404)
 print(f"\nПеревірок: {checks}, помилок: {len(failures)}")
 sys.exit(1 if failures else 0)

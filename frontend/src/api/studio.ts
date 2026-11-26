@@ -38,7 +38,7 @@ export interface SceneForm {
   choices: { id: string | null; text: string; nextSceneId: string | null; priceCrystals: number }[]
 }
 
-async function upload<T>(path: string, form: FormData): Promise<T> {
+export async function upload<T>(path: string, form: FormData): Promise<T> {
   const token = tokenStore.get()
   const response = await fetch(`/api${path}`, {
     method: 'POST',

@@ -48,13 +48,19 @@
 .stage {
   position: relative;
   flex: 1;
+  container-type: size;
   cursor: pointer;
   outline: none;
 }
 
 .cast {
   position: absolute;
-  inset: 0 0 150px 0;
+  left: 50%;
+  bottom: 150px;
+  width: min(100cqw, calc((100cqh - 150px) * 2));
+  aspect-ratio: 2 / 1;
+  transform: translateX(-50%);
+  clip-path: inset(-300% -300% -150px -300%);
   pointer-events: none;
 }
 
@@ -120,16 +126,16 @@
 }
 
 .narration {
-  background: var(--color-text);
-  color: var(--color-paper);
-  border-color: var(--color-text);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-primary);
   font-style: italic;
   text-align: center;
   padding-top: 16px;
 }
 
 .narration .next {
-  color: var(--color-paper);
+  color: var(--color-primary);
 }
 
 .speaker {
@@ -329,6 +335,14 @@
 @media (max-width: 560px) {
   .cast {
     bottom: 190px;
+    clip-path: inset(-300% -300% -190px -300%);
+    width: 100cqw;
+    height: calc(100cqh - 190px);
+    aspect-ratio: auto;
+  }
+
+  .character {
+    max-height: calc(55vw * var(--scale, 1));
   }
 
   .dialog {

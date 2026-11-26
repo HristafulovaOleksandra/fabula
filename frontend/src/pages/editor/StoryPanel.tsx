@@ -311,7 +311,7 @@ export function StoryPanel({ story, economy, tags, onTagCreated, onSaved, onDirt
           return (
             <div key={index} className={styles.wordRow}>
               <input
-                placeholder="ticket"
+                placeholder="слово"
                 value={word.word}
                 maxLength={64}
                 onChange={(e) => setWord(index, { word: e.target.value })}
@@ -338,7 +338,6 @@ export function StoryPanel({ story, economy, tags, onTagCreated, onSaved, onDirt
             </div>
           )
         })}
-        <small className={styles.hint}>Переклад підставляється автоматично зі словника — його можна змінити або обрати інший варіант.</small>
         <button type="button" className="btn btn-ghost" onClick={() => update({ ...form, words: [...form.words, { word: '', translation: '' }] })}>
           + Слово
         </button>

@@ -54,11 +54,16 @@ public class AuthController(FabulaDbContext db, TokenService tokens, PasswordRes
     [HttpPost("login")]
     public async Task<ActionResult<AuthResponse>> Login(LoginRequest request, CancellationToken cancellationToken)
     {
-        var email = request.Email.Trim().ToLowerInvariant();
-        var user = await db.Users.SingleOrDefaultAsync(u => u.Email == email, cancellationToken);
+        var identifier = (request.Login ?? request.Email ?? "").Trim().TrimStart('@').ToLowerInvariant();
+        if (identifier.Length == 0)
+        {
+            return ValidationProblem("Вкажи пошту або нік.");
+        }
+
+        var user = await db.Users.SingleOrDefaultAsync(u => u.Email == identifier || u.Username == identifier, cancellationToken);
         if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
         {
-            return Unauthorized(new ProblemDetails { Title = "Неправильна пошта або пароль." });
+            return Unauthorized(new ProblemDetails { Title = "Неправильна пошта, нік або пароль." });
         }
 
         return Ok(new AuthResponse(tokens.Create(user), UserDto.From(user, await db.IsTeacherAsync(user.Id, cancellationToken))));

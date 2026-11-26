@@ -33,7 +33,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return {
       user,
       loading,
-      login: async (email, password) => accept(await api<AuthResponse>('/auth/login', { method: 'POST', body: { email, password } })),
+      login: async (login, password) => accept(await api<AuthResponse>('/auth/login', { method: 'POST', body: { login, password } })),
       register: async (input) => accept(await api<AuthResponse>('/auth/register', { method: 'POST', body: input })),
       logout: () => {
         tokenStore.clear()

@@ -39,7 +39,7 @@ function CharacterFigure({ character, active }: { character: Character; active: 
   return (
     <figure
       className={`${styles.character} ${character.imagePath ? '' : styles.noImage} ${active ? styles.speaking : styles.listening}`}
-      style={placementStyle(character, true)}
+      style={placementStyle(character)}
     >
       {character.imagePath && (
         <img src={character.imagePath} alt={character.name ?? ''} style={character.flip ? { transform: 'scaleX(-1)' } : undefined} />

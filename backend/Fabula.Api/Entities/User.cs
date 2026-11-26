@@ -8,6 +8,10 @@ public class User
     public required string PasswordHash { get; set; }
     public required string DisplayName { get; set; }
     public NameVisibility NameVisibility { get; set; } = NameVisibility.Private;
+    public string? AvatarPath { get; set; }
+    public double AvatarFocusX { get; set; } = 50;
+    public double AvatarFocusY { get; set; } = 50;
+    public double AvatarZoom { get; set; } = 1;
     public UserRole Role { get; set; }
     public CefrLevel? Level { get; set; }
     public List<string> FavoriteTopics { get; set; } = [];

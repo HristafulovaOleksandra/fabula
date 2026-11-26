@@ -1,0 +1,200 @@
+.page {
+  display: grid;
+  gap: 20px;
+  max-width: 820px;
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+
+.avatarButton {
+  padding: 0;
+  border: none;
+  background: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.identityText {
+  display: grid;
+  gap: 8px;
+}
+
+.identityText h1 {
+  margin: 0;
+}
+
+.badges {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 2px 12px;
+  border: var(--line) solid var(--color-primary);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 800;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.roleBadge {
+  background: var(--color-paper);
+  color: var(--color-primary);
+}
+
+.teacherBadge {
+  background: var(--color-success);
+  color: #fff;
+}
+
+.nameLine {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.card {
+  display: grid;
+  gap: 12px;
+  padding: 18px 20px;
+}
+
+.card h2,
+.card h3,
+.card p {
+  margin: 0;
+}
+
+.card h3 {
+  font-size: 1rem;
+}
+
+.hint {
+  color: var(--color-text-soft);
+  font-size: 0.92rem;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  align-items: start;
+  gap: 12px;
+}
+
+.stack {
+  display: grid;
+  gap: 12px;
+}
+
+.inlineActions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.linkButton {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-primary);
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.people {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.people li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.personName {
+  display: grid;
+  font-weight: 700;
+}
+
+.personName small {
+  font-weight: 400;
+  color: var(--color-text-soft);
+}
+
+.personActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.personActions :global(.btn) {
+  min-height: 36px;
+  padding: 4px 14px;
+}
+
+.inviteRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.inviteRow input {
+  min-height: 46px;
+  padding: 8px 12px;
+  border: var(--line) solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  background: var(--color-paper);
+  font-weight: 600;
+}
+
+.danger {
+  box-shadow: 0 0 0 2px var(--color-accent);
+}
+
+.dangerButton {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-accent);
+  font-weight: 800;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.deleteButton {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+@media (max-width: 560px) {
+  .people li {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .personActions {
+    grid-column: 2;
+  }
+
+  .inviteRow {
+    grid-template-columns: 1fr;
+  }
+}

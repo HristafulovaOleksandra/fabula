@@ -1,5 +1,6 @@
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/useAuth'
+import { Avatar } from './Avatar'
 import { Logo } from './Brand'
 import { ScrollTopButton } from './ScrollTopButton'
 import styles from './Layout.module.css'
@@ -19,10 +20,10 @@ export function Layout() {
           {user ? (
             <>
               {user.role !== 'Student' && <NavLink to="/studio">Мої історії</NavLink>}
-              <span className={styles.user}>
-                @{user.username}
-                {user.isTeacher && <span className={styles.teacher}>Teacher</span>}
-              </span>
+              <NavLink to="/profile" className={styles.user} title="Мій профіль">
+                <Avatar avatar={user.avatar} username={user.username} size={32} />
+                {user.username}
+              </NavLink>
               <button
                 type="button"
                 className={styles.linkButton}

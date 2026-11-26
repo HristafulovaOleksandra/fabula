@@ -11,6 +11,7 @@ import { LibraryPage } from './pages/LibraryPage'
 import { EditorPage } from './pages/EditorPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { PlayerPage } from './pages/PlayerPage'
+import { ProfilePage } from './pages/ProfilePage'
 import { StoryIntroPage } from './pages/StoryIntroPage'
 import { StudioPage } from './pages/StudioPage'
 
@@ -26,6 +27,14 @@ createRoot(document.getElementById('root')!).render(
             <Route path="login" element={<LoginPage />} />
             <Route path="register" element={<RegisterPage />} />
             <Route path="forgot-password" element={<ForgotPasswordPage />} />
+            <Route
+              path="profile"
+              element={
+                <RequireAuth>
+                  <ProfilePage />
+                </RequireAuth>
+              }
+            />
             <Route
               path="studio"
               element={

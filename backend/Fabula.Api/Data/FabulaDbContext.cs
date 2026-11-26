@@ -23,6 +23,7 @@ public class FabulaDbContext(DbContextOptions<FabulaDbContext> options) : DbCont
     public DbSet<TeachingLink> TeachingLinks => Set<TeachingLink>();
     public DbSet<Follow> Follows => Set<Follow>();
     public DbSet<PasswordResetCode> PasswordResetCodes => Set<PasswordResetCode>();
+    public DbSet<EmailChangeCode> EmailChangeCodes => Set<EmailChangeCode>();
     public DbSet<Assignment> Assignments => Set<Assignment>();
     public DbSet<ModerationItem> ModerationItems => Set<ModerationItem>();
 
@@ -122,6 +123,13 @@ public class FabulaDbContext(DbContextOptions<FabulaDbContext> options) : DbCont
         {
             code.HasOne<User>().WithMany().HasForeignKey(c => c.UserId);
             code.HasIndex(c => new { c.UserId, c.CreatedAt });
+        });
+
+        model.Entity<EmailChangeCode>(code =>
+        {
+            code.HasOne<User>().WithMany().HasForeignKey(c => c.UserId);
+            code.HasIndex(c => new { c.UserId, c.CreatedAt });
+            code.Property(c => c.NewEmail).HasMaxLength(256);
         });
 
         model.Entity<Assignment>(assignment =>
