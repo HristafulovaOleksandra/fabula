@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { errorText, studio, type SceneForm } from '../../api/studio'
 import type { Background, Economy, Scene, StoryDetail } from '../../api/types'
-import { AutoGrowTextarea } from './AutoGrowTextarea'
+import { AnalyzedLine, LevelBadge } from './AnalyzedLine'
+import { prefetchAnalyses } from './lineAnalysis'
 import { PriceInput } from './PriceInput'
+import { SaveStatusLine } from './SaveStatusLine'
+import { useAutosave } from './useAutosave'
 import { StageEditor } from './StageEditor'
 import styles from './Editor.module.css'
 
@@ -41,24 +44,63 @@ interface ScenePanelProps {
   onDelete: () => void
 }
 
+function sceneProblem(form: SceneForm) {
+  if (!form.title.trim()) return 'назва сцени порожня'
+  if (form.lines.some((l) => !l.text.trim())) return 'є порожня репліка — допиши або видали її'
+  if (form.choices.some((c) => !c.text.trim())) return 'є вибір без тексту'
+  return null
+}
+
+function withSavedIds(value: SceneForm, sent: SceneForm, saved: Scene): SceneForm {
+  return {
+    ...value,
+    lines: value.lines.map((line, i) => (sent.lines[i]?.text === line.text && saved.lines[i] ? { ...line, id: saved.lines[i].id } : line)),
+    choices: value.choices.map((choice, i) =>
+      sent.choices[i]?.text === choice.text && saved.choices[i] ? { ...choice, id: saved.choices[i].id } : choice,
+    ),
+  }
+}
+
 export function ScenePanel({ story, economy, scene, onSaved, onDirtyChange, onDelete }: ScenePanelProps) {
-  const [initial, setInitial] = useState(() => toSceneForm(scene))
-  const [form, setForm] = useState(initial)
+  const [baseline, setBaseline] = useState(() => toSceneForm(scene))
+  const [form, setForm] = useState(baseline)
   const [backgrounds, setBackgrounds] = useState<Background[]>([])
-  const [busy, setBusy] = useState(false)
-  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null)
   const [uploadError, setUploadError] = useState<string | null>(null)
   const fileInput = useRef<HTMLInputElement>(null)
+
+  const autosave = useAutosave({
+    value: form,
+    baseline,
+    problem: sceneProblem(form),
+    save: async (sent) => {
+      const saved = await studio.saveScene(story.id, scene.id, {
+        ...sent,
+        title: sent.title.trim(),
+        lines: sent.lines.map((l) => ({ ...l, text: l.text.trim() })),
+        choices: sent.choices.map((c) => ({ ...c, text: c.text.trim() })),
+      })
+      setBaseline(withSavedIds(sent, sent, saved))
+      setForm((current) => withSavedIds(current, sent, saved))
+      await onSaved()
+    },
+  })
+
+  useEffect(() => {
+    onDirtyChange(autosave.dirty)
+  }, [autosave.dirty, onDirtyChange])
 
   useEffect(() => {
     studio.backgrounds().then(setBackgrounds).catch(() => setBackgrounds([]))
   }, [])
 
-  const update = (next: SceneForm) => {
-    setForm(next)
-    setMessage(null)
-    onDirtyChange(JSON.stringify(next) !== JSON.stringify(initial))
-  }
+  useEffect(() => {
+    prefetchAnalyses(
+      scene.lines.map((l) => ({ text: l.text, narration: !l.speaker })),
+      story.level,
+    ).catch(() => undefined)
+  }, [scene.lines, story.level])
+
+  const update = (next: SceneForm) => setForm(next)
 
   const castName = (id: string) => story.characters.find((c) => c.id === id)?.name ?? ''
 
@@ -76,29 +118,6 @@ export function ScenePanel({ story, economy, scene, onSaved, onDirtyChange, onDe
       setUploadError(errorText(caught))
     } finally {
       if (fileInput.current) fileInput.current.value = ''
-    }
-  }
-
-  const save = async () => {
-    setBusy(true)
-    try {
-      const payload: SceneForm = {
-        ...form,
-        title: form.title.trim(),
-        lines: form.lines.filter((l) => l.text.trim()).map((l) => ({ ...l, text: l.text.trim() })),
-        choices: form.choices.filter((c) => c.text.trim()).map((c) => ({ ...c, text: c.text.trim() })),
-      }
-      const saved = await studio.saveScene(story.id, scene.id, payload)
-      const next = toSceneForm(saved)
-      setInitial(next)
-      setForm(next)
-      onDirtyChange(false)
-      await onSaved()
-      setMessage({ ok: true, text: 'Збережено' })
-    } catch (caught) {
-      setMessage({ ok: false, text: errorText(caught) })
-    } finally {
-      setBusy(false)
     }
   }
 
@@ -161,24 +180,34 @@ export function ScenePanel({ story, economy, scene, onSaved, onDirtyChange, onDe
         <legend>Репліки ({form.lines.length})</legend>
         {form.lines.map((line, index) => (
           <div key={index} className={styles.lineRow}>
-            <select
-              value={line.speaker ?? ''}
-              onChange={(e) => update({ ...form, lines: form.lines.map((l, i) => (i === index ? { ...l, speaker: e.target.value || null } : l)) })}
-            >
-              <option value="">Оповідач</option>
-              {[...new Set([...speakers, ...(line.speaker ? [line.speaker] : [])])].map((name) => (
-                <option key={name} value={name}>
-                  {name}
-                </option>
-              ))}
-            </select>
-            <AutoGrowTextarea
-              rows={2}
-              maxLength={500}
-              className={line.speaker ? undefined : styles.narration}
+            <div className={styles.lineSide}>
+              <select
+                value={line.speaker ?? ''}
+                onChange={(e) => update({ ...form, lines: form.lines.map((l, i) => (i === index ? { ...l, speaker: e.target.value || null } : l)) })}
+              >
+                <option value="">Оповідач</option>
+                {[...new Set([...speakers, ...(line.speaker ? [line.speaker] : [])])].map((name) => (
+                  <option key={name} value={name}>
+                    {name}
+                  </option>
+                ))}
+              </select>
+              <LevelBadge text={line.text} target={story.level} narration={!line.speaker} />
+            </div>
+            <AnalyzedLine
+              text={line.text}
+              target={story.level}
+              narration={!line.speaker}
               placeholder={line.speaker ? 'Що каже персонаж англійською' : 'Опис того, що відбувається'}
-              value={line.text}
-              onChange={(e) => update({ ...form, lines: form.lines.map((l, i) => (i === index ? { ...l, text: e.target.value } : l)) })}
+              targetWords={story.words.map((w) => w.word)}
+              allowedWords={story.allowedWords}
+              onChange={(text) => update({ ...form, lines: form.lines.map((l, i) => (i === index ? { ...l, text } : l)) })}
+              onAllow={(lemma) => {
+                studio
+                  .allowWord(story.id, lemma)
+                  .then(onSaved)
+                  .catch(() => undefined)
+              }}
             />
             <div className={styles.rowButtons}>
               <button type="button" className={styles.iconButton} aria-label="Вище" onClick={() => update({ ...form, lines: move(form.lines, index, -1) })}>
@@ -233,7 +262,7 @@ export function ScenePanel({ story, economy, scene, onSaved, onDirtyChange, onDe
               <option value="">Кінець історії</option>
               {otherScenes.map((s) => (
                 <option key={s.id} value={s.id}>
-                  → {s.title}
+                  {s.title}
                 </option>
               ))}
             </select>
@@ -267,10 +296,15 @@ export function ScenePanel({ story, economy, scene, onSaved, onDirtyChange, onDe
       </fieldset>
 
       <div className={styles.actions}>
-        <button type="button" className="btn" disabled={busy || !form.title.trim()} onClick={save}>
-          {busy ? 'Зберігаємо…' : 'Зберегти сцену'}
+        <button
+          type="button"
+          className="btn"
+
+          onClick={autosave.saveNow}
+        >
+          Зберегти зараз
         </button>
-        {message && <span className={message.ok ? 'success-text' : 'error-text'}>{message.text}</span>}
+        <SaveStatusLine status={autosave.status} onRetry={autosave.saveNow} />
         <button type="button" className={styles.dangerButton} onClick={onDelete}>
           Видалити сцену
         </button>

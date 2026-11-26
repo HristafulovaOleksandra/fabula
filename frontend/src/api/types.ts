@@ -91,6 +91,7 @@ export interface Line {
   text: string
   level: CefrLevel | null
   levelScore: number | null
+  levelChecked: boolean
 }
 
 export interface Choice {
@@ -126,6 +127,7 @@ export interface StoryDetail {
   startSceneId: string | null
   tags: Tag[]
   words: StoryWord[]
+  allowedWords: string[]
   characters: StoryCharacter[]
   scenes: Scene[]
 }
@@ -149,4 +151,32 @@ export interface Economy {
   choicePriceMax: number
   storyPriceMin: number
   storyPriceMax: number
+}
+
+export interface AnalyzedWord {
+  text: string
+  start: number
+  end: number
+  lemma: string
+  level: CefrLevel | null
+  aboveTarget: boolean
+  rare: boolean
+  simpler: string[]
+}
+
+export interface AnalyzedSentence {
+  start: number
+  end: number
+  level: CefrLevel
+  score: number
+}
+
+export interface LineAnalysis {
+  level: CefrLevel | null
+  score: number | null
+  confidence: number | null
+  scale: 'dialogue' | 'narration'
+  tooShort: boolean
+  sentences: AnalyzedSentence[]
+  words: AnalyzedWord[]
 }

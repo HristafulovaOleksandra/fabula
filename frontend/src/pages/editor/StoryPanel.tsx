@@ -1,10 +1,12 @@
-import { useRef, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { DEFAULT_STORY_TITLE, errorText, studio, type StoryForm } from '../../api/studio'
 import type { CefrLevel, Economy, StoryDetail, Tag } from '../../api/types'
 import { Crystals } from '../../components/Brand'
 import { AutoGrowTextarea } from './AutoGrowTextarea'
 import { CoverEditor } from './CoverEditor'
 import { PriceInput } from './PriceInput'
+import { SaveStatusLine } from './SaveStatusLine'
+import { useAutosave } from './useAutosave'
 import styles from './Editor.module.css'
 
 const LEVELS: CefrLevel[] = ['A1', 'A2', 'B1', 'B2', 'C']
@@ -98,41 +100,41 @@ interface StoryPanelProps {
 }
 
 export function StoryPanel({ story, economy, tags, onTagCreated, onSaved, onDirtyChange, onDelete }: StoryPanelProps) {
-  const [initial, setInitial] = useState(() => toStoryForm(story))
-  const [form, setForm] = useState(initial)
-  const [busy, setBusy] = useState(false)
-  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null)
+  const [baseline, setBaseline] = useState(() => toStoryForm(story))
+  const [form, setForm] = useState(baseline)
   const [suggestions, setSuggestions] = useState<Record<string, string[]>>({})
   const latest = useRef(form)
   const autoTranslations = useRef(new Map<number, string>())
   const prices = storyPrices(economy)
-  const [customPrice, setCustomPrice] = useState(() => !storyPrices(economy).includes(initial.priceCrystals))
+  const [customPrice, setCustomPrice] = useState(() => !storyPrices(economy).includes(baseline.priceCrystals))
+
+  const autosave = useAutosave({
+    value: form,
+    baseline,
+    problem: null,
+    save: async (sent) => {
+      await studio.saveStory(story.id, {
+        ...sent,
+        title: sent.title.trim() || DEFAULT_STORY_TITLE,
+        words: sent.words.filter((w) => w.word.trim() && w.translation.trim()),
+      })
+      setBaseline(sent)
+      await onSaved()
+    },
+  })
+
+  useEffect(() => {
+    onDirtyChange(autosave.dirty)
+  }, [autosave.dirty, onDirtyChange])
 
   const update = (next: StoryForm) => {
     latest.current = next
     setForm(next)
-    setMessage(null)
-    onDirtyChange(JSON.stringify(next) !== JSON.stringify(initial))
   }
 
-  const save = async (event: FormEvent) => {
+  const save = (event: FormEvent) => {
     event.preventDefault()
-    setBusy(true)
-    try {
-      await studio.saveStory(story.id, {
-        ...form,
-        title: form.title.trim() || DEFAULT_STORY_TITLE,
-        words: form.words.filter((w) => w.word.trim() && w.translation.trim()),
-      })
-      setInitial(form)
-      onDirtyChange(false)
-      await onSaved()
-      setMessage({ ok: true, text: 'Збережено' })
-    } catch (caught) {
-      setMessage({ ok: false, text: errorText(caught) })
-    } finally {
-      setBusy(false)
-    }
+    autosave.saveNow()
   }
 
   const toggleTag = (id: number) =>
@@ -342,11 +344,38 @@ export function StoryPanel({ story, economy, tags, onTagCreated, onSaved, onDirt
         </button>
       </fieldset>
 
+      {story.allowedWords.length > 0 && (
+        <fieldset className={styles.fieldset}>
+          <legend>Дозволені слова ({story.allowedWords.length})</legend>
+          <small className={styles.hint}>Ці слова в репліках цієї історії не підсвічуються як складні.</small>
+          <div className={styles.chips}>
+            {story.allowedWords.map((word) => (
+              <span key={word} className={styles.allowedChip}>
+                {word}
+                <button
+                  type="button"
+                  aria-label={`Знову підсвічувати «${word}»`}
+                  title="Знову підсвічувати це слово"
+                  onClick={() => {
+                    studio
+                      .disallowWord(story.id, word)
+                      .then(onSaved)
+                      .catch(() => undefined)
+                  }}
+                >
+                  ✕
+                </button>
+              </span>
+            ))}
+          </div>
+        </fieldset>
+      )}
+
       <div className={styles.actions}>
-        <button className="btn" disabled={busy}>
-          {busy ? 'Зберігаємо…' : 'Зберегти'}
+        <button className="btn">
+          Зберегти зараз
         </button>
-        {message && <span className={message.ok ? 'success-text' : 'error-text'}>{message.text}</span>}
+        <SaveStatusLine status={autosave.status} onRetry={autosave.saveNow} />
         <button type="button" className={styles.dangerButton} onClick={onDelete}>
           Видалити історію
         </button>

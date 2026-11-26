@@ -1,6 +1,7 @@
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/useAuth'
 import { Logo } from './Brand'
+import { ScrollTopButton } from './ScrollTopButton'
 import styles from './Layout.module.css'
 
 export function Layout() {
@@ -45,6 +46,7 @@ export function Layout() {
       </header>
       <main>
         <Outlet />
+        <ScrollTopButton />
       </main>
     </>
   )

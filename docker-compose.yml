@@ -25,5 +25,57 @@ services:
       - "1025:1025"
       - "8025:8025"
 
+  ml-service:
+    build: ./ml-service
+    image: fabula-ml-service
+    container_name: fabula-ml-service
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ml-research:/research:ro
+      - ${HF_CACHE_DIR:-${USERPROFILE}/.cache/huggingface}:/hf:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  backend:
+    build: ./backend
+    image: fabula-backend
+    container_name: fabula-backend
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      SMTP_HOST: ${DOCKER_SMTP_HOST:-mailpit}
+      SMTP_PORT: ${DOCKER_SMTP_PORT:-1025}
+      ML_SERVICE_URL: http://ml-service:8000
+    ports:
+      - "5080:5080"
+    volumes:
+      - ./uploads:/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+      ml-service:
+        condition: service_started
+
+  frontend:
+    build: ./frontend
+    image: fabula-frontend
+    container_name: fabula-frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
 volumes:
   postgres-data:

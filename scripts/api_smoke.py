@@ -187,6 +187,18 @@ s, student = call("POST", "/auth/register", {"email": f"student{sfx}@test.local"
 st = student["token"]
 s, _ = call("POST", "/stories", {"title": "X", "level": "A1", "priceCrystals": 0}, token=st)
 ok(f"учень не може створити історію ({s})", s == 403)
+s, _ = call("POST", "/ml/analyze", {"texts": ["Hello there, my friend."], "level": "A2"}, token=st)
+ok(f"учень не має доступу до ML-аналізу ({s})", s == 403)
+s, live = call("POST", "/ml/analyze", {"texts": ["I purchased a magnificent gift for my grandmother.", "Yes."], "level": "A2"}, token=tok)
+if s == 503:
+    print("SKIP ML-сервіс не запущено — перевірки рівня пропущено")
+else:
+    purchased = next((w for w in live["results"][0]["words"] if w["text"] == "purchased"), {}) if s == 200 else {}
+    ok(f"живий аналіз: рівень, складне слово і простіший відповідник ({s})",
+       s == 200 and live["results"][0]["level"] in ["A1", "A2", "B1", "B2", "C"]
+       and purchased.get("aboveTarget") and "buy" in purchased.get("simpler", []) and live["results"][1]["tooShort"])
+    s, rated_scene = call("GET", f"/stories/{sid}/scenes/{sc1['id']}", token=tok)
+    ok(f"репліки отримали рівень під час збереження ({s})", s == 200 and all(line["level"] for line in rated_scene["lines"]))
 s, _ = call("POST", "/stories", {"title": "X", "level": "A1", "priceCrystals": 0})
 ok(f"без входу — 401 ({s})", s == 401)
 s, _ = call("GET", f"/stories/{sid}", token=st)

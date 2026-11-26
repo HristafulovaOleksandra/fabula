@@ -233,8 +233,12 @@
 .sidebar {
   display: grid;
   gap: 6px;
+  align-content: start;
   position: sticky;
-  top: 16px;
+  top: 88px;
+  max-height: calc(100dvh - 104px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 12px;
   border: var(--line) solid var(--color-primary);
   border-radius: var(--radius);
@@ -421,6 +425,8 @@
 
   .sidebar {
     position: static;
+    max-height: none;
+    overflow: visible;
   }
 
   .lineRow {
@@ -751,4 +757,251 @@
 
 .labelSpacer {
   visibility: hidden;
+}
+
+.lineSide {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+}
+
+.levelBadge {
+  justify-self: start;
+  min-width: 44px;
+  padding: 2px 10px;
+  border: var(--line) solid var(--color-primary);
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-align: center;
+  cursor: default;
+}
+
+.levelOk {
+  background: var(--color-paper);
+  color: var(--color-primary);
+}
+
+.levelAbove {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-paper);
+}
+
+.levelMuted {
+  border-style: dashed;
+  border-color: var(--color-text-soft);
+  color: var(--color-text-soft);
+}
+
+.lineEditor {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.highlightBox {
+  position: relative;
+  border-radius: var(--radius-sm);
+  background: var(--color-paper);
+}
+
+.lineRow .highlightBox textarea {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  background: transparent !important;
+  font: inherit;
+}
+
+.highlightMirror {
+  position: absolute;
+  inset: 0;
+  padding: 8px 12px;
+  border: var(--line) solid transparent;
+  font: inherit;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  color: transparent;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.highlightMirror mark {
+  background: none;
+  color: transparent;
+  text-decoration: underline wavy var(--color-accent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+  text-decoration-skip-ink: none;
+}
+
+.hardWords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.hardWord {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgba(229, 72, 59, 0.12);
+  font-size: 0.82rem;
+  cursor: default;
+}
+
+@media (max-width: 860px) {
+  .lineSide {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+}
+
+.levelVerdict {
+  margin: 0;
+}
+
+.verdictBad {
+  color: var(--color-accent);
+}
+
+.levelBars {
+  display: flex;
+  gap: 14px;
+  align-items: flex-end;
+}
+
+.levelBar {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  font-size: 0.85rem;
+}
+
+.levelBar > span:last-child {
+  font-family: var(--font-display);
+  font-weight: 800;
+}
+
+.levelBarTrack {
+  display: flex;
+  align-items: flex-end;
+  width: 34px;
+  height: 90px;
+  border-bottom: var(--line) solid var(--color-primary);
+}
+
+.levelBarFill {
+  width: 100%;
+  min-height: 2px;
+  border-radius: 6px 6px 0 0;
+  background: var(--color-primary);
+}
+
+.levelBarAbove {
+  background: var(--color-accent);
+}
+
+.aboveList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.aboveList li {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: baseline;
+}
+
+.aboveText {
+  color: var(--color-text-soft);
+}
+
+@media (max-width: 560px) {
+  .aboveList li {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .aboveText {
+    grid-column: 1 / -1;
+  }
+}
+
+.saveStatus {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--color-text-soft);
+}
+
+.saveOk {
+  color: var(--color-success);
+}
+
+.saveWarn {
+  color: var(--color-accent);
+}
+
+.highlightMirror mark.targetMark {
+  text-decoration: underline solid var(--color-primary);
+  text-decoration-thickness: 2px;
+}
+
+.keepWord {
+  margin-left: 8px;
+  padding: 0 8px;
+  border: 1.5px solid var(--color-accent);
+  border-radius: 999px;
+  background: var(--color-paper);
+  color: var(--color-accent);
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.allowedChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 6px 2px 12px;
+  border: var(--line) solid var(--color-primary);
+  border-radius: 999px;
+  background: var(--color-paper);
+  font-weight: 700;
+}
+
+.allowedChip button {
+  border: none;
+  background: none;
+  color: var(--color-primary);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.sentenceLevels {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: var(--color-text-soft);
+}
+
+.sentenceLevel {
+  padding: 1px 8px;
+  border: 1.5px solid var(--color-primary);
+  border-radius: 999px;
+  color: var(--color-primary);
+  font-weight: 800;
+  cursor: default;
+}
+
+.sentenceAbove {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }

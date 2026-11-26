@@ -2,6 +2,7 @@ using Fabula.Api.Auth;
 using Fabula.Api.Data;
 using Fabula.Api.Dictionary;
 using Fabula.Api.Economy;
+using Fabula.Api.Ml;
 using Fabula.Api.Email;
 using Fabula.Api.Entities;
 using Fabula.Api.Storage;
@@ -53,6 +54,14 @@ builder.Services.AddRateLimiter(options =>
     options.AddPolicy(RateLimits.Auth, context => RateLimitPartition.GetFixedWindowLimiter(
         context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
         _ => new FixedWindowRateLimiterOptions { PermitLimit = 30, Window = TimeSpan.FromMinutes(1) }));
+    options.AddPolicy(RateLimits.Ml, context => RateLimitPartition.GetFixedWindowLimiter(
+        context.User.Identity?.Name ?? context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+        _ => new FixedWindowRateLimiterOptions { PermitLimit = 120, Window = TimeSpan.FromMinutes(1) }));
+});
+builder.Services.AddHttpClient<MlClient>(client =>
+{
+    client.BaseAddress = new Uri(Environment.GetEnvironmentVariable("ML_SERVICE_URL") is { Length: > 0 } url ? url : "http://localhost:8000");
+    client.Timeout = TimeSpan.FromSeconds(15);
 });
 
 builder.Services

@@ -355,6 +355,10 @@ namespace Fabula.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.PrimitiveCollection<List<string>>("AllowedWords")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
                     b.Property<Guid>("AuthorId")
                         .HasColumnType("uuid");
 

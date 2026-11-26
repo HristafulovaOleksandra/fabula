@@ -173,8 +173,14 @@
 }
 
 .choices {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: grid;
   gap: 10px;
+  max-height: 65%;
+  overflow-y: auto;
   padding: 14px 12px max(16px, env(safe-area-inset-bottom));
   background: var(--color-paper);
   border-top: var(--line) solid var(--color-primary);

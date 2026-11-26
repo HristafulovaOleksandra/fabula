@@ -20,7 +20,7 @@ public static class Mapping
         scene.Characters.OrderBy(c => c.Position).Select(c => new CharacterDto(
             c.Position, c.StoryCharacterId, c.StoryCharacter?.Name, c.StoryCharacter?.ImageFor(c.Emotion), c.Emotion,
             c.X, c.Y, c.Scale, c.Flip)).ToList(),
-        scene.Lines.OrderBy(l => l.Order).Select(l => new LineDto(l.Id, l.Speaker, l.Text, l.Level, l.LevelScore)).ToList(),
+        scene.Lines.OrderBy(l => l.Order).Select(l => new LineDto(l.Id, l.Speaker, l.Text, l.Level, l.LevelScore, l.LevelCheckedAt != null)).ToList(),
         scene.Choices.OrderBy(c => c.Order).Select(c => new ChoiceDto(c.Id, c.Text, c.NextSceneId, c.PriceCrystals)).ToList());
 
     public static StorySummaryDto ToSummary(this Story story) => new(
@@ -55,6 +55,7 @@ public static class Mapping
         story.StartSceneId,
         VisibleTags(story, forEditor),
         story.Words.OrderBy(w => w.Word).Select(w => new StoryWordDto(w.Word, w.Translation)).ToList(),
+        story.AllowedWords.Order().ToList(),
         story.Cast.OrderBy(c => c.Order).ThenBy(c => c.Name).Select(c => c.ToDto()).ToList(),
         story.Scenes.OrderBy(s => s.Order).Select(s => s.ToDto()).ToList());
 

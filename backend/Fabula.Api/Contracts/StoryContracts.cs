@@ -9,6 +9,8 @@ public record CreateTagRequest([Required, MinLength(2), MaxLength(30)] string Na
 
 public record TranslationDto(string Word, IReadOnlyList<string> Translations);
 
+public record AllowedWordRequest([Required, MinLength(1), MaxLength(64)] string Word);
+
 public record StoryWordDto(
     [Required, MaxLength(64)] string Word,
     [Required, MaxLength(128)] string Translation);
@@ -45,6 +47,7 @@ public record StoryDetailDto(
     Guid? StartSceneId,
     IReadOnlyList<TagDto> Tags,
     IReadOnlyList<StoryWordDto> Words,
+    IReadOnlyList<string> AllowedWords,
     IReadOnlyList<StoryCharacterDto> Characters,
     IReadOnlyList<SceneDto> Scenes);
 
@@ -85,7 +88,8 @@ public record LineDto(
     [MaxLength(60)] string? Speaker,
     [Required, MinLength(1), MaxLength(500)] string Text,
     CefrLevel? Level = null,
-    double? LevelScore = null);
+    double? LevelScore = null,
+    bool LevelChecked = false);
 
 public record ChoiceDto(
     Guid? Id,

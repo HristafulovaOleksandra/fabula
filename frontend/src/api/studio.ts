@@ -1,5 +1,5 @@
 import { api, ApiError, tokenStore } from './client'
-import type { Background, CefrLevel, CharacterPosition, CharacterState, Economy, Scene, StoryCharacter, StoryDetail, StorySummary, StoryWord, Tag } from './types'
+import type { Background, CefrLevel, CharacterPosition, CharacterState, Economy, LineAnalysis, Scene, StoryCharacter, StoryDetail, StorySummary, StoryWord, Tag } from './types'
 
 export interface StoryForm {
   title: string
@@ -60,6 +60,13 @@ export const studio = {
   story: (id: string) => api<StoryDetail>(`/stories/${id}`),
   tags: () => api<Tag[]>('/tags/available'),
   economy: () => api<Economy>('/economy'),
+  analyze: (texts: string[], level: CefrLevel, narration: boolean[]) =>
+    api<{ model: string; results: LineAnalysis[] }>('/ml/analyze', { method: 'POST', body: { texts, level, narration } }).then((r) => r.results),
+  allowWord: (storyId: string, word: string) =>
+    api<string[]>(`/stories/${storyId}/allowed-words`, { method: 'POST', body: { word } }),
+  disallowWord: (storyId: string, word: string) =>
+    api<string[]>(`/stories/${storyId}/allowed-words/${encodeURIComponent(word)}`, { method: 'DELETE' }),
+  rateLines: (storyId: string) => api<{ rated: number; pending: number }>(`/stories/${storyId}/rate-lines`, { method: 'POST' }),
   createTag: (name: string, kind: Tag['kind']) => api<Tag>('/tags', { method: 'POST', body: { name, kind } }),
   translate: (word: string) =>
     api<{ word: string; translations: string[] }>(`/dictionary?word=${encodeURIComponent(word)}`).then((result) => result.translations),

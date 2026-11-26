@@ -3,6 +3,8 @@ import { errorText, studio, type CharacterForm } from '../../api/studio'
 import type { CharacterState, StoryCharacter, StoryDetail } from '../../api/types'
 import { BUILT_IN_STATES, isBuiltInState } from './characterStates'
 import { ImageInput } from './ImageInput'
+import { SaveStatusLine } from './SaveStatusLine'
+import { useAutosave } from './useAutosave'
 import styles from './Editor.module.css'
 
 const MAX_STATES = 16
@@ -20,13 +22,38 @@ function customStateProblem(states: CharacterState[]) {
   return null
 }
 
+function withSavedIds(value: CharacterForm, saved: StoryCharacter): CharacterForm {
+  return {
+    ...value,
+    states: value.states.map((state) => {
+      const match = saved.states.find((s) => s.key === state.key.trim())
+      return match ? { ...state, id: match.id } : state
+    }),
+  }
+}
+
 function CharacterCard({ storyId, character, onChanged }: { storyId: string; character: StoryCharacter; onChanged: () => Promise<void> }) {
-  const [initial, setInitial] = useState(() => toForm(character))
-  const [form, setForm] = useState(initial)
-  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null)
-  const dirty = JSON.stringify(form) !== JSON.stringify(initial)
-  const problem = customStateProblem(form.states)
+  const [baseline, setBaseline] = useState(() => toForm(character))
+  const [form, setForm] = useState(baseline)
+  const [message, setMessage] = useState<string | null>(null)
+  const problem = form.name.trim() ? customStateProblem(form.states) : "Ім'я персонажа порожнє."
   const customStates = form.states.map((state, index) => ({ state, index })).filter(({ state }) => !isBuiltInState(state.key))
+
+  const autosave = useAutosave({
+    value: form,
+    baseline,
+    problem: problem && problem.replace(/\.$/, '').toLowerCase(),
+    save: async (sent) => {
+      const states = [
+        ...BUILT_IN_STATES.map((b) => sent.states.find((s) => s.key === b.key)).filter((s): s is CharacterState => !!s?.imagePath),
+        ...sent.states.filter((s) => !isBuiltInState(s.key)).map((s) => ({ ...s, key: s.key.trim() })),
+      ]
+      const saved = await studio.saveCharacter(storyId, character.id, { name: sent.name.trim(), states })
+      setBaseline(withSavedIds(sent, saved))
+      setForm((current) => withSavedIds(current, saved))
+      await onChanged()
+    },
+  })
 
   const change = (next: CharacterForm) => {
     setForm(next)
@@ -46,29 +73,13 @@ function CharacterCard({ storyId, character, onChanged }: { storyId: string; cha
   const setCustom = (index: number, patch: Partial<CharacterState>) =>
     change({ ...form, states: form.states.map((s, i) => (i === index ? { ...s, ...patch } : s)) })
 
-  const save = async () => {
-    try {
-      const states = [
-        ...BUILT_IN_STATES.map((b) => form.states.find((s) => s.key === b.key)).filter((s): s is CharacterState => !!s?.imagePath),
-        ...form.states.filter((s) => !isBuiltInState(s.key)).map((s) => ({ ...s, key: s.key.trim() })),
-      ]
-      const saved = await studio.saveCharacter(storyId, character.id, { name: form.name.trim(), states })
-      setInitial(toForm(saved))
-      setForm(toForm(saved))
-      setMessage({ ok: true, text: 'Збережено' })
-      await onChanged()
-    } catch (caught) {
-      setMessage({ ok: false, text: errorText(caught) })
-    }
-  }
-
   const remove = async () => {
     if (!window.confirm(`Видалити персонажа «${character.name}»? Він зникне з усіх сцен.`)) return
     try {
       await studio.deleteCharacter(storyId, character.id)
       await onChanged()
     } catch (caught) {
-      setMessage({ ok: false, text: errorText(caught) })
+      setMessage(errorText(caught))
     }
   }
 
@@ -135,12 +146,17 @@ function CharacterCard({ storyId, character, onChanged }: { storyId: string; cha
           </div>
         )}
       </div>
-      {problem && <small className="error-text">{problem}</small>}
       <div className={styles.actions}>
-        <button type="button" className="btn" disabled={!dirty || !form.name.trim() || !!problem} onClick={save}>
-          Зберегти
+        <button
+          type="button"
+          className="btn"
+
+          onClick={autosave.saveNow}
+        >
+          Зберегти зараз
         </button>
-        {message && <span className={message.ok ? 'success-text' : 'error-text'}>{message.text}</span>}
+        <SaveStatusLine status={autosave.status} onRetry={autosave.saveNow} />
+        {message && <span className="error-text">{message}</span>}
         <button type="button" className={styles.dangerButton} onClick={remove}>
           Видалити
         </button>

@@ -22,6 +22,7 @@ public class Story
     public List<Scene> Scenes { get; set; } = [];
     public List<StoryCharacter> Cast { get; set; } = [];
     public List<StoryWord> Words { get; set; } = [];
+    public List<string> AllowedWords { get; set; } = [];
 }
 
 public class Tag

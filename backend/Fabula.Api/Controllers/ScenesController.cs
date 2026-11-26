@@ -3,6 +3,7 @@ using Fabula.Api.Contracts;
 using Fabula.Api.Data;
 using Fabula.Api.Economy;
 using Fabula.Api.Entities;
+using Fabula.Api.Ml;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,7 @@ namespace Fabula.Api.Controllers;
 [ApiController]
 [Authorize(Policy = Policies.CanAuthor)]
 [Route("api/stories/{storyId:guid}/scenes")]
-public class ScenesController(FabulaDbContext db, EconomySettings economy) : ControllerBase
+public class ScenesController(FabulaDbContext db, EconomySettings economy, MlClient ml) : ControllerBase
 {
     [HttpPost]
     public async Task<ActionResult<SceneDto>> Create(Guid storyId, CreateSceneRequest request, CancellationToken cancellationToken)
@@ -112,7 +113,9 @@ public class ScenesController(FabulaDbContext db, EconomySettings economy) : Con
             Scale = c.Scale ?? 1,
             Flip = c.Flip
         }));
-        db.Lines.AddRange(request.Lines.Select((l, index) => BuildLine(scene.Id, index, l, previousLines)));
+        var lines = request.Lines.Select((l, index) => BuildLine(scene.Id, index, l, previousLines)).ToList();
+        await RateLinesAsync(lines, story.Level, cancellationToken);
+        db.Lines.AddRange(lines);
         db.Choices.AddRange(request.Choices.Select((c, index) => new Choice
         {
             SceneId = scene.Id,
@@ -158,7 +161,8 @@ public class ScenesController(FabulaDbContext db, EconomySettings economy) : Con
     {
         var text = request.Text.Trim();
         var line = new Line { SceneId = sceneId, Order = index, Speaker = request.Speaker?.Trim() ?? "", Text = text };
-        if (request.Id is not null && previous.TryGetValue(request.Id.Value, out var old) && old.Text == text)
+        if (request.Id is not null && previous.TryGetValue(request.Id.Value, out var old) && old.Text == text
+            && (old.Speaker.Length == 0) == (line.Speaker.Length == 0))
         {
             line.Level = old.Level;
             line.LevelScore = old.LevelScore;
@@ -166,6 +170,40 @@ public class ScenesController(FabulaDbContext db, EconomySettings economy) : Con
         }
 
         return line;
+    }
+
+    [HttpPost("~/api/stories/{storyId:guid}/rate-lines")]
+    public async Task<ActionResult<object>> RateUnchecked(Guid storyId, CancellationToken cancellationToken)
+    {
+        var story = await LoadEditableStoryAsync(storyId, cancellationToken);
+        if (story is null)
+        {
+            return NotFound();
+        }
+
+        var pending = story.Scenes.SelectMany(s => s.Lines).Where(l => l.LevelCheckedAt is null).ToList();
+        await RateLinesAsync(pending, story.Level, cancellationToken);
+        await db.SaveChangesAsync(cancellationToken);
+        return Ok(new { rated = pending.Count(l => l.LevelCheckedAt is not null), pending = pending.Count(l => l.LevelCheckedAt is null) });
+    }
+
+    private async Task RateLinesAsync(List<Line> lines, CefrLevel storyLevel, CancellationToken cancellationToken)
+    {
+        var pending = lines.Where(l => l.LevelCheckedAt is null).ToList();
+        var analysis = await ml.AnalyzeAsync(
+            pending.Select(l => l.Text).ToList(), pending.Select(l => l.Speaker.Length == 0).ToList(), storyLevel, cancellationToken);
+        if (analysis is null || analysis.Results.Count != pending.Count)
+        {
+            return;
+        }
+
+        var now = DateTime.UtcNow;
+        foreach (var (line, result) in pending.Zip(analysis.Results))
+        {
+            line.Level = Enum.TryParse<CefrLevel>(result.Level, out var level) ? level : null;
+            line.LevelScore = result.Score;
+            line.LevelCheckedAt = now;
+        }
     }
 
     private async Task<Story?> LoadEditableStoryAsync(Guid storyId, CancellationToken cancellationToken)

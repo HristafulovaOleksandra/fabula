@@ -44,6 +44,10 @@ export function EditorPage() {
       .story(storyId)
       .then(setStory)
       .catch((caught) => setError(errorText(caught)))
+    studio
+      .rateLines(storyId)
+      .then(({ rated }) => (rated > 0 ? studio.story(storyId).then(setStory) : undefined))
+      .catch(() => undefined)
     studio.tags().then(setTags).catch(() => setTags([]))
     studio.economy().then(setEconomy).catch((caught) => setError(errorText(caught)))
   }, [storyId])
@@ -180,7 +184,7 @@ export function EditorPage() {
             />
           )}
           {view.kind === 'cast' && <CastPanel story={story} onChanged={reload} />}
-          {view.kind === 'check' && <CheckPanel story={story} />}
+          {view.kind === 'check' && <CheckPanel story={story} onOpenScene={(id) => open({ kind: 'scene', id })} />}
           {view.kind === 'scene' && scene && (
             <ScenePanel
               key={scene.id}

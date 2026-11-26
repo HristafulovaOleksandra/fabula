@@ -140,6 +140,50 @@ public class StoriesController(FabulaDbContext db, EconomySettings economy) : Co
         return NoContent();
     }
 
+    [Authorize(Policy = Policies.CanAuthor)]
+    [HttpPost("{id:guid}/allowed-words")]
+    public async Task<ActionResult<IReadOnlyList<string>>> AllowWord(Guid id, AllowedWordRequest request, CancellationToken cancellationToken)
+    {
+        var story = await db.Stories.FindAsync([id], cancellationToken);
+        if (story is null || !CanEdit(story))
+        {
+            return NotFound();
+        }
+
+        var word = request.Word.Trim().ToLowerInvariant();
+        if (!story.AllowedWords.Contains(word))
+        {
+            if (story.AllowedWords.Count >= MaxAllowedWords)
+            {
+                return ValidationProblem($"У списку дозволених слів може бути до {MaxAllowedWords} слів.");
+            }
+
+            story.AllowedWords = [.. story.AllowedWords, word];
+            story.UpdatedAt = DateTime.UtcNow;
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
+        return Ok(story.AllowedWords.Order().ToList());
+    }
+
+    [Authorize(Policy = Policies.CanAuthor)]
+    [HttpDelete("{id:guid}/allowed-words/{word}")]
+    public async Task<ActionResult<IReadOnlyList<string>>> DisallowWord(Guid id, string word, CancellationToken cancellationToken)
+    {
+        var story = await db.Stories.FindAsync([id], cancellationToken);
+        if (story is null || !CanEdit(story))
+        {
+            return NotFound();
+        }
+
+        story.AllowedWords = story.AllowedWords.Where(w => w != word.Trim().ToLowerInvariant()).ToList();
+        story.UpdatedAt = DateTime.UtcNow;
+        await db.SaveChangesAsync(cancellationToken);
+        return Ok(story.AllowedWords.Order().ToList());
+    }
+
+    private const int MaxAllowedWords = 200;
+
     private bool CanEdit(Story story) =>
         User.Identity?.IsAuthenticated == true && (story.AuthorId == User.UserId() || User.IsAdmin());
 

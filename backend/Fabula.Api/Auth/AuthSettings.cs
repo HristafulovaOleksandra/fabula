@@ -14,6 +14,7 @@ public record JwtSettings(string Secret, string Issuer, string Audience, TimeSpa
 public static class RateLimits
 {
     public const string Auth = "auth";
+    public const string Ml = "ml";
 }
 
 public static class Policies
