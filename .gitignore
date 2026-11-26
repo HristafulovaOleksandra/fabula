@@ -1,6 +1,3 @@
-/CLAUDE.md
-/README.md
-
 .env
 *.local
 
@@ -42,5 +39,4 @@ uploads/
 Thumbs.db
 
 backups/
-.claude/
 ml-service/nltk_data/
