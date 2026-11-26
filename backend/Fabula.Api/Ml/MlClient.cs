@@ -41,4 +41,17 @@ public class MlClient(HttpClient http, ILogger<MlClient> logger)
             return null;
         }
     }
+
+    public async Task<System.Text.Json.Nodes.JsonNode?> CalibrationAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            return await http.GetFromJsonAsync<System.Text.Json.Nodes.JsonNode>("/calibration", cancellationToken);
+        }
+        catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException or System.Text.Json.JsonException)
+        {
+            logger.LogWarning("ML-сервіс недоступний: {Message}", exception.Message);
+            return null;
+        }
+    }
 }

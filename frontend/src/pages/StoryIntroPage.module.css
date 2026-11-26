@@ -82,3 +82,14 @@
     grid-template-columns: 1fr;
   }
 }
+
+.buy p {
+  margin: 0 0 10px;
+}
+
+.buyActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}

@@ -4,6 +4,8 @@ import catSad from '../assets/brand/cat-sad.webp'
 import catThinking from '../assets/brand/cat-thinking.webp'
 import crystal from '../assets/brand/crystal.webp'
 import logo from '../assets/brand/logo.webp'
+import streakOff from '../assets/brand/streak-off.webp'
+import streakOn from '../assets/brand/streak-on.webp'
 import styles from './Brand.module.css'
 
 export type MascotMood = 'happy' | 'thinking' | 'sad' | 'celebrate'
@@ -30,6 +32,16 @@ export function Crystals({ amount, size = 18 }: { amount?: number; size?: number
       <img src={crystal} alt={amount === undefined ? 'кристали' : ''} width={size} height={size} className={styles.crystalIcon} />
       {amount !== undefined && <span>{amount}</span>}
       {amount !== undefined && <span className={styles.visuallyHidden}> кристалів</span>}
+    </span>
+  )
+}
+
+export function StreakFlame({ lit, size = 22, days }: { lit: boolean; size?: number; days?: number }) {
+  return (
+    <span className={styles.flame}>
+      <img src={lit ? streakOn : streakOff} alt={days === undefined ? (lit ? 'вогник горить' : 'вогник згас') : ''} height={size} className={styles.flameIcon} />
+      {days !== undefined && <span>{days}</span>}
+      {days !== undefined && <span className={styles.visuallyHidden}> днів поспіль</span>}
     </span>
   )
 }

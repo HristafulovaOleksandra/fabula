@@ -44,6 +44,7 @@ public enum TransactionReason
     PaidChoice,
     PaidStory,
     StreakFreeze,
+    WelcomeBonus,
     AdminAdjustment
 }
 

@@ -183,9 +183,6 @@ export function CastPanel({ story, onChanged }: { story: StoryDetail; onChanged:
   return (
     <div className={styles.panel}>
       <h2>Персонажі</h2>
-      <p className={styles.hint}>
-        Персонаж створюється один раз для всієї історії. У сцені ти обираєш, хто в ній є, у якому стані, і перетягуєш його туди, де він має стояти.
-      </p>
       {story.characters.map((character) => (
         <CharacterCard key={character.id} storyId={story.id} character={character} onChanged={onChanged} />
       ))}

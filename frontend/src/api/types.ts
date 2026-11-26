@@ -111,6 +111,9 @@ export interface Scene {
   characters: Character[]
   lines: Line[]
   choices: Choice[]
+  backgroundFocusX: number
+  backgroundFocusY: number
+  backgroundZoom: number
 }
 
 export interface StoryDetail {
@@ -137,6 +140,76 @@ export interface PlaySession {
   sessionId: string
   storyId: string
   currentSceneId: string | null
+  free: boolean
+  purchasedChoiceIds: string[]
+}
+
+export interface ChoiceResult {
+  nextSceneId: string | null
+  finished: boolean
+  spent: number
+  balance: number
+}
+
+export type TransactionReason =
+  | 'StoryCompleted'
+  | 'DailyGoal'
+  | 'StreakBonus'
+  | 'PaidChoice'
+  | 'PaidStory'
+  | 'StreakFreeze'
+  | 'WelcomeBonus'
+  | 'AdminAdjustment'
+
+export interface Reward {
+  reason: TransactionReason
+  amount: number
+}
+
+export interface StreakInfo {
+  current: number
+  longest: number
+  playedToday: boolean
+  rescueDays: number
+  rescuePrice: number
+}
+
+export type StreakDayState = 'Done' | 'Rescued' | 'Missed' | 'Today' | 'Future'
+
+export interface StreakDay {
+  date: string
+  state: StreakDayState
+  isToday: boolean
+}
+
+export interface Wallet {
+  balance: number
+  streak: StreakInfo
+  dailyGoalReward: number
+  week: StreakDay[]
+}
+
+export interface RecentStory {
+  story: StorySummary
+  lastPlayedAt: string
+  completed: boolean
+}
+
+export interface WalletTransaction {
+  id: string
+  amount: number
+  reason: TransactionReason
+  storyTitle: string | null
+  createdAt: string
+}
+
+export interface StoryAccess {
+  price: number
+  owned: boolean
+  free: boolean
+  completed: boolean
+  reward: number
+  balance: number
 }
 
 export interface PlaySummary {
@@ -145,6 +218,11 @@ export interface PlaySummary {
   wordsSaved: StoryWord[]
   crystalsEarned: number
   minutes: number
+  completed: boolean
+  free: boolean
+  rewards: Reward[]
+  balance: number
+  streak: StreakInfo
 }
 
 export interface Economy {
@@ -204,4 +282,21 @@ export interface TeachingLink {
   status: 'Pending' | 'Accepted'
   createdAt: string
   acceptedAt: string | null
+}
+
+export interface StudioStory {
+  story: StorySummary
+  totalLines: number
+  uncheckedLines: number
+  hardLines: number
+}
+
+export interface StudioOverview {
+  recentStories: StudioStory[]
+  storyCount: number
+  publishedCount: number
+  draftCount: number
+  studentCount: number
+  pendingInvitationCount: number
+  followerCount: number
 }

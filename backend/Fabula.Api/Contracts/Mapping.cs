@@ -21,7 +21,10 @@ public static class Mapping
             c.Position, c.StoryCharacterId, c.StoryCharacter?.Name, c.StoryCharacter?.ImageFor(c.Emotion), c.Emotion,
             c.X, c.Y, c.Scale, c.Flip)).ToList(),
         scene.Lines.OrderBy(l => l.Order).Select(l => new LineDto(l.Id, l.Speaker, l.Text, l.Level, l.LevelScore, l.LevelCheckedAt != null)).ToList(),
-        scene.Choices.OrderBy(c => c.Order).Select(c => new ChoiceDto(c.Id, c.Text, c.NextSceneId, c.PriceCrystals)).ToList());
+        scene.Choices.OrderBy(c => c.Order).Select(c => new ChoiceDto(c.Id, c.Text, c.NextSceneId, c.PriceCrystals)).ToList(),
+        scene.BackgroundFocusX,
+        scene.BackgroundFocusY,
+        scene.BackgroundZoom);
 
     public static StorySummaryDto ToSummary(this Story story) => new(
         story.Id,

@@ -1,6 +1,7 @@
 import { useRef, useState, type PointerEvent } from 'react'
 import type { ScenePlacement } from '../../api/studio'
 import type { CharacterPosition, StoryCharacter } from '../../api/types'
+import { framedImageStyle, type Framing } from '../../components/coverFraming'
 import { DEFAULT_X, placementStyle, STAGE_SCALE, STAGE_X, STAGE_Y } from '../../components/stageLayout'
 import { availableStates, stateImage, stateLabel } from './characterStates'
 import styles from './Editor.module.css'
@@ -15,11 +16,12 @@ const clamp = (value: number, min: number, max: number) => Math.min(max, Math.ma
 interface StageEditorProps {
   cast: StoryCharacter[]
   backgroundPath: string | null
+  backgroundFraming: Framing
   placements: ScenePlacement[]
   onChange: (placements: ScenePlacement[]) => void
 }
 
-export function StageEditor({ cast, backgroundPath, placements, onChange }: StageEditorProps) {
+export function StageEditor({ cast, backgroundPath, backgroundFraming, placements, onChange }: StageEditorProps) {
   const stage = useRef<HTMLDivElement>(null)
   const drag = useRef<{ position: CharacterPosition; x: number; y: number; startX: number; startY: number } | null>(null)
   const [selected, setSelected] = useState<CharacterPosition | null>(null)
@@ -69,11 +71,10 @@ export function StageEditor({ cast, backgroundPath, placements, onChange }: Stag
 
   return (
     <div className={styles.stageEditor}>
-      <div
-        className={styles.stageViewport}
-        style={backgroundPath ? { backgroundImage: `url(${backgroundPath})` } : undefined}
-        onPointerDown={(e) => e.target === e.currentTarget && setSelected(null)}
-      >
+      <div className={styles.stageViewport} onPointerDown={(e) => e.target === e.currentTarget && setSelected(null)}>
+        {backgroundPath && (
+          <img className={styles.stageBackground} src={backgroundPath} alt="" draggable={false} style={framedImageStyle(backgroundFraming)} />
+        )}
         <div className={styles.dialogZone} aria-hidden="true">
           <span>Вікно діалогу</span>
         </div>
@@ -104,7 +105,6 @@ export function StageEditor({ cast, backgroundPath, placements, onChange }: Stag
         })}
         </div>
       </div>
-      <p className={styles.hint}>Перетягни персонажа мишкою або пальцем. Його можна висунути за край кадру: нижня частина зайде за вікно діалогу так само, як у програвачі.</p>
 
       <div className={styles.slots}>
         {SLOTS.map(({ position, label }) => {

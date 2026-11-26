@@ -4,6 +4,7 @@ import sys
 import time
 import urllib.parse
 import struct
+import subprocess
 import urllib.request
 import uuid
 import zlib
@@ -111,7 +112,9 @@ s, framed = call("PUT", f"/stories/{sid}", {"title": "Lost at the Station", "des
 ok(f"обкладинка й власний тег збережені ({s})",
    s == 200 and (framed["coverFocusX"], framed["coverFocusY"], framed["coverZoom"]) == (30, 70, 1.5) and any(t["id"] == own["id"] for t in framed["tags"]))
 s, econ = call("GET", "/economy")
-ok(f"ліміти економіки з налаштувань ({s}, {econ})", s == 200 and econ == {"choicePriceMin": 10, "choicePriceMax": 30, "storyPriceMin": 50, "storyPriceMax": 150})
+ok(f"ліміти й нагороди економіки з налаштувань ({s})",
+   s == 200 and (econ["choicePriceMin"], econ["choicePriceMax"], econ["storyPriceMin"], econ["storyPriceMax"]) == (10, 30, 50, 150)
+   and econ["storyRewards"]["A2"] == 12 and econ["dailyGoalReward"] == 5 and econ["streakFreezePrice"] == 20)
 s, _ = call("PUT", f"/stories/{sid}", {"title": "X", "level": "A2", "priceCrystals": 40}, token=tok)
 s2, _ = call("PUT", f"/stories/{sid}", {"title": "X", "level": "A2", "priceCrystals": 200}, token=tok)
 ok(f"ціна історії поза 50–150 відхилена ({s}, {s2})", s == 400 and s2 == 400)
@@ -176,6 +179,13 @@ left = placed["characters"][0] if s == 200 else {}
 ok(f"положення і власний стан у сцені ({s})",
    s == 200 and (left["x"], left["y"], left["scale"], left["flip"], left["emotion"], left["imagePath"]) == (40, 10, 1.3, True, "angry", anna_img)
    and placed["characters"][1]["x"] == 75)
+s, framed_scene = call("PUT", f"/stories/{sid}/scenes/{sc1['id']}", dict(staged, backgroundFocusX=20, backgroundFocusY=80, backgroundZoom=1.6), token=tok)
+s2, _ = call("PUT", f"/stories/{sid}/scenes/{sc1['id']}", dict(staged, backgroundZoom=4), token=tok)
+ok(f"кадр фону сцени збережено, масштаб поза межами відхилено ({s}, {s2})",
+   s == 200 and (framed_scene["backgroundFocusX"], framed_scene["backgroundFocusY"], framed_scene["backgroundZoom"]) == (20, 80, 1.6) and s2 == 400)
+s, overview = call("GET", "/studio/overview", token=tok)
+ok(f"робочий стіл автора: остання історія і кількість реплік ({s})",
+   s == 200 and overview["recentStories"][0]["story"]["id"] == sid and overview["recentStories"][0]["totalLines"] == 2 and overview["storyCount"] == 1)
 bad = dict(scene, characters=[{"position": "Right", "storyCharacterId": guard["id"], "emotion": "angry"}])
 s, _ = call("PUT", f"/stories/{sid}/scenes/{sc1['id']}", bad, token=tok)
 bad = dict(scene, characters=[{"position": "Left", "storyCharacterId": anna["id"], "x": 150}])
@@ -210,6 +220,10 @@ else:
     ok(f"живий аналіз: рівень, складне слово і простіший відповідник ({s})",
        s == 200 and live["results"][0]["level"] in ["A1", "A2", "B1", "B2", "C"]
        and purchased.get("aboveTarget") and "buy" in purchased.get("simpler", []) and live["results"][1]["tooShort"])
+    s, calibration = call("GET", "/ml/calibration", token=tok)
+    ok(f"таблиця впевненості моделі: межі й червоний від 80% ({s})",
+       s == 200 and calibration["redFrom"] == 0.8 and calibration["scales"]["dialogue"]["edges"][-1] == 2.5
+       and len(calibration["scales"]["narration"]["bins"]) == 7)
     s, rated_scene = call("GET", f"/stories/{sid}/scenes/{sc1['id']}", token=tok)
     ok(f"репліки отримали рівень під час збереження ({s})", s == 200 and all(line["level"] for line in rated_scene["lines"]))
 s, _ = call("POST", "/stories", {"title": "X", "level": "A1", "priceCrystals": 0})
@@ -227,6 +241,79 @@ ok(f"учень не може редагувати сцену ({s})", s == 403)
 s, _ = call("DELETE", f"/stories/{sid}/scenes/{sc2['id']}", token=tok)
 s2, after = call("GET", f"/stories/{sid}", token=tok)
 ok(f"видалення сцени обнуляє вибір, що вів до неї ({s})", s == 204 and after["scenes"][0]["choices"][0]["nextSceneId"] is None)
+free_choice, paid_choice = after["scenes"][0]["choices"][0]["id"], after["scenes"][0]["choices"][1]["id"]
+
+
+def sql(statement):
+    subprocess.run(["docker", "compose", "exec", "-T", "postgres", "sh", "-c",
+                    'psql -q -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "$0"', statement], check=True, capture_output=True)
+
+
+def play(token, choice=None):
+    _, session = call("POST", f"/play/{sid}/start", token=token)
+    spent = None
+    if choice:
+        _, result = call("POST", f"/play/sessions/{session['sessionId']}/choice", {"choiceId": choice}, token=token)
+        spent = result
+    _, summary = call("POST", f"/play/sessions/{session['sessionId']}/finish", token=token)
+    return session, spent, summary
+
+
+s, wallet = call("GET", "/wallet", token=st)
+s2, history = call("GET", "/wallet/transactions", token=st)
+ok(f"новий учень має вітальні 50 кристалів і нульову серію ({s}, {s2})",
+   s == 200 and wallet["balance"] == 50 and wallet["streak"]["current"] == 0 and history[0]["reason"] == "WelcomeBonus")
+s, access = call("GET", f"/play/{sid}/access", token=st)
+ok(f"безкоштовна історія доступна, нагорода за A2 — 12 ({s})", s == 200 and access["owned"] and access["reward"] == 12 and not access["free"])
+session, choice_result, summary = play(st, paid_choice)
+ok(f"платний вибір списує 10 кристалів ({choice_result})", choice_result["spent"] == 10 and choice_result["balance"] == 40)
+ok(f"перше проходження: +12 за історію, +5 щоденна ціль, серія 1 ({summary['rewards']})",
+   summary["completed"] and sorted(r["amount"] for r in summary["rewards"]) == [5, 12] and summary["balance"] == 57 and summary["streak"]["current"] == 1)
+s, wallet = call("GET", "/wallet", token=st)
+today_cell = [d for d in wallet["week"] if d["isToday"]]
+ok(f"тиждень серії: 7 днів, сьогодні виконано ({s})", len(wallet["week"]) == 7 and len(today_cell) == 1 and today_cell[0]["state"] == "Done")
+s, recent = call("GET", "/play/recent", token=st)
+ok(f"нещодавні історії учня ({s})", s == 200 and recent[0]["story"]["id"] == sid and recent[0]["completed"])
+session, choice_result, summary = play(st, paid_choice)
+ok(f"куплений вибір не списується вдруге, повтор історії без нагороди ({choice_result['spent']}, {summary['rewards']})",
+   paid_choice in session["purchasedChoiceIds"] and choice_result["spent"] == 0 and summary["rewards"] == [] and summary["balance"] == 57)
+_, _, summary = play(st)
+ok(f"незавершене проходження не дає нагороди ({summary['completed']})", not summary["completed"] and summary["rewards"] == [])
+s, wallet_a = call("GET", "/wallet", token=tok)
+_, choice_result, summary = play(tok, paid_choice)
+s2, wallet_a2 = call("GET", "/wallet", token=tok)
+ok("автор у своїй історії нічого не платить і не заробляє",
+   summary["free"] and choice_result["spent"] == 0 and summary["rewards"] == [] and wallet_a["balance"] == wallet_a2["balance"])
+call("PUT", f"/stories/{sid}", {"title": "Lost at the Station", "level": "A2", "priceCrystals": 100, "tagIds": [1, 8], "words": story["words"]}, token=tok)
+s, access = call("GET", f"/play/{sid}/access", token=st)
+s2, _ = call("POST", f"/play/{sid}/start", token=st)
+s3, _ = call("POST", f"/play/{sid}/purchase", token=st)
+ok(f"платну історію не можна почати без покупки, на 100 не вистачає ({s2}, {s3})", not access["owned"] and s2 == 402 and s3 == 409)
+call("PUT", f"/stories/{sid}", {"title": "Lost at the Station", "level": "A2", "priceCrystals": 50, "tagIds": [1, 8], "words": story["words"]}, token=tok)
+s, bought = call("POST", f"/play/{sid}/purchase", token=st)
+s2, bought_again = call("POST", f"/play/{sid}/purchase", token=st)
+s3, _ = call("POST", f"/play/{sid}/start", token=st)
+ok(f"купівля за 50 один раз, далі історія доступна ({s}, {s2}, {s3})",
+   s == 200 and bought["owned"] and bought["balance"] == 7 and bought_again["balance"] == 7 and s3 == 200)
+s, _ = call("POST", "/wallet/streak/rescue", token=st)
+ok(f"відновлювати нічого, коли серія не обірвана ({s})", s == 409)
+student_id = student["user"]["id"]
+sql(f"""UPDATE "Streaks" SET "CurrentDays" = 6, "LastActiveDate" = (now() at time zone 'Europe/Kyiv')::date - 2 WHERE "UserId" = '{student_id}'""")
+s, wallet = call("GET", "/wallet", token=st)
+s2, _ = call("POST", "/wallet/streak/rescue", token=st)
+ok(f"пропущений день: серія 0, можна відновити 6 днів, але 7 кристалів замало ({s2})",
+   wallet["streak"]["current"] == 0 and wallet["streak"]["rescueDays"] == 6 and s2 == 409)
+sql(f"""UPDATE "Users" SET "CrystalBalance" = 100 WHERE "Id" = '{student_id}'""")
+s, rescued = call("POST", "/wallet/streak/rescue", token=st)
+ok(f"відновлення за 20 повертає 6 днів ({s})",
+   s == 200 and rescued["wallet"]["streak"]["current"] == 6 and not rescued["wallet"]["streak"]["playedToday"] and rescued["wallet"]["balance"] == 80)
+_, _, summary = play(st, free_choice)
+ok(f"проходження сьогодні: серія 7, щоденна ціль +5 і бонус за 7 днів +30 ({summary['rewards']})",
+   summary["streak"]["current"] == 7 and sorted(r["amount"] for r in summary["rewards"]) == [5, 30] and summary["balance"] == 115)
+sql(f"""UPDATE "Streaks" SET "CurrentDays" = 4, "LastActiveDate" = (now() at time zone 'Europe/Kyiv')::date - 3, "RescuableDays" = 0, "RescuableUntil" = NULL WHERE "UserId" = '{student_id}'""")
+s, wallet = call("GET", "/wallet", token=st)
+ok(f"два пропущені дні: серія обнуляється без відновлення ({s})", wallet["streak"]["current"] == 0 and wallet["streak"]["rescueDays"] == 0)
+call("PUT", f"/stories/{sid}", {"title": "Lost at the Station", "level": "A2", "priceCrystals": 0, "tagIds": [1, 8], "words": story["words"]}, token=tok)
 s, _ = call("POST", "/auth/register", {"email": f"t{sfx}@test.local", "username": f"t_{sfx}", "password": "secret-pass-1", "displayName": "Teacher", "role": "Teacher"})
 ok(f"роль Teacher під час реєстрації не існує ({s})", s == 400)
 s, _ = call("POST", "/auth/register", {"email": f"other{sfx}@test.local", "username": f"student_{sfx}", "password": "secret-pass-1", "displayName": "Other", "role": "Student"})

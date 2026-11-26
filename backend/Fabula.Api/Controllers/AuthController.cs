@@ -1,6 +1,7 @@
 using Fabula.Api.Auth;
 using Fabula.Api.Contracts;
 using Fabula.Api.Data;
+using Fabula.Api.Economy;
 using Fabula.Api.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +13,7 @@ namespace Fabula.Api.Controllers;
 [ApiController]
 [Route("api/auth")]
 [EnableRateLimiting(RateLimits.Auth)]
-public class AuthController(FabulaDbContext db, TokenService tokens, PasswordResetService passwordReset) : ControllerBase
+public class AuthController(FabulaDbContext db, TokenService tokens, PasswordResetService passwordReset, WalletService wallet, EconomySettings economy) : ControllerBase
 {
     private static readonly UserRole[] SelfRegisterRoles = [UserRole.Student, UserRole.Author];
 
@@ -47,6 +48,11 @@ public class AuthController(FabulaDbContext db, TokenService tokens, PasswordRes
             Streak = new Streak()
         };
         db.Users.Add(user);
+        if (economy.WelcomeBonus > 0)
+        {
+            wallet.Add(user, economy.WelcomeBonus, TransactionReason.WelcomeBonus);
+        }
+
         await db.SaveChangesAsync(cancellationToken);
         return Ok(new AuthResponse(tokens.Create(user), UserDto.From(user, isTeacher: false)));
     }

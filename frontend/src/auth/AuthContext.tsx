@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { api, tokenStore } from '../api/client'
+import { api, ApiError, tokenStore } from '../api/client'
 import type { AuthResponse, User } from '../api/types'
 import { AuthContext, type AuthState } from './useAuth'
+
+const isSignedOut = (caught: unknown) => caught instanceof ApiError && (caught.status === 401 || caught.status === 404)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
@@ -11,9 +13,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!tokenStore.get()) return
     try {
       setUser(await api<User>('/auth/me'))
-    } catch {
-      tokenStore.clear()
-      setUser(null)
+    } catch (caught) {
+      if (isSignedOut(caught)) {
+        tokenStore.clear()
+        setUser(null)
+      }
     }
   }, [])
 
@@ -21,7 +25,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!tokenStore.get()) return
     api<User>('/auth/me')
       .then(setUser)
-      .catch(() => tokenStore.clear())
+      .catch((caught) => {
+        if (isSignedOut(caught)) tokenStore.clear()
+      })
       .finally(() => setLoading(false))
   }, [])
 

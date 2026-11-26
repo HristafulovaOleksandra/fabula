@@ -23,7 +23,9 @@ class CefrModel:
         checkpoint = torch.load(settings.MODELS_DIR / final["file"], map_location="cpu", weights_only=False)
         self.name = final["model"]
         self.levels: list[str] = final["levels"]
-        self.thresholds = np.asarray(final["thresholds"], dtype=np.float64)
+        thresholds = list(final["thresholds"])
+        thresholds[-1] = max(thresholds[-1], settings.MIN_DIALOGUE_C_THRESHOLD)
+        self.thresholds = np.asarray(thresholds, dtype=np.float64)
         self.feature_names: list[str] = checkpoint["features"]
         self.max_length: int = checkpoint["max_length"]
         self.scaler = FeatureScaler.from_dict(checkpoint["scaler"])

@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api, ApiError } from '../api/client'
-import type { StoryDetail } from '../api/types'
+import type { StoryAccess, StoryDetail } from '../api/types'
+import { notifyWalletChanged } from '../api/wallet'
 import { useAuth } from '../auth/useAuth'
-import { Mascot } from '../components/Brand'
+import { Crystals, Mascot } from '../components/Brand'
 import { StoryCover } from '../components/StoryCover'
 import styles from './StoryIntroPage.module.css'
 
@@ -13,12 +14,22 @@ export function StoryIntroPage() {
   const navigate = useNavigate()
   const [story, setStory] = useState<StoryDetail | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [access, setAccess] = useState<StoryAccess | null>(null)
+  const [confirming, setConfirming] = useState(false)
+  const [buyError, setBuyError] = useState<string | null>(null)
 
   useEffect(() => {
     api<StoryDetail>(`/stories/${storyId}`)
       .then(setStory)
       .catch((caught) => setError(caught instanceof ApiError && caught.status === 404 ? 'Історію не знайдено.' : 'Не вдалося завантажити історію.'))
   }, [storyId])
+
+  useEffect(() => {
+    if (!user) return
+    api<StoryAccess>(`/play/${storyId}/access`)
+      .then(setAccess)
+      .catch(() => setAccess(null))
+  }, [storyId, user])
 
   if (error) {
     return (
@@ -34,6 +45,57 @@ export function StoryIntroPage() {
 
   const start = () => (user ? navigate(`/play/${story.id}`) : navigate('/login', { state: { from: `/play/${story.id}` } }))
 
+  const purchase = async () => {
+    setBuyError(null)
+    try {
+      setAccess(await api<StoryAccess>(`/play/${story.id}/purchase`, { method: 'POST' }))
+      setConfirming(false)
+      notifyWalletChanged()
+    } catch (caught) {
+      setBuyError(caught instanceof ApiError ? caught.message : 'Не вдалося купити історію.')
+    }
+  }
+
+  const locked = user !== null && access !== null && !access.owned
+
+  const action = !user ? (
+    <button className="btn" onClick={start}>
+      Увійти й почати
+    </button>
+  ) : locked && access ? (
+    <div className={styles.buy}>
+      {!confirming ? (
+        <button className="btn" onClick={() => setConfirming(true)}>
+          Купити за <Crystals amount={access.price} />
+        </button>
+      ) : (
+        <>
+          <p>
+            Списати {access.price} кристалів? Після покупки історія лишається твоєю назавжди. У тебе {access.balance}.
+          </p>
+          <div className={styles.buyActions}>
+            <button className="btn" onClick={purchase} disabled={access.balance < access.price}>
+              Так, купити
+            </button>
+            <button className="btn btn-ghost" onClick={() => setConfirming(false)}>
+              Скасувати
+            </button>
+          </div>
+        </>
+      )}
+      {access.balance < access.price && (
+        <p className={styles.small}>
+          Не вистачає {access.price - access.balance} кристалів. Проходь безкоштовні історії й виконуй щоденну ціль, щоб заробити.
+        </p>
+      )}
+      {buyError && <p className="error-text">{buyError}</p>}
+    </div>
+  ) : (
+    <button className="btn" onClick={start}>
+      Почати історію
+    </button>
+  )
+
   return (
     <div className={`page ${styles.layout}`}>
       <section className={`sticker ${styles.info}`}>
@@ -48,10 +110,18 @@ export function StoryIntroPage() {
         </div>
         <h1>{story.title}</h1>
         {story.description && <p>{story.description}</p>}
-        <p className={styles.small}>{story.scenes.length} сцен</p>
-        <button className="btn" onClick={start}>
-          {user ? 'Почати історію' : 'Увійти й почати'}
-        </button>
+        <p className={styles.small}>
+          {story.scenes.length} сцен
+          {story.priceCrystals > 0 && (
+            <>
+              {' · '}
+              {access?.owned && !access.free ? 'куплено' : <Crystals amount={story.priceCrystals} />}
+            </>
+          )}
+          {access && access.reward > 0 && <> · за перше проходження +{access.reward} кристалів</>}
+          {access?.completed && <> · уже пройдено</>}
+        </p>
+        {action}
       </section>
 
       <section className={`sticker ${styles.words}`}>

@@ -1,17 +1,33 @@
-import type { CefrLevel, StoryDetail } from '../../api/types'
-import { isAboveLevel, LEVEL_ORDER } from './lineAnalysis'
+import type { StoryDetail } from '../../api/types'
+import { aboveTarget, aboveTitle, useCalibration } from './certainty'
+import { LEVEL_ORDER } from './lineAnalysis'
 import { storyIssues } from './storyIssues'
 import styles from './Editor.module.css'
 
 function LevelSummary({ story, onOpenScene }: { story: StoryDetail; onOpenScene: (sceneId: string) => void }) {
+  const calibration = useCalibration()
   const lines = story.scenes.flatMap((scene) => scene.lines.map((line) => ({ scene, line })))
   const checked = lines.filter(({ line }) => line.levelChecked)
-  const rated = checked.filter(({ line }) => line.level !== null)
+  const rated = checked
+    .filter(({ line }) => line.level !== null)
+    .map((item) => ({ ...item, above: aboveTarget(calibration, item.line.level, item.line.levelScore, !item.line.speaker, story.level) }))
   const short = checked.length - rated.length
   const pending = lines.length - checked.length
-  const above = rated.filter(({ line }) => isAboveLevel(line.level, story.level))
+  const above = rated
+    .filter((item) => item.above !== null)
+    .sort((a, b) => (a.above?.kind === b.above?.kind ? 0 : a.above?.kind === 'sure' ? -1 : 1))
+  const sure = above.filter((item) => item.above?.kind === 'sure').length
+  const maybe = above.length - sure
   const share = checked.length === 0 ? 0 : Math.round((above.length / checked.length) * 100)
-  const counts = LEVEL_ORDER.map((level) => ({ level, count: rated.filter(({ line }) => line.level === level).length }))
+  const counts = LEVEL_ORDER.map((level) => {
+    const atLevel = rated.filter(({ line }) => line.level === level)
+    return {
+      level,
+      count: atLevel.length,
+      sure: atLevel.filter((item) => item.above?.kind === 'sure').length,
+      maybe: atLevel.filter((item) => item.above?.kind === 'maybe').length,
+    }
+  })
   const max = Math.max(1, ...counts.map((c) => c.count))
 
   return (
@@ -23,22 +39,39 @@ function LevelSummary({ story, onOpenScene }: { story: StoryDetail; onOpenScene:
         <>
           <p className={styles.levelVerdict}>
             Складніших за <b>{story.level}</b>: <b className={share > 0 ? styles.verdictBad : undefined}>{above.length}</b> з {checked.length} реплік
-            історії ({share}%).
+            історії ({share}%)
+            {above.length > 0 && (
+              <>
+                {' '}
+                — <span className={styles.sureText}>точно: {sure}</span>, <span className={styles.maybeText}>можливо: {maybe}</span>
+              </>
+            )}
+            .
           </p>
           <div className={styles.levelBars}>
-            {counts.map(({ level, count }) => (
-              <div key={level} className={styles.levelBar}>
-                <span className={styles.levelBarTrack}>
-                  <span
-                    className={`${styles.levelBarFill} ${isAboveLevel(level as CefrLevel, story.level) ? styles.levelBarAbove : ''}`}
-                    style={{ height: `${(count / max) * 100}%` }}
-                  />
-                </span>
-                <b>{count}</b>
-                <span>{level}</span>
-              </div>
-            ))}
+            {counts.map(({ level, count, sure: sureCount, maybe: maybeCount }) => {
+              const plain = count - sureCount - maybeCount
+              return (
+                <div key={level} className={styles.levelBar}>
+                  <span className={styles.levelBarTrack}>
+                    <span className={styles.levelBarStack} style={{ height: `${(count / max) * 100}%` }}>
+                      {sureCount > 0 && <span className={styles.levelBarAbove} style={{ flexGrow: sureCount }} />}
+                      {maybeCount > 0 && <span className={styles.levelBarMaybe} style={{ flexGrow: maybeCount }} />}
+                      {plain > 0 && <span className={styles.levelBarFill} style={{ flexGrow: plain }} />}
+                    </span>
+                  </span>
+                  <b>{count}</b>
+                  <span>{level}</span>
+                </div>
+              )
+            })}
           </div>
+          {above.length > 0 && (
+            <p className={styles.legend}>
+              <span className={styles.legendSure} /> модель права в 80% і більше таких випадків
+              <span className={styles.legendMaybe} /> менше 80% — варто перечитати самому
+            </p>
+          )}
           {short > 0 && (
             <p className={styles.hint}>
               Коротких реплік (1–2 слова): {short} — модель їх не оцінює, у статистиці вони рахуються як нескладні.
@@ -47,9 +80,14 @@ function LevelSummary({ story, onOpenScene }: { story: StoryDetail; onOpenScene:
           {pending > 0 && <p className={styles.hint}>Ще оцінюються: {pending}. Онови сторінку за хвилину.</p>}
           {above.length > 0 && (
             <ul className={styles.aboveList}>
-              {above.map(({ scene, line }) => (
+              {above.map(({ scene, line, above: mark }) => (
                 <li key={line.id ?? `${scene.id}-${line.text}`}>
-                  <span className={`${styles.levelBadge} ${styles.levelAbove}`}>{line.level}</span>
+                  <span
+                    className={`${styles.levelBadge} ${mark?.kind === 'maybe' ? styles.levelMaybe : styles.levelAbove}`}
+                    title={mark ? `Рівень за моделлю: ${line.level} – ${aboveTitle(mark, story.level)}` : undefined}
+                  >
+                    {line.level}
+                  </span>
                   <button type="button" className={styles.linkButton} onClick={() => onOpenScene(scene.id)}>
                     {scene.title}
                   </button>

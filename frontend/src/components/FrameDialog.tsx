@@ -9,11 +9,12 @@ interface FrameDialogProps {
   imagePath: string
   initial: Framing
   round?: boolean
+  aspect?: string
   onApply: (framing: Framing) => void
   onClose: () => void
 }
 
-export function FrameDialog({ title, imagePath, initial, round = false, onApply, onClose }: FrameDialogProps) {
+export function FrameDialog({ title, imagePath, initial, round = false, aspect, onApply, onClose }: FrameDialogProps) {
   const [draft, setDraft] = useState(initial)
   const drag = useRef<{ x: number; y: number; focusX: number; focusY: number } | null>(null)
 
@@ -56,6 +57,7 @@ export function FrameDialog({ title, imagePath, initial, round = false, onApply,
         <h3>{title}</h3>
         <div
           className={`${styles.frame} ${round ? styles.round : ''}`}
+          style={aspect ? { aspectRatio: aspect } : undefined}
           onPointerDown={start}
           onPointerMove={move}
           onPointerUp={stop}

@@ -16,6 +16,12 @@ export function framedImageStyle(framing: Framing): CSSProperties {
   return { objectPosition: position, transformOrigin: position, transform: `scale(${framing.zoom})` }
 }
 
+export function sceneBackgroundFraming(scene: { backgroundFocusX: number; backgroundFocusY: number; backgroundZoom: number }): Framing {
+  return { focusX: scene.backgroundFocusX, focusY: scene.backgroundFocusY, zoom: scene.backgroundZoom }
+}
+
+export const SCENE_FRAME_ASPECT = '16 / 9'
+
 export function coverImageStyle(framing: CoverFraming): CSSProperties {
   return framedImageStyle({ focusX: framing.coverFocusX, focusY: framing.coverFocusY, zoom: framing.coverZoom })
 }

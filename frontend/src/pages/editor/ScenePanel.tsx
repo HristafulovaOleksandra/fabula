@@ -7,12 +7,17 @@ import { PriceInput } from './PriceInput'
 import { SaveStatusLine } from './SaveStatusLine'
 import { useAutosave } from './useAutosave'
 import { StageEditor } from './StageEditor'
+import { CENTERED_FRAMING, SCENE_FRAME_ASPECT, sceneBackgroundFraming } from '../../components/coverFraming'
+import { FrameDialog } from '../../components/FrameDialog'
 import styles from './Editor.module.css'
 
 function toSceneForm(scene: Scene): SceneForm {
   return {
     title: scene.title,
     backgroundId: scene.backgroundId,
+    backgroundFocusX: scene.backgroundFocusX,
+    backgroundFocusY: scene.backgroundFocusY,
+    backgroundZoom: scene.backgroundZoom,
     characters: scene.characters.map((c) => ({
       position: c.position,
       storyCharacterId: c.storyCharacterId,
@@ -66,6 +71,7 @@ export function ScenePanel({ story, economy, scene, onSaved, onDirtyChange, onDe
   const [form, setForm] = useState(baseline)
   const [backgrounds, setBackgrounds] = useState<Background[]>([])
   const [uploadError, setUploadError] = useState<string | null>(null)
+  const [framingBackground, setFramingBackground] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
 
   const autosave = useAutosave({
@@ -101,6 +107,14 @@ export function ScenePanel({ story, economy, scene, onSaved, onDirtyChange, onDe
   }, [scene.lines, story.level])
 
   const update = (next: SceneForm) => setForm(next)
+  const chooseBackground = (backgroundId: string | null) =>
+    update({
+      ...form,
+      backgroundId,
+      backgroundFocusX: CENTERED_FRAMING.focusX,
+      backgroundFocusY: CENTERED_FRAMING.focusY,
+      backgroundZoom: CENTERED_FRAMING.zoom,
+    })
 
   const castName = (id: string) => story.characters.find((c) => c.id === id)?.name ?? ''
 
@@ -113,7 +127,8 @@ export function ScenePanel({ story, economy, scene, onSaved, onDirtyChange, onDe
       const name = file.name.replace(/\.[^.]+$/, '').slice(0, 100) || 'Фон'
       const background = await studio.uploadBackground(name, file)
       setBackgrounds((list) => [...list, background])
-      update({ ...form, backgroundId: background.id })
+      chooseBackground(background.id)
+      setFramingBackground(true)
     } catch (caught) {
       setUploadError(errorText(caught))
     } finally {
@@ -122,6 +137,7 @@ export function ScenePanel({ story, economy, scene, onSaved, onDirtyChange, onDe
   }
 
   const otherScenes = story.scenes.filter((s) => s.id !== scene.id)
+  const backgroundPath = backgrounds.find((b) => b.id === form.backgroundId)?.imagePath ?? null
 
   return (
     <div className={styles.panel}>
@@ -139,7 +155,7 @@ export function ScenePanel({ story, economy, scene, onSaved, onDirtyChange, onDe
           <button
             type="button"
             className={`${styles.backgroundTile} ${form.backgroundId === null ? styles.tileOn : ''}`}
-            onClick={() => update({ ...form, backgroundId: null })}
+            onClick={() => chooseBackground(null)}
           >
             <span className={styles.noBackground}>Без фону</span>
           </button>
@@ -149,7 +165,7 @@ export function ScenePanel({ story, economy, scene, onSaved, onDirtyChange, onDe
               key={background.id}
               title={background.name}
               className={`${styles.backgroundTile} ${form.backgroundId === background.id ? styles.tileOn : ''}`}
-              onClick={() => update({ ...form, backgroundId: background.id })}
+              onClick={() => form.backgroundId !== background.id && chooseBackground(background.id)}
             >
               <img src={background.imagePath} alt={background.name} />
             </button>
@@ -160,6 +176,24 @@ export function ScenePanel({ story, economy, scene, onSaved, onDirtyChange, onDe
         </div>
         <input ref={fileInput} type="file" accept="image/png,image/jpeg,image/webp" hidden onChange={(e) => uploadBackground(e.target.files?.[0])} />
         {uploadError && <small className="error-text">{uploadError}</small>}
+        {backgroundPath && (
+          <button type="button" className={`btn btn-ghost ${styles.frameButton}`} onClick={() => setFramingBackground(true)}>
+            Редагувати фон
+          </button>
+        )}
+        {framingBackground && backgroundPath && (
+          <FrameDialog
+            title="Редагувати фон сцени"
+            imagePath={backgroundPath}
+            aspect={SCENE_FRAME_ASPECT}
+            initial={sceneBackgroundFraming(form)}
+            onClose={() => setFramingBackground(false)}
+            onApply={(next) => {
+              update({ ...form, backgroundFocusX: next.focusX, backgroundFocusY: next.focusY, backgroundZoom: next.zoom })
+              setFramingBackground(false)
+            }}
+          />
+        )}
       </fieldset>
 
       <fieldset className={styles.fieldset}>
@@ -169,7 +203,8 @@ export function ScenePanel({ story, economy, scene, onSaved, onDirtyChange, onDe
         ) : (
           <StageEditor
             cast={story.characters}
-            backgroundPath={backgrounds.find((b) => b.id === form.backgroundId)?.imagePath ?? null}
+            backgroundPath={backgroundPath}
+            backgroundFraming={sceneBackgroundFraming(form)}
             placements={form.characters}
             onChange={(characters) => update({ ...form, characters })}
           />

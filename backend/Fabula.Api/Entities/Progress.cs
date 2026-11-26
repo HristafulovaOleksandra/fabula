@@ -37,6 +37,7 @@ public class Transaction
     public int Amount { get; set; }
     public TransactionReason Reason { get; set; }
     public Guid? StoryId { get; set; }
+    public Guid? ChoiceId { get; set; }
     public DateTime CreatedAt { get; set; }
 }
 
@@ -46,7 +47,8 @@ public class Streak
     public int CurrentDays { get; set; }
     public int LongestDays { get; set; }
     public DateOnly? LastActiveDate { get; set; }
-    public int FreezesAvailable { get; set; }
+    public int RescuableDays { get; set; }
+    public DateOnly? RescuableUntil { get; set; }
 }
 
 public class TeachingLink

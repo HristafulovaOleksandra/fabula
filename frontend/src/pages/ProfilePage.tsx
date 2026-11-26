@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ApiError } from '../api/client'
+import { api, ApiError } from '../api/client'
 import { profileApi } from '../api/profile'
-import type { NameVisibility, PublicUser, TeachingLink, User } from '../api/types'
+import type { NameVisibility, PublicUser, TeachingLink, User, WalletTransaction } from '../api/types'
+import { REASON_LABELS, useWallet } from '../api/wallet'
+import { Crystals } from '../components/Brand'
+import { StreakWeek } from '../components/StreakWeek'
 import { useAuth } from '../auth/useAuth'
 import { Avatar } from '../components/Avatar'
 import type { Framing } from '../components/coverFraming'
@@ -138,7 +141,6 @@ function NameSection({ user, onChanged }: { user: User; onChanged: () => Promise
   return (
     <form className={`sticker ${styles.card}`} onSubmit={save}>
       <h2>Ім'я</h2>
-      <p className={styles.hint}>Нік «{user.username}» бачать усі. Справжнє ім'я — лише ті, кому ти дозволиш.</p>
       <div className={styles.row}>
         <label className="field">
           Ім'я
@@ -436,7 +438,6 @@ function StudentsSection({ onChanged }: { onChanged: () => Promise<void> }) {
   return (
     <section className={`sticker ${styles.card}`}>
       <h2>Мої учні</h2>
-      <p className={styles.hint}>Коли хоча б один учень прийме запрошення, у тебе з'явиться бейдж «Викладач».</p>
       <PeopleList
         empty="Поки немає учнів."
         people={(links ?? []).map((link) => ({
@@ -531,6 +532,44 @@ function DeleteSection() {
   )
 }
 
+function WalletSection() {
+  const wallet = useWallet(true)
+  const [history, setHistory] = useState<WalletTransaction[] | null>(null)
+
+  useEffect(() => {
+    api<WalletTransaction[]>('/wallet/transactions').then(setHistory).catch(() => setHistory([]))
+  }, [wallet?.balance])
+
+  if (!wallet) return null
+
+  return (
+    <section id="wallet" className={`sticker ${styles.card}`}>
+      <h2>Кристали і серія</h2>
+      <p className={styles.walletBalance}>
+        На рахунку: <Crystals amount={wallet.balance} size={22} />
+      </p>
+      <StreakWeek wallet={wallet} />
+      {history && history.length > 0 && (
+        <ul className={styles.history}>
+          {history.map((item) => (
+            <li key={item.id}>
+              <span>
+                {REASON_LABELS[item.reason]}
+                {item.storyTitle && <small> · {item.storyTitle}</small>}
+              </span>
+              <time dateTime={item.createdAt}>{new Date(item.createdAt).toLocaleDateString('uk-UA')}</time>
+              <b className={item.amount > 0 ? styles.plus : styles.minus}>
+                {item.amount > 0 ? '+' : '−'}
+                {Math.abs(item.amount)}
+              </b>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  )
+}
+
 export function ProfilePage() {
   const { user, refresh } = useAuth()
   if (!user) return null
@@ -538,6 +577,7 @@ export function ProfilePage() {
   return (
     <div className={`page ${styles.page}`}>
       <AvatarSection user={user} onChanged={refresh} />
+      <WalletSection />
       <NameSection key={`${user.displayName}-${user.nameVisibility}`} user={user} onChanged={refresh} />
       {user.role === 'Student' ? <TeachersSection onChanged={refresh} /> : <StudentsSection onChanged={refresh} />}
       <FollowsSection />

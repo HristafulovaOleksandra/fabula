@@ -307,13 +307,18 @@
 }
 
 .backgroundGrid {
+  --tile-height: 96px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  grid-auto-rows: var(--tile-height);
   gap: 10px;
+  max-height: calc(var(--tile-height) * 2 + 10px + 8px);
+  overflow-y: auto;
+  padding: 4px;
+  margin: -4px;
 }
 
 .backgroundTile {
-  aspect-ratio: 16 / 10;
   padding: 0;
   border: var(--line) solid var(--color-primary);
   border-radius: var(--radius-sm);
@@ -354,6 +359,7 @@
 .slot {
   display: grid;
   gap: 8px;
+  align-content: start;
 }
 
 .lineRow {
@@ -760,6 +766,12 @@
   color: var(--color-paper);
 }
 
+.levelMaybe {
+  background: var(--color-warning);
+  border-color: var(--color-warning);
+  color: var(--color-text);
+}
+
 .levelMuted {
   border-style: dashed;
   border-color: var(--color-text-soft);
@@ -864,15 +876,62 @@
   border-bottom: var(--line) solid var(--color-primary);
 }
 
-.levelBarFill {
+.levelBarStack {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   min-height: 2px;
   border-radius: 6px 6px 0 0;
+  overflow: hidden;
+}
+
+.levelBarFill {
+  min-height: 2px;
   background: var(--color-primary);
 }
 
 .levelBarAbove {
+  min-height: 2px;
   background: var(--color-accent);
+}
+
+.levelBarMaybe {
+  min-height: 2px;
+  background: var(--color-warning);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  margin: 10px 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text-soft);
+}
+
+.legendSure,
+.legendMaybe {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  background: var(--color-accent);
+}
+
+.legendMaybe {
+  margin-left: 8px;
+  background: var(--color-warning);
+}
+
+.sureText {
+  color: var(--color-accent);
+  font-weight: 800;
+}
+
+.maybeText {
+  color: var(--color-warning-text);
+  font-weight: 800;
 }
 
 .aboveList {
@@ -975,4 +1034,26 @@
 .sentenceAbove {
   border-color: var(--color-accent);
   color: var(--color-accent);
+}
+
+.sentenceMaybe {
+  border-color: var(--color-warning);
+  color: var(--color-warning-text);
+}
+
+.stageBackground {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+}
+
+.frameButton {
+  justify-self: start;
+  margin-top: 10px;
+  min-height: 36px;
+  padding: 4px 14px;
 }

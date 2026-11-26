@@ -102,6 +102,9 @@ public class ScenesController(FabulaDbContext db, EconomySettings economy, MlCli
 
         scene.Title = request.Title.Trim();
         scene.BackgroundId = request.BackgroundId;
+        scene.BackgroundFocusX = request.BackgroundFocusX;
+        scene.BackgroundFocusY = request.BackgroundFocusY;
+        scene.BackgroundZoom = request.BackgroundZoom;
         db.Characters.AddRange(request.Characters.Select(c => new Character
         {
             SceneId = scene.Id,

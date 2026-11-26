@@ -1,3 +1,4 @@
+import json
 from contextlib import asynccontextmanager
 from functools import lru_cache
 from threading import Lock
@@ -110,6 +111,23 @@ def analyze_one(text: str, target: str, narration: bool) -> LineResult:
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok", "service": "fabula-ml", "model": state["model"].name if "model" in state else "loading"}
+
+
+@app.get("/calibration")
+def calibration() -> dict:
+    model: CefrModel = state["model"]
+    table = json.loads(settings.CERTAINTY_FILE.read_text(encoding="utf-8"))
+    return {
+        "levels": model.levels,
+        "redFrom": table["redFrom"],
+        "scales": {
+            scale: {
+                "edges": model.boundaries(scale == "dialogue")[1:-1],
+                "bins": [{"maxMargin": row["maxMargin"], "certainty": row["certainty"]} for row in table[scale]["bins"]],
+            }
+            for scale in ("dialogue", "narration")
+        },
+    }
 
 
 @app.post("/analyze", response_model=AnalyzeResponse, response_model_by_alias=True)

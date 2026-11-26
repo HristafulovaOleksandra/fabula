@@ -18,6 +18,9 @@ public class Scene
     public int Order { get; set; }
     public Guid? BackgroundId { get; set; }
     public Background? Background { get; set; }
+    public double BackgroundFocusX { get; set; } = 50;
+    public double BackgroundFocusY { get; set; } = 50;
+    public double BackgroundZoom { get; set; } = 1;
 
     public List<Character> Characters { get; set; } = [];
     public List<Line> Lines { get; set; } = [];

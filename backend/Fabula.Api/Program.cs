@@ -49,6 +49,7 @@ builder.Services.AddSingleton(SmtpSettings.FromEnvironment());
 builder.Services.AddSingleton<EmailSender>();
 builder.Services.AddScoped<PasswordResetService>();
 builder.Services.AddScoped<EmailChangeService>();
+builder.Services.AddScoped<WalletService>();
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;

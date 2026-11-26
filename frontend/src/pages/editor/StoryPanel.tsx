@@ -346,7 +346,6 @@ export function StoryPanel({ story, economy, tags, onTagCreated, onSaved, onDirt
       {story.allowedWords.length > 0 && (
         <fieldset className={styles.fieldset}>
           <legend>Дозволені слова ({story.allowedWords.length})</legend>
-          <small className={styles.hint}>Ці слова в репліках цієї історії не підсвічуються як складні.</small>
           <div className={styles.chips}>
             {story.allowedWords.map((word) => (
               <span key={word} className={styles.allowedChip}>

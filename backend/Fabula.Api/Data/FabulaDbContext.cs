@@ -102,6 +102,7 @@ public class FabulaDbContext(DbContextOptions<FabulaDbContext> options) : DbCont
         model.Entity<UserWord>().HasIndex(w => new { w.UserId, w.Lemma }).IsUnique();
         model.Entity<Streak>().HasKey(s => s.UserId);
         model.Entity<Transaction>().HasIndex(t => new { t.UserId, t.CreatedAt });
+        model.Entity<Transaction>().HasIndex(t => new { t.UserId, t.StoryId, t.Reason });
         model.Entity<GameSession>().HasIndex(g => new { g.UserId, g.StoryId });
 
         model.Entity<TeachingLink>(link =>

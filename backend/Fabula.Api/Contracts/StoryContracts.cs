@@ -105,7 +105,10 @@ public record SceneDto(
     string? BackgroundImagePath,
     IReadOnlyList<CharacterDto> Characters,
     IReadOnlyList<LineDto> Lines,
-    IReadOnlyList<ChoiceDto> Choices);
+    IReadOnlyList<ChoiceDto> Choices,
+    double BackgroundFocusX = 50,
+    double BackgroundFocusY = 50,
+    double BackgroundZoom = 1);
 
 public record CreateSceneRequest([Required, MinLength(1), MaxLength(120)] string Title);
 
@@ -114,8 +117,22 @@ public record SceneUpsertRequest(
     Guid? BackgroundId,
     [MaxLength(2)] IReadOnlyList<CharacterDto> Characters,
     [MaxLength(100)] IReadOnlyList<LineDto> Lines,
-    [MaxLength(10)] IReadOnlyList<ChoiceDto> Choices);
+    [MaxLength(10)] IReadOnlyList<ChoiceDto> Choices,
+    [Range(0, 100)] double BackgroundFocusX = 50,
+    [Range(0, 100)] double BackgroundFocusY = 50,
+    [Range(1, 3)] double BackgroundZoom = 1);
 
 public record BackgroundDto(Guid Id, string Name, string ImagePath, bool IsLibrary);
 
 public record UploadResponse(string Path);
+
+public record StudioStoryDto(StorySummaryDto Story, int TotalLines, int UncheckedLines, int HardLines);
+
+public record StudioOverviewDto(
+    IReadOnlyList<StudioStoryDto> RecentStories,
+    int StoryCount,
+    int PublishedCount,
+    int DraftCount,
+    int StudentCount,
+    int PendingInvitationCount,
+    int FollowerCount);

@@ -18,6 +18,15 @@ public class MlController(MlClient ml) : ControllerBase
 {
     private const int MaxTextLength = 500;
 
+    [HttpGet("calibration")]
+    public async Task<ActionResult<System.Text.Json.Nodes.JsonNode>> Calibration(CancellationToken cancellationToken)
+    {
+        var calibration = await ml.CalibrationAsync(cancellationToken);
+        return calibration is null
+            ? Problem("Оцінка рівня тимчасово недоступна: ML-сервіс не відповідає.", statusCode: StatusCodes.Status503ServiceUnavailable)
+            : Ok(calibration);
+    }
+
     [HttpPost("analyze")]
     public async Task<ActionResult<MlAnalysis>> Analyze(AnalyzeTextsRequest request, CancellationToken cancellationToken)
     {

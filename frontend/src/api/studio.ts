@@ -33,6 +33,9 @@ export interface ScenePlacement {
 export interface SceneForm {
   title: string
   backgroundId: string | null
+  backgroundFocusX: number
+  backgroundFocusY: number
+  backgroundZoom: number
   characters: ScenePlacement[]
   lines: { id: string | null; speaker: string | null; text: string }[]
   choices: { id: string | null; text: string; nextSceneId: string | null; priceCrystals: number }[]

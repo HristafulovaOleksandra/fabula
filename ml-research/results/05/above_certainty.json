@@ -1,0 +1,111 @@
+{
+  "redFrom": 0.8,
+  "source": {
+    "dialogue": "300 DailyDialog utterances annotated by the author, M4-final scores, calibrated thresholds with C >= 2.5",
+    "narration": "CEFR-SP validation split, M4-final seeds 42-44, CEFR-SP scale"
+  },
+  "dialogue": {
+    "edges": [
+      0.911,
+      1.2478,
+      1.9034,
+      2.5
+    ],
+    "bins": [
+      {
+        "maxMargin": 0.1,
+        "observed": 0.61,
+        "certainty": 0.61,
+        "count": 77
+      },
+      {
+        "maxMargin": 0.2,
+        "observed": 0.77,
+        "certainty": 0.758,
+        "count": 61
+      },
+      {
+        "maxMargin": 0.3,
+        "observed": 0.737,
+        "certainty": 0.758,
+        "count": 38
+      },
+      {
+        "maxMargin": 0.45,
+        "observed": 0.82,
+        "certainty": 0.82,
+        "count": 50
+      },
+      {
+        "maxMargin": 0.6,
+        "observed": 0.854,
+        "certainty": 0.854,
+        "count": 48
+      },
+      {
+        "maxMargin": 0.8,
+        "observed": 0.941,
+        "certainty": 0.941,
+        "count": 68
+      },
+      {
+        "maxMargin": null,
+        "observed": 0.988,
+        "certainty": 0.988,
+        "count": 170
+      }
+    ]
+  },
+  "narration": {
+    "edges": [
+      0.5,
+      1.5,
+      2.5,
+      3.5
+    ],
+    "bins": [
+      {
+        "maxMargin": 0.1,
+        "observed": 0.55,
+        "certainty": 0.55,
+        "count": 240
+      },
+      {
+        "maxMargin": 0.2,
+        "observed": 0.604,
+        "certainty": 0.604,
+        "count": 283
+      },
+      {
+        "maxMargin": 0.3,
+        "observed": 0.709,
+        "certainty": 0.709,
+        "count": 320
+      },
+      {
+        "maxMargin": 0.45,
+        "observed": 0.774,
+        "certainty": 0.774,
+        "count": 984
+      },
+      {
+        "maxMargin": 0.6,
+        "observed": 0.924,
+        "certainty": 0.924,
+        "count": 1483
+      },
+      {
+        "maxMargin": 0.8,
+        "observed": 0.956,
+        "certainty": 0.956,
+        "count": 706
+      },
+      {
+        "maxMargin": null,
+        "observed": 0.996,
+        "certainty": 0.996,
+        "count": 7546
+      }
+    ]
+  }
+}

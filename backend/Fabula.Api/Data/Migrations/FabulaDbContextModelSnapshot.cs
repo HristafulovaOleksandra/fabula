@@ -364,8 +364,17 @@ namespace Fabula.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<double>("BackgroundFocusX")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("BackgroundFocusY")
+                        .HasColumnType("double precision");
+
                     b.Property<Guid?>("BackgroundId")
                         .HasColumnType("uuid");
+
+                    b.Property<double>("BackgroundZoom")
+                        .HasColumnType("double precision");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
@@ -536,14 +545,17 @@ namespace Fabula.Api.Data.Migrations
                     b.Property<int>("CurrentDays")
                         .HasColumnType("integer");
 
-                    b.Property<int>("FreezesAvailable")
-                        .HasColumnType("integer");
-
                     b.Property<DateOnly?>("LastActiveDate")
                         .HasColumnType("date");
 
                     b.Property<int>("LongestDays")
                         .HasColumnType("integer");
+
+                    b.Property<int>("RescuableDays")
+                        .HasColumnType("integer");
+
+                    b.Property<DateOnly?>("RescuableUntil")
+                        .HasColumnType("date");
 
                     b.HasKey("UserId");
 
@@ -761,6 +773,9 @@ namespace Fabula.Api.Data.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("integer");
 
+                    b.Property<Guid?>("ChoiceId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -778,6 +793,8 @@ namespace Fabula.Api.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("UserId", "CreatedAt");
+
+                    b.HasIndex("UserId", "StoryId", "Reason");
 
                     b.ToTable("Transactions");
                 });

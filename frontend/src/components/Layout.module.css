@@ -48,7 +48,7 @@
   gap: 8px;
   font-weight: 800;
 }
-
+
 .linkButton {
   background: none;
   border: none;
@@ -68,4 +68,28 @@
     gap: 10px;
     font-size: 0.9rem;
   }
+}
+
+.wallet {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+}
+
+.rescue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 10px 20px;
+  background: var(--color-highlight);
+  border-bottom: var(--line) solid var(--color-primary);
+  text-align: center;
+}
+
+.walletItem {
+  display: inline-flex;
+  align-items: center;
 }

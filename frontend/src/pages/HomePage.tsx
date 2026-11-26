@@ -1,11 +1,10 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/useAuth'
 import { Mascot } from '../components/Brand'
+import { AuthorHome, StudentHome } from './HomeDashboards'
 import styles from './HomePage.module.css'
 
-export function HomePage() {
-  const { user } = useAuth()
-
+function GuestHome() {
   return (
     <div className="page">
       <section className={styles.hero}>
@@ -19,11 +18,9 @@ export function HomePage() {
             <Link to="/library" className="btn">
               Почати історію
             </Link>
-            {!user && (
-              <Link to="/register" className="btn btn-ghost">
-                Створити акаунт
-              </Link>
-            )}
+            <Link to="/register" className="btn btn-ghost">
+              Створити акаунт
+            </Link>
           </div>
         </div>
         <Mascot mood="happy" size={240} className={styles.cat} />
@@ -45,4 +42,10 @@ export function HomePage() {
       </section>
     </div>
   )
+}
+
+export function HomePage() {
+  const { user } = useAuth()
+  if (!user) return <GuestHome />
+  return user.role === 'Student' ? <StudentHome user={user} /> : <AuthorHome user={user} />
 }

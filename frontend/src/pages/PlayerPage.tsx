@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api, ApiError } from '../api/client'
-import type { Character, PlaySession, PlaySummary, Scene, StoryDetail, StoryWord } from '../api/types'
-import { Crystals, Mascot } from '../components/Brand'
+import type { Character, ChoiceResult, PlaySession, PlaySummary, Scene, StoryDetail, StoryWord, Wallet } from '../api/types'
+import { notifyWalletChanged, REASON_LABELS } from '../api/wallet'
+import { Crystals, Mascot, StreakFlame } from '../components/Brand'
 import { COVER_COLORS } from '../components/coverColors'
+import { framedImageStyle, sceneBackgroundFraming } from '../components/coverFraming'
 import { placementStyle } from '../components/stageLayout'
+import { findTargetWords } from '../components/targetWords'
 import styles from './PlayerPage.module.css'
 
 type Phase = 'loading' | 'lines' | 'choices' | 'summary' | 'error'
@@ -14,22 +17,13 @@ interface Segment {
   word?: StoryWord
 }
 
-function escapeRegExp(value: string) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-}
-
 function splitByWords(text: string, words: StoryWord[]): Segment[] {
-  if (words.length === 0) return [{ text }]
-  const sorted = [...words].sort((a, b) => b.word.length - a.word.length)
-  const pattern = new RegExp(`\\b(${sorted.map((w) => escapeRegExp(w.word)).join('|')})(s|es|ed|d|ing)?\\b`, 'gi')
   const segments: Segment[] = []
   let last = 0
-  for (const match of text.matchAll(pattern)) {
-    const index = match.index ?? 0
-    if (index > last) segments.push({ text: text.slice(last, index) })
-    const word = sorted.find((w) => w.word.toLowerCase() === match[1].toLowerCase())
-    segments.push({ text: match[0], word })
-    last = index + match[0].length
+  for (const match of findTargetWords(text, words.map((w) => w.word))) {
+    if (match.start > last) segments.push({ text: text.slice(last, match.start) })
+    segments.push({ text: text.slice(match.start, match.end), word: words.find((w) => w.word.trim() === match.word) })
+    last = match.end
   }
   if (last < text.length) segments.push({ text: text.slice(last) })
   return segments
@@ -61,6 +55,10 @@ export function PlayerPage() {
   const [error, setError] = useState<string | null>(null)
   const [popup, setPopup] = useState<{ word: StoryWord; saved: boolean } | null>(null)
   const [busy, setBusy] = useState(false)
+  const [bought, setBought] = useState<Set<string>>(new Set())
+  const [pending, setPending] = useState<string | null>(null)
+  const [choiceError, setChoiceError] = useState<string | null>(null)
+  const [balance, setBalance] = useState<number | null>(null)
   const started = useRef(false)
 
   useEffect(() => {
@@ -73,6 +71,10 @@ export function PlayerPage() {
         })
         setStory(loadedStory)
         setSession(loadedSession)
+        setBought(new Set(loadedSession.purchasedChoiceIds))
+        api<Wallet>('/wallet')
+          .then((wallet) => setBalance(wallet.balance))
+          .catch(() => setBalance(null))
         setSceneId(loadedSession.currentSceneId)
         const first = loadedStory.scenes.find((s) => s.id === loadedSession.currentSceneId)
         setPhase(first && first.lines.length === 0 && first.choices.length > 0 ? 'choices' : 'lines')
@@ -92,6 +94,7 @@ export function PlayerPage() {
     try {
       setSummary(await api<PlaySummary>(`/play/sessions/${session.sessionId}/finish`, { method: 'POST' }))
       setPhase('summary')
+      notifyWalletChanged()
     } catch (caught) {
       setError(caught instanceof ApiError ? caught.message : 'Не вдалося завершити історію.')
       setPhase('error')
@@ -114,11 +117,25 @@ export function PlayerPage() {
   const choose = async (choiceId: string | null) => {
     if (!session || !choiceId || busy) return
     setBusy(true)
+    setChoiceError(null)
     try {
-      const result = await api<{ nextSceneId: string | null; finished: boolean }>(`/play/sessions/${session.sessionId}/choice`, {
-        method: 'POST',
-        body: { choiceId },
-      })
+      let result: ChoiceResult
+      try {
+        result = await api<ChoiceResult>(`/play/sessions/${session.sessionId}/choice`, { method: 'POST', body: { choiceId } })
+      } catch (caught) {
+        if (caught instanceof ApiError && caught.status === 409) {
+          setChoiceError(caught.message)
+          setPending(null)
+          return
+        }
+        throw caught
+      }
+      setPending(null)
+      if (result.spent > 0) {
+        setBought((set) => new Set(set).add(choiceId))
+        notifyWalletChanged()
+      }
+      setBalance(result.balance)
       if (result.finished || !result.nextSceneId) {
         await finish()
       } else {
@@ -191,6 +208,33 @@ export function PlayerPage() {
             <span>хв</span>
           </div>
         </div>
+        <div className={`sticker ${styles.rewards}`}>
+          {summary.free ? (
+            <p>Це перегляд автора — кристали й серія не змінюються.</p>
+          ) : summary.rewards.length > 0 ? (
+            <ul>
+              {summary.rewards.map((reward, index) => (
+                <li key={`${reward.reason}-${index}`}>
+                  <span>{REASON_LABELS[reward.reason]}</span>
+                  <b>
+                    +<Crystals amount={reward.amount} />
+                  </b>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>
+              {summary.completed
+                ? 'Кристали за цю історію вже отримано, а щоденну ціль сьогодні виконано.'
+                : 'Історію не дочитано до кінцівки, тому нагороди немає.'}
+            </p>
+          )}
+          {!summary.free && (
+            <p className={styles.rewardsFooter}>
+              Серія: <StreakFlame lit={summary.streak.playedToday} days={summary.streak.current} /> · На рахунку: <Crystals amount={summary.balance} />
+            </p>
+          )}
+        </div>
         {summary.wordsSaved.length > 0 && (
           <ul className={styles.savedWords}>
             {summary.wordsSaved.map((word) => (
@@ -216,15 +260,21 @@ export function PlayerPage() {
     return <div className={styles.center}>Відкриваємо історію…</div>
   }
 
-  const background = {
-    backgroundColor: COVER_COLORS[story.level],
-    backgroundImage: scene.backgroundImagePath ? `url(${scene.backgroundImagePath})` : undefined,
-  }
   const isNarration = !line?.speaker
   const speakerIsCharacter = scene.characters.some((c) => c.name === line?.speaker)
 
   return (
-    <div className={styles.player} style={background}>
+    <div className={styles.player} style={{ backgroundColor: COVER_COLORS[story.level] }}>
+      {scene.backgroundImagePath && (
+        <img
+          key={scene.id}
+          className={styles.backdrop}
+          src={scene.backgroundImagePath}
+          alt=""
+          draggable={false}
+          style={framedImageStyle(sceneBackgroundFraming(scene))}
+        />
+      )}
       <header className={styles.top}>
         <button className={styles.close} aria-label="Вийти з історії" onClick={() => navigate(`/stories/${story.id}`)}>
           ✕
@@ -264,12 +314,38 @@ export function PlayerPage() {
       {phase === 'choices' && (
         <div className={styles.choices}>
           <p className={styles.choicesTitle}>Що далі?</p>
-          {scene.choices.map((choice) => (
-            <button key={choice.id} className={styles.choice} disabled={busy} onClick={() => choose(choice.id)}>
-              <span>{choice.text}</span>
-              {choice.priceCrystals > 0 && <span className={styles.gem}><Crystals amount={choice.priceCrystals} /></span>}
-            </button>
-          ))}
+          {scene.choices.map((choice) => {
+            const owned = choice.id !== null && bought.has(choice.id)
+            const paid = choice.priceCrystals > 0 && !session?.free && !owned
+            return pending === choice.id ? (
+              <div key={choice.id} className={styles.confirmChoice}>
+                <span>
+                  Списати {choice.priceCrystals} кристалів за цей вибір?{balance !== null && ` У тебе ${balance}.`}
+                </span>
+                <button className="btn" disabled={busy} onClick={() => choose(choice.id)}>
+                  Так
+                </button>
+                <button className="btn btn-ghost" disabled={busy} onClick={() => setPending(null)}>
+                  Ні
+                </button>
+              </div>
+            ) : (
+              <button
+                key={choice.id}
+                className={styles.choice}
+                disabled={busy}
+                onClick={() => (paid ? (setChoiceError(null), setPending(choice.id)) : choose(choice.id))}
+              >
+                <span>{choice.text}</span>
+                {choice.priceCrystals > 0 && (
+                  <span className={styles.gem}>
+                    {owned ? 'куплено' : <Crystals amount={choice.priceCrystals} />}
+                  </span>
+                )}
+              </button>
+            )
+          })}
+          {choiceError && <p className={styles.choiceError}>{choiceError}</p>}
         </div>
       )}
 
