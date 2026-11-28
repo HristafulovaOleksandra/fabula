@@ -2,6 +2,7 @@ using Fabula.Api.Auth;
 using Fabula.Api.Contracts;
 using Fabula.Api.Data;
 using Fabula.Api.Entities;
+using Fabula.Api.Moderation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ namespace Fabula.Api.Controllers;
 [ApiController]
 [Authorize(Policy = Policies.CanAuthor)]
 [Route("api/stories/{storyId:guid}/characters")]
-public class StoryCharactersController(FabulaDbContext db) : ControllerBase
+public class StoryCharactersController(FabulaDbContext db, StoryModeration moderation) : ControllerBase
 {
     private const string CharacterImagesPrefix = "/uploads/characters/";
 
@@ -73,6 +74,11 @@ public class StoryCharactersController(FabulaDbContext db) : ControllerBase
         ApplyStates(character, request, PlacementsOf(story, character.Id));
         story.UpdatedAt = DateTime.UtcNow;
         await db.SaveChangesAsync(cancellationToken);
+        if (story.Status is StoryStatus.Published or StoryStatus.PendingModeration)
+        {
+            await moderation.ApplyAsync(storyId, publishing: false, cancellationToken);
+        }
+
         return Ok(character.ToDto());
     }
 

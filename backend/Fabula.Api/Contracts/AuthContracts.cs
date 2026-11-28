@@ -8,6 +8,7 @@ public record RegisterRequest(
     [Required, RegularExpression("^[a-zA-Z0-9_.]{3,30}$", ErrorMessage = "Нік: 3–30 латинських літер, цифр, «_» або «.».")] string Username,
     [Required, MinLength(8), MaxLength(128)] string Password,
     [Required, MinLength(2), MaxLength(100)] string DisplayName,
+    [Required] DateOnly? BirthDate,
     UserRole Role = UserRole.Student);
 
 public record LoginRequest(
@@ -37,7 +38,8 @@ public record EmailChangeConfirmRequest(
 
 public record UpdateProfileRequest(
     [MinLength(2), MaxLength(100)] string? DisplayName,
-    NameVisibility? NameVisibility);
+    NameVisibility? NameVisibility,
+    DateOnly? BirthDate = null);
 
 public record UserDto(
     Guid Id,
@@ -50,11 +52,12 @@ public record UserDto(
     CefrLevel? Level,
     IReadOnlyList<string> FavoriteTopics,
     int CrystalBalance,
-    AvatarDto Avatar)
+    AvatarDto Avatar,
+    DateOnly? BirthDate)
 {
     public static UserDto From(User user, bool isTeacher) => new(
         user.Id, user.Email, user.Username, user.DisplayName, user.NameVisibility, user.Role,
-        isTeacher, user.Level, user.FavoriteTopics, user.CrystalBalance, AvatarDto.From(user));
+        isTeacher, user.Level, user.FavoriteTopics, user.CrystalBalance, AvatarDto.From(user), user.BirthDate);
 }
 
 public record AvatarDto(string? Path, double FocusX, double FocusY, double Zoom)

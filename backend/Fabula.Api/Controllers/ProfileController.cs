@@ -1,6 +1,8 @@
 using Fabula.Api.Auth;
 using Fabula.Api.Contracts;
 using Fabula.Api.Data;
+using Fabula.Api.Entities;
+using Fabula.Api.Moderation;
 using Fabula.Api.Storage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +13,7 @@ namespace Fabula.Api.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/profile")]
-public class ProfileController(FabulaDbContext db, ImageStorage storage, EmailChangeService emailChange) : ControllerBase
+public class ProfileController(FabulaDbContext db, ImageStorage storage, EmailChangeService emailChange, StoryModeration moderation) : ControllerBase
 {
     [HttpPost("avatar")]
     [RequestSizeLimit(ImageStorage.MaxBytes + 64 * 1024)]
@@ -31,6 +33,13 @@ public class ProfileController(FabulaDbContext db, ImageStorage storage, EmailCh
         catch (ImageRejectedException exception)
         {
             return ValidationProblem(exception.Message);
+        }
+
+        var check = await moderation.CheckImageAsync(path, cancellationToken);
+        if (check is not null && (check.Verdict != ModerationVerdict.Ok || check.Age != AgeRating.All))
+        {
+            storage.DeleteIfOwned(path);
+            return ValidationProblem("Це фото не підходить для профілю: воно не пройшло автоматичну перевірку.");
         }
 
         var previous = user.AvatarPath;

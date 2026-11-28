@@ -6,6 +6,7 @@ export interface RegisterInput {
   username: string
   displayName: string
   password: string
+  birthDate: string
   role: UserRole
 }
 

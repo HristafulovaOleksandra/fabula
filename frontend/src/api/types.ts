@@ -16,6 +16,7 @@ export interface User {
   favoriteTopics: string[]
   crystalBalance: number
   avatar: AvatarImage
+  birthDate: string | null
 }
 
 export interface AuthResponse {
@@ -48,7 +49,13 @@ export interface StorySummary {
   updatedAt: string
   rating: number | null
   ratingCount: number
+  ageRating: AgeRating
+  visibility: StoryVisibility
 }
+
+export type AgeRating = 'All' | 'Teen' | 'Mature'
+
+export type StoryVisibility = 'Public' | 'Private'
 
 export interface StoryWord {
   word: string
@@ -139,6 +146,9 @@ export interface StoryDetail {
   authorUsername: string
   rating: number | null
   ratingCount: number
+  ageRating: AgeRating
+  visibility: StoryVisibility
+  moderationNote: string
 }
 
 export interface PlaySession {
@@ -261,6 +271,7 @@ export interface AnalyzedSentence {
 }
 
 export interface LineAnalysis {
+  moderation: TextModeration | null
   level: CefrLevel | null
   score: number | null
   confidence: number | null
@@ -425,4 +436,137 @@ export interface QuizAnswer {
   correctAnswer: string
   correctInRow: number
   learned: boolean
+}
+
+export type ModerationKind = 'mild' | 'strong' | 'sexual' | 'hate'
+
+export interface FlaggedWord {
+  text: string
+  start: number
+  end: number
+  kind: ModerationKind
+}
+
+export interface TextModeration {
+  age: '6+' | '12+' | '16+'
+  verdict: 'ok' | 'review' | 'blocked'
+  reasons: string[]
+  words: FlaggedWord[]
+}
+
+export type ModerationVerdict = 'Ok' | 'Review' | 'Blocked'
+
+export interface ModerationFinding {
+  kind: 'text' | 'image'
+  location: string
+  sceneId: string | null
+  text: string | null
+  imagePath: string | null
+  age: AgeRating
+  verdict: ModerationVerdict
+  reasons: string[]
+  words: FlaggedWord[]
+}
+
+export interface ModerationReport {
+  available: boolean
+  age: AgeRating
+  verdict: ModerationVerdict
+  findings: ModerationFinding[]
+}
+
+export interface QueueStory {
+  id: string
+  title: string
+  authorUsername: string
+  status: StoryStatus
+  ageRating: AgeRating
+  visibility: StoryVisibility
+}
+
+export interface QueueTag {
+  id: number
+  name: string
+  kind: Tag['kind']
+  status: Tag['status']
+  creatorUsername: string | null
+}
+
+export interface QueueItem {
+  id: string
+  targetType: 'Story' | 'Line' | 'Image' | 'Tag'
+  status: 'Pending' | 'Approved' | 'Rejected' | 'Appealed'
+  reason: string
+  authorMessage: string
+  resolutionNote: string
+  createdAt: string
+  reviewedAt: string | null
+  reviewedBy: string | null
+  story: QueueStory | null
+  tag: QueueTag | null
+}
+
+export interface AdminUser {
+  id: string
+  username: string
+  email: string
+  role: UserRole
+  isBlocked: boolean
+  isTeacher: boolean
+  storyCount: number
+  createdAt: string
+  avatar: AvatarImage
+}
+
+export interface NamedCount {
+  name: string
+  count: number
+}
+
+export interface StoryMlRow {
+  id: string
+  title: string
+  authorUsername: string
+  level: CefrLevel
+  status: StoryStatus
+  ageRating: AgeRating
+  totalLines: number
+  ratedLines: number
+  shortLines: number
+  aboveLevel: number
+}
+
+export interface MlStats {
+  modelName: string | null
+  totalLines: number
+  ratedLines: number
+  shortLines: number
+  uncheckedLines: number
+  levels: NamedCount[]
+  checkedPerDay: NamedCount[]
+  storyAges: NamedCount[]
+  storyStatuses: NamedCount[]
+  imageVerdicts: NamedCount[]
+  adminApproved: number
+  adminRejected: number
+  autoResolved: number
+  openItems: number
+  stories: StoryMlRow[]
+}
+
+export interface LineMl {
+  id: string
+  sceneTitle: string
+  sceneOrder: number
+  order: number
+  speaker: string
+  text: string
+  level: CefrLevel | null
+  score: number | null
+  checkedAt: string | null
+}
+
+export interface StoryMlDetail {
+  story: StoryMlRow
+  lines: LineMl[]
 }

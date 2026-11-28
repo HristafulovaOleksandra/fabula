@@ -2,6 +2,7 @@ using Fabula.Api.Auth;
 using Fabula.Api.Contracts;
 using Fabula.Api.Data;
 using Fabula.Api.Economy;
+using Fabula.Api.Moderation;
 using Fabula.Api.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -37,8 +38,15 @@ public class AuthController(FabulaDbContext db, TokenService tokens, PasswordRes
             return Conflict(new ProblemDetails { Title = "Цей нік уже зайнятий." });
         }
 
+        var birthProblem = AgePolicy.BirthDateProblem(request.BirthDate!.Value);
+        if (birthProblem is not null)
+        {
+            return ValidationProblem(birthProblem);
+        }
+
         var user = new User
         {
+            BirthDate = request.BirthDate,
             Email = email,
             Username = username,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
@@ -70,6 +78,11 @@ public class AuthController(FabulaDbContext db, TokenService tokens, PasswordRes
         if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
         {
             return Unauthorized(new ProblemDetails { Title = "Неправильна пошта, нік або пароль." });
+        }
+
+        if (user.IsBlocked)
+        {
+            return Problem(statusCode: StatusCodes.Status403Forbidden, detail: "Цей акаунт заблоковано адміністратором.");
         }
 
         return Ok(new AuthResponse(tokens.Create(user), UserDto.From(user, await db.IsTeacherAsync(user.Id, cancellationToken))));

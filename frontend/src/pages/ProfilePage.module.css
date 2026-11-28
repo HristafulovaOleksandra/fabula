@@ -264,3 +264,7 @@
   font-weight: 700;
   font-size: 0.9rem;
 }
+
+.attention {
+  background: var(--color-highlight);
+}

@@ -252,6 +252,33 @@ namespace Fabula.Api.Data.Migrations
                     b.ToTable("GameSessions");
                 });
 
+            modelBuilder.Entity("Fabula.Api.Entities.ImageCheck", b =>
+                {
+                    b.Property<string>("Path")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Age")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
+
+                    b.Property<DateTime>("CheckedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.PrimitiveCollection<List<string>>("Reasons")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<string>("Verdict")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
+
+                    b.HasKey("Path");
+
+                    b.ToTable("ImageChecks");
+                });
+
             modelBuilder.Entity("Fabula.Api.Entities.Line", b =>
                 {
                     b.Property<Guid>("Id")
@@ -295,12 +322,22 @@ namespace Fabula.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("AuthorMessage")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Reason")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<string>("ResolutionNote")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
 
                     b.Property<DateTime?>("ReviewedAt")
                         .HasColumnType("timestamp with time zone");
@@ -316,6 +353,9 @@ namespace Fabula.Api.Data.Migrations
                         .HasMaxLength(12)
                         .HasColumnType("character varying(12)");
 
+                    b.Property<int?>("TagId")
+                        .HasColumnType("integer");
+
                     b.Property<Guid>("TargetId")
                         .HasColumnType("uuid");
 
@@ -327,6 +367,8 @@ namespace Fabula.Api.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Status");
+
+                    b.HasIndex("TargetType", "TargetId");
 
                     b.ToTable("ModerationItems");
                 });
@@ -406,7 +448,16 @@ namespace Fabula.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("AgeRating")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
+
                     b.PrimitiveCollection<List<string>>("AllowedWords")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.PrimitiveCollection<List<string>>("ApprovedContent")
                         .IsRequired()
                         .HasColumnType("text[]");
 
@@ -437,6 +488,11 @@ namespace Fabula.Api.Data.Migrations
                         .HasMaxLength(4)
                         .HasColumnType("character varying(4)");
 
+                    b.Property<string>("ModerationNote")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
                     b.Property<int>("PriceCrystals")
                         .HasColumnType("integer");
 
@@ -461,6 +517,11 @@ namespace Fabula.Api.Data.Migrations
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Visibility")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
 
                     b.HasKey("Id");
 
@@ -852,6 +913,9 @@ namespace Fabula.Api.Data.Migrations
                     b.Property<double>("AvatarZoom")
                         .HasColumnType("double precision");
 
+                    b.Property<DateOnly?>("BirthDate")
+                        .HasColumnType("date");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -871,6 +935,9 @@ namespace Fabula.Api.Data.Migrations
                     b.PrimitiveCollection<List<string>>("FavoriteTopics")
                         .IsRequired()
                         .HasColumnType("text[]");
+
+                    b.Property<bool>("IsBlocked")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Level")
                         .HasMaxLength(4)

@@ -32,7 +32,9 @@ public record StorySummaryDto(
     int SceneCount,
     DateTime UpdatedAt,
     double? Rating,
-    int RatingCount);
+    int RatingCount,
+    AgeRating AgeRating,
+    StoryVisibility Visibility);
 
 public record StoryDetailDto(
     Guid Id,
@@ -54,7 +56,10 @@ public record StoryDetailDto(
     IReadOnlyList<SceneDto> Scenes,
     string AuthorUsername,
     double? Rating,
-    int RatingCount);
+    int RatingCount,
+    AgeRating AgeRating,
+    StoryVisibility Visibility,
+    string ModerationNote);
 
 public record StoryUpsertRequest(
     [Required, MinLength(1), MaxLength(200)] string Title,
@@ -67,7 +72,8 @@ public record StoryUpsertRequest(
     Guid? StartSceneId,
     [Range(0, 100)] double CoverFocusX = 50,
     [Range(0, 100)] double CoverFocusY = 50,
-    [Range(1, 3)] double CoverZoom = 1);
+    [Range(1, 3)] double CoverZoom = 1,
+    StoryVisibility Visibility = StoryVisibility.Public);
 
 public record CharacterDto(
     CharacterPosition Position,
@@ -145,3 +151,5 @@ public record StudioOverviewDto(
 public record ForYouStoryDto(StorySummaryDto Story, IReadOnlyList<string> Reasons);
 
 public record ForYouDto(CefrLevel? Level, bool LevelFromTest, IReadOnlyList<ForYouStoryDto> Stories);
+
+public record AppealRequest([Required, MinLength(5), MaxLength(1000)] string Message);

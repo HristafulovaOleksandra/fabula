@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import type { StorySummary } from '../api/types'
+import { AGE_LABELS } from './ageRating'
 import { Crystals } from './Brand'
 import { RatingBadge } from './StarRating'
 import { StoryCover } from './StoryCover'
@@ -20,6 +21,7 @@ export function StoryCard({ story, to, badge, footer }: StoryCardProps) {
       <div className={styles.meta}>
         <span className={styles.badges}>
           <span className="level-badge">{story.level}</span>
+          {story.ageRating !== 'All' && <span className="age-badge" title="Вікова позначка">{AGE_LABELS[story.ageRating]}</span>}
           {badge}
         </span>
         <span className={styles.price}>

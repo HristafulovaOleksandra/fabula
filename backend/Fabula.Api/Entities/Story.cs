@@ -19,6 +19,10 @@ public class Story
     public DateTime UpdatedAt { get; set; }
     public int RatingCount { get; set; }
     public int RatingSum { get; set; }
+    public AgeRating AgeRating { get; set; }
+    public StoryVisibility Visibility { get; set; }
+    public string ModerationNote { get; set; } = "";
+    public List<string> ApprovedContent { get; set; } = [];
 
     public List<Tag> Tags { get; set; } = [];
     public List<Scene> Scenes { get; set; } = [];

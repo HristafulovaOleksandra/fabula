@@ -1,0 +1,159 @@
+.page {
+  display: grid;
+  gap: 18px;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.tiles > div {
+  display: grid;
+  gap: 2px;
+  padding: 14px 16px;
+}
+
+.tiles b {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--color-primary);
+  overflow-wrap: anywhere;
+}
+
+.tiles span {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.tiles .online {
+  color: var(--color-success);
+}
+
+.tiles .offline {
+  color: var(--color-accent);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 14px;
+}
+
+.panel {
+  padding: 14px 18px;
+}
+
+.panel h3 {
+  margin: 0 0 8px;
+}
+
+.panel h3:not(:first-child) {
+  margin-top: 14px;
+}
+
+.bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 5px;
+}
+
+.bars li {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr) 36px;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.barName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.barTrack {
+  height: 12px;
+  border-radius: 999px;
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.barFill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--color-primary);
+}
+
+.note {
+  margin: 10px 0 0;
+}
+
+.muted {
+  color: var(--color-text-soft);
+  font-size: 0.9rem;
+}
+
+.stories,
+.lines {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.stories th,
+.stories td,
+.lines th,
+.lines td {
+  padding: 6px 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--color-surface);
+  vertical-align: top;
+}
+
+.storyRow {
+  cursor: pointer;
+}
+
+.storyRow:hover {
+  background: var(--color-paper);
+}
+
+.lines {
+  margin: 4px 0 8px;
+  background: var(--color-paper);
+}
+
+.level {
+  display: inline-block;
+  min-width: 36px;
+  text-align: center;
+  font-weight: 800;
+  border: var(--line) solid var(--color-primary);
+  border-radius: 999px;
+  padding: 0 8px;
+}
+
+.levelSure {
+  color: #fff;
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.levelMaybe {
+  color: var(--color-text);
+  background: var(--color-warning);
+  border-color: var(--color-warning);
+}
+
+.wide {
+  overflow-x: auto;
+}
+
+.stories {
+  min-width: 560px;
+}

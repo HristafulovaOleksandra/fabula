@@ -7,6 +7,7 @@ import { Layout } from './components/Layout'
 import { RequireAuth } from './components/RequireAuth'
 import { ForgotPasswordPage, LoginPage, RegisterPage } from './pages/AuthPages'
 import { HomePage } from './pages/HomePage'
+import { AdminPage } from './pages/AdminPage'
 import { AuthorPage } from './pages/AuthorPage'
 import { DictionaryPage } from './pages/DictionaryPage'
 import { WelcomePage } from './pages/WelcomePage'
@@ -31,6 +32,14 @@ createRoot(document.getElementById('root')!).render(
             <Route path="login" element={<LoginPage />} />
             <Route path="register" element={<RegisterPage />} />
             <Route path="forgot-password" element={<ForgotPasswordPage />} />
+            <Route
+              path="admin"
+              element={
+                <RequireAuth adminOnly>
+                  <AdminPage />
+                </RequireAuth>
+              }
+            />
             <Route
               path="words"
               element={

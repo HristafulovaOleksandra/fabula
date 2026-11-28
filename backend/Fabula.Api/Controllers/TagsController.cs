@@ -3,6 +3,7 @@ using Fabula.Api.Auth;
 using Fabula.Api.Contracts;
 using Fabula.Api.Data;
 using Fabula.Api.Entities;
+using Fabula.Api.Ml;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ namespace Fabula.Api.Controllers;
 
 [ApiController]
 [Route("api/tags")]
-public partial class TagsController(FabulaDbContext db) : ControllerBase
+public partial class TagsController(FabulaDbContext db, MlClient ml) : ControllerBase
 {
     private const int MaxPendingPerAuthor = 20;
 
@@ -64,9 +65,30 @@ public partial class TagsController(FabulaDbContext db) : ControllerBase
             return ValidationProblem("Забагато тегів чекають на перевірку. Дочекайся рішення модератора.");
         }
 
-        var tag = new Tag { Name = name, Kind = request.Kind, Status = ModerationStatus.Pending, CreatedById = userId };
+        var check = (await ml.ModerateTextsAsync([name], cancellationToken))?.SingleOrDefault();
+        if (check?.Verdict == "blocked")
+        {
+            return ValidationProblem("Такий тег не можна створити: він не пройшов автоматичну перевірку.");
+        }
+
+        var approved = check is { Verdict: "ok", Age: "6+" };
+        var tag = new Tag { Name = name, Kind = request.Kind, Status = approved ? ModerationStatus.Approved : ModerationStatus.Pending, CreatedById = userId };
         db.Tags.Add(tag);
         await db.SaveChangesAsync(cancellationToken);
+        if (!approved)
+        {
+            db.ModerationItems.Add(new ModerationItem
+            {
+                TargetType = ModerationTarget.Tag,
+                TargetId = Guid.Empty,
+                TagId = tag.Id,
+                Reason = check is null ? "Автоматична перевірка недоступна" : $"Тег «{name}»: {string.Join(", ", check.Reasons.DefaultIfEmpty("груба лексика"))}",
+                Status = ModerationStatus.Pending,
+                CreatedAt = DateTime.UtcNow
+            });
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
         return Ok(tag.ToDto());
     }
 

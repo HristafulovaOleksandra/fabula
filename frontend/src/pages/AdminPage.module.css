@@ -1,0 +1,201 @@
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.tabs button {
+  min-height: 40px;
+  padding: 6px 16px;
+  border: var(--line) solid var(--color-primary);
+  border-radius: 999px;
+  background: var(--color-paper);
+  color: var(--color-primary);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.tabs .tabOn {
+  background: var(--color-primary);
+  color: var(--color-paper);
+}
+
+.list {
+  display: grid;
+  gap: 14px;
+}
+
+.card {
+  display: grid;
+  gap: 8px;
+  padding: 16px 20px;
+}
+
+.card h3 {
+  margin: 0;
+}
+
+.cardHead {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.kind {
+  font-size: 0.8rem;
+  font-weight: 800;
+  border-radius: 999px;
+  padding: 2px 10px;
+  color: var(--color-text);
+  background: var(--color-warning);
+}
+
+.kindAppeal {
+  color: #fff;
+  background: var(--color-accent);
+}
+
+.muted {
+  color: var(--color-text-soft);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-weight: 700;
+}
+
+.reason,
+.appeal {
+  margin: 0;
+}
+
+.appeal {
+  font-style: italic;
+}
+
+.decision {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.decision input,
+.search {
+  flex: 1 1 240px;
+  min-height: 42px;
+  padding: 8px 12px;
+  border: var(--line) solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  background: var(--color-paper);
+  font: inherit;
+}
+
+.search {
+  width: min(420px, 100%);
+  margin-bottom: 14px;
+}
+
+.reject {
+  background: var(--color-paper);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.findings {
+  list-style: none;
+  margin: 0;
+  padding: 10px 12px;
+  display: grid;
+  gap: 8px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
+
+.findings li {
+  display: grid;
+  gap: 2px;
+}
+
+.findingImage {
+  width: 160px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.linkButton {
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--color-primary);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.empty {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+}
+
+.empty p {
+  margin: 0;
+}
+
+.users {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.users li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border: var(--line) solid var(--color-surface);
+  border-radius: var(--radius-sm);
+  background: var(--color-paper);
+}
+
+.users select {
+  min-height: 38px;
+  padding: 4px 8px;
+  border: var(--line) solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  background: var(--color-paper);
+  font: inherit;
+}
+
+.userInfo {
+  display: grid;
+  min-width: 0;
+}
+
+.userInfo small {
+  color: var(--color-text-soft);
+  overflow-wrap: anywhere;
+}
+
+.blockedUser {
+  opacity: 0.6;
+}
+
+@media (max-width: 640px) {
+  .users li {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+}

@@ -177,3 +177,15 @@ textarea {
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+.age-badge {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.75rem;
+  border-radius: 999px;
+  padding: 2px 8px;
+  color: var(--color-paper);
+  background: var(--color-text-soft);
+  border: 2px solid var(--color-text-soft);
+}

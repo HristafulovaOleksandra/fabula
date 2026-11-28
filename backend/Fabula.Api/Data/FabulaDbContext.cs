@@ -20,6 +20,7 @@ public class FabulaDbContext(DbContextOptions<FabulaDbContext> options) : DbCont
     public DbSet<GameSession> GameSessions => Set<GameSession>();
     public DbSet<Transaction> Transactions => Set<Transaction>();
     public DbSet<StoryRating> StoryRatings => Set<StoryRating>();
+    public DbSet<ImageCheck> ImageChecks => Set<ImageCheck>();
     public DbSet<Streak> Streaks => Set<Streak>();
     public DbSet<TeachingLink> TeachingLinks => Set<TeachingLink>();
     public DbSet<Follow> Follows => Set<Follow>();
@@ -40,6 +41,9 @@ public class FabulaDbContext(DbContextOptions<FabulaDbContext> options) : DbCont
         builder.Properties<ModerationStatus>().HaveConversion<string>().HaveMaxLength(12);
         builder.Properties<TeachingStatus>().HaveConversion<string>().HaveMaxLength(12);
         builder.Properties<NameVisibility>().HaveConversion<string>().HaveMaxLength(12);
+        builder.Properties<AgeRating>().HaveConversion<string>().HaveMaxLength(8);
+        builder.Properties<StoryVisibility>().HaveConversion<string>().HaveMaxLength(8);
+        builder.Properties<ModerationVerdict>().HaveConversion<string>().HaveMaxLength(8);
     }
 
     protected override void OnModelCreating(ModelBuilder model)
@@ -151,7 +155,15 @@ public class FabulaDbContext(DbContextOptions<FabulaDbContext> options) : DbCont
             assignment.HasOne<Story>().WithMany().HasForeignKey(a => a.StoryId);
         });
 
-        model.Entity<ModerationItem>().HasIndex(m => m.Status);
+        model.Entity<ModerationItem>(item =>
+        {
+            item.HasIndex(m => m.Status);
+            item.HasIndex(m => new { m.TargetType, m.TargetId });
+            item.Property(m => m.AuthorMessage).HasMaxLength(1000);
+            item.Property(m => m.ResolutionNote).HasMaxLength(1000);
+        });
+        model.Entity<ImageCheck>().HasKey(c => c.Path);
+        model.Entity<Story>().Property(s => s.ModerationNote).HasMaxLength(1000);
     }
 
     private static Tag[] SeedTags()

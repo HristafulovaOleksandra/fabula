@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { api } from '../api/client'
 import { errorText, studio } from '../api/studio'
+import { AGE_LABELS } from '../components/ageRating'
 import type { Economy, StoryDetail, StoryStatus, Tag } from '../api/types'
 import { CastPanel } from './editor/CastPanel'
 import { CheckPanel } from './editor/CheckPanel'
@@ -19,6 +21,61 @@ const STATUS_LABELS: Record<StoryStatus, string> = {
 }
 
 const LEAVE_WARNING = 'Є незбережені зміни. Перейти без збереження?'
+
+function ModerationNotice({ story, onOpenCheck }: { story: StoryDetail; onOpenCheck: () => void }) {
+  const [appealing, setAppealing] = useState(false)
+  const [message, setMessage] = useState('')
+  const [result, setResult] = useState<{ ok: boolean; text: string } | null>(null)
+  const blocked = story.status === 'Blocked'
+
+  const appeal = async (event: FormEvent) => {
+    event.preventDefault()
+    try {
+      await api(`/stories/${story.id}/appeal`, { method: 'POST', body: { message } })
+      setResult({ ok: true, text: 'Оскарження надіслано. Адміністратор розгляне його й ухвалить рішення.' })
+      setAppealing(false)
+    } catch (caught) {
+      setResult({ ok: false, text: errorText(caught) })
+    }
+  }
+
+  return (
+    <div className={`${styles.moderationNotice} ${blocked ? styles.noticeBlocked : styles.noticeReview}`}>
+      <b>{blocked ? 'Історію заблоковано під час публікації' : 'Історія на перевірці в модератора'}</b>
+      {story.moderationNote && <span>Причина: {story.moderationNote}</span>}
+      <span>
+        {blocked
+          ? 'Виправ зміст (див. «Перевірка») і опублікуй знову — або оскарж рішення, якщо вважаєш, що модель помилилась.'
+          : 'Читачі поки її не бачать. Якщо виправиш позначене в «Перевірці», історія повернеться в бібліотеку автоматично.'}
+      </span>
+      <div className={styles.noticeActions}>
+        <button type="button" className="btn btn-ghost" onClick={onOpenCheck}>
+          Відкрити «Перевірку»
+        </button>
+        {blocked && !appealing && (
+          <button type="button" className={styles.linkButton} onClick={() => setAppealing(true)}>
+            Оскаржити
+          </button>
+        )}
+      </div>
+      {appealing && (
+        <form className={styles.appealForm} onSubmit={appeal}>
+          <textarea
+            required
+            minLength={5}
+            maxLength={1000}
+            rows={3}
+            placeholder="Поясни, чому вміст підходить для платформи"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+          <button className="btn">Надіслати</button>
+        </form>
+      )}
+      {result && <span className={result.ok ? 'success-text' : 'error-text'}>{result.text}</span>}
+    </div>
+  )
+}
 
 export function EditorPage() {
   const { storyId = '' } = useParams()
@@ -106,8 +163,15 @@ export function EditorPage() {
       return
     }
     try {
-      setStory(await studio.publish(story.id))
-      setPublishMessage({ ok: true, text: 'Історію опубліковано' })
+      const updated = await studio.publish(story.id)
+      setStory(updated)
+      if (updated.status === 'Published') {
+        const age = updated.ageRating === 'All' ? '' : ` з позначкою ${AGE_LABELS[updated.ageRating]}`
+        const where = updated.visibility === 'Private' ? ' приватно — її можна призначати своїм учням' : ''
+        setPublishMessage({ ok: true, text: `Історію опубліковано${where}${age}.` })
+      } else {
+        setPublishMessage(null)
+      }
     } catch (caught) {
       setPublishMessage({ ok: false, text: errorText(caught) })
     }
@@ -148,6 +212,9 @@ export function EditorPage() {
         </div>
       </div>
       {publishMessage && <p className={publishMessage.ok ? 'success-text' : 'error-text'}>{publishMessage.text}</p>}
+      {(story.status === 'Blocked' || story.status === 'PendingModeration') && (
+        <ModerationNotice story={story} onOpenCheck={() => open({ kind: 'check' })} />
+      )}
 
       <div className={styles.layout}>
         <aside className={styles.sidebar}>

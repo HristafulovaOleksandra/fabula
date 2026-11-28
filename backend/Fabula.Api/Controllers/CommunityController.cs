@@ -1,6 +1,7 @@
 using Fabula.Api.Auth;
 using Fabula.Api.Contracts;
 using Fabula.Api.Data;
+using Fabula.Api.Moderation;
 using Fabula.Api.Entities;
 using Fabula.Api.Storage;
 using Microsoft.AspNetCore.Authorization;
@@ -31,6 +32,22 @@ public class CommunityController(FabulaDbContext db, ImageStorage storage) : Con
         if (request.NameVisibility is not null)
         {
             user.NameVisibility = request.NameVisibility.Value;
+        }
+
+        if (request.BirthDate is not null)
+        {
+            if (user.BirthDate is not null)
+            {
+                return ValidationProblem("Дату народження вже вказано, змінити її не можна.");
+            }
+
+            var problem = AgePolicy.BirthDateProblem(request.BirthDate.Value);
+            if (problem is not null)
+            {
+                return ValidationProblem(problem);
+            }
+
+            user.BirthDate = request.BirthDate;
         }
 
         await db.SaveChangesAsync(cancellationToken);
@@ -79,9 +96,13 @@ public class CommunityController(FabulaDbContext db, ImageStorage storage) : Con
         await db.Transactions.Where(t => t.UserId == user.Id).ExecuteDeleteAsync(cancellationToken);
         await db.EmailChangeCodes.Where(c => c.UserId == user.Id).ExecuteDeleteAsync(cancellationToken);
         await db.Backgrounds.Where(b => b.OwnerId == user.Id).ExecuteDeleteAsync(cancellationToken);
+        var ownTagIds = db.Tags.Where(t => t.CreatedById == user.Id && t.Status != ModerationStatus.Approved).Select(t => (int?)t.Id);
+        await db.ModerationItems.Where(m => ownTagIds.Contains(m.TagId)).ExecuteDeleteAsync(cancellationToken);
         await db.Tags.Where(t => t.CreatedById == user.Id && t.Status != ModerationStatus.Approved).ExecuteDeleteAsync(cancellationToken);
         await db.ModerationItems.Where(m => m.ReviewedById == user.Id)
             .ExecuteUpdateAsync(update => update.SetProperty(m => m.ReviewedById, (Guid?)null), cancellationToken);
+        var ownStoryIds = db.Stories.Where(s => s.AuthorId == user.Id).Select(s => s.Id);
+        await db.ModerationItems.Where(m => m.TargetType == ModerationTarget.Story && ownStoryIds.Contains(m.TargetId)).ExecuteDeleteAsync(cancellationToken);
         db.Users.Remove(user);
         await db.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
@@ -104,9 +125,11 @@ public class CommunityController(FabulaDbContext db, ImageStorage storage) : Con
         }
 
         Guid? viewerId = User.Identity?.IsAuthenticated == true ? User.UserId() : null;
+        var allowedAge = await db.ViewerAllowedAsync(User, cancellationToken);
         var stories = await db.Stories.AsNoTracking()
             .Include(s => s.Author).Include(s => s.Tags).Include(s => s.Scenes)
-            .Where(s => s.AuthorId == author.Id && s.Status == StoryStatus.Published)
+            .Where(s => s.AuthorId == author.Id && s.Status == StoryStatus.Published && s.Visibility == StoryVisibility.Public
+                        && (AgePolicy.Upto(allowedAge).Contains(s.AgeRating) || viewerId == author.Id))
             .OrderByDescending(s => s.UpdatedAt)
             .AsSplitQuery()
             .ToListAsync(cancellationToken);
@@ -217,9 +240,10 @@ public class CommunityController(FabulaDbContext db, ImageStorage storage) : Con
     {
         var followerId = User.UserId();
         var authorIds = db.Follows.Where(f => f.FollowerId == followerId).Select(f => f.AuthorId);
+        var allowedAge = await db.ViewerAllowedAsync(User, cancellationToken);
         var stories = await db.Stories.AsNoTracking()
             .Include(s => s.Author).Include(s => s.Tags).Include(s => s.Scenes)
-            .Where(s => s.Status == StoryStatus.Published && authorIds.Contains(s.AuthorId))
+            .Where(s => s.Status == StoryStatus.Published && s.Visibility == StoryVisibility.Public && AgePolicy.Upto(allowedAge).Contains(s.AgeRating) && authorIds.Contains(s.AuthorId))
             .OrderByDescending(s => s.UpdatedAt)
             .Take(50)
             .AsSplitQuery()

@@ -8,6 +8,7 @@ import { formatDue } from '../components/assignmentFormat'
 import { AssignDialog } from '../components/Assignments'
 import { Crystals, Mascot } from '../components/Brand'
 import { RateStory, RatingBadge } from '../components/StarRating'
+import { AGE_LABELS } from '../components/ageRating'
 import { StoryCover } from '../components/StoryCover'
 import styles from './StoryIntroPage.module.css'
 
@@ -106,6 +107,7 @@ export function StoryIntroPage() {
         <StoryCover story={story} />
         <div className={styles.meta}>
           <span className="level-badge">{story.level}</span>
+          {story.ageRating !== 'All' && <span className="age-badge">{AGE_LABELS[story.ageRating]}</span>}
           {story.tags.map((tag) => (
             <span key={tag.id} className={styles.tag}>
               {tag.name}

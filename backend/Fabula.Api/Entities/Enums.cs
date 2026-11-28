@@ -52,7 +52,28 @@ public enum ModerationTarget
 {
     Story,
     Line,
-    Image
+    Image,
+    Tag
+}
+
+public enum AgeRating
+{
+    All,
+    Teen,
+    Mature
+}
+
+public enum StoryVisibility
+{
+    Public,
+    Private
+}
+
+public enum ModerationVerdict
+{
+    Ok,
+    Review,
+    Blocked
 }
 
 public enum ModerationStatus

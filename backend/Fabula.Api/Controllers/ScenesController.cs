@@ -4,6 +4,7 @@ using Fabula.Api.Data;
 using Fabula.Api.Economy;
 using Fabula.Api.Entities;
 using Fabula.Api.Ml;
+using Fabula.Api.Moderation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,7 @@ namespace Fabula.Api.Controllers;
 [ApiController]
 [Authorize(Policy = Policies.CanAuthor)]
 [Route("api/stories/{storyId:guid}/scenes")]
-public class ScenesController(FabulaDbContext db, EconomySettings economy, MlClient ml) : ControllerBase
+public class ScenesController(FabulaDbContext db, EconomySettings economy, MlClient ml, StoryModeration moderation) : ControllerBase
 {
     [HttpPost]
     public async Task<ActionResult<SceneDto>> Create(Guid storyId, CreateSceneRequest request, CancellationToken cancellationToken)
@@ -129,6 +130,10 @@ public class ScenesController(FabulaDbContext db, EconomySettings economy, MlCli
         }));
         story.UpdatedAt = DateTime.UtcNow;
         await db.SaveChangesAsync(cancellationToken);
+        if (story.Status is StoryStatus.Published or StoryStatus.PendingModeration)
+        {
+            await moderation.ApplyAsync(storyId, publishing: false, cancellationToken);
+        }
 
         var saved = await LoadEditableStoryAsync(storyId, cancellationToken);
         return Ok(saved!.Scenes.Single(s => s.Id == sceneId).ToDto());

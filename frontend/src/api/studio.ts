@@ -1,5 +1,5 @@
 import { api, ApiError, tokenStore } from './client'
-import type { Background, CefrLevel, CharacterPosition, CharacterState, Economy, LineAnalysis, Scene, StoryCharacter, StoryDetail, StorySummary, StoryWord, Tag } from './types'
+import type { Background, CefrLevel, CharacterPosition, CharacterState, Economy, LineAnalysis, Scene, StoryCharacter, StoryDetail, StorySummary, StoryVisibility, StoryWord, Tag } from './types'
 
 export interface StoryForm {
   title: string
@@ -13,6 +13,7 @@ export interface StoryForm {
   tagIds: number[]
   words: StoryWord[]
   startSceneId: string | null
+  visibility: StoryVisibility
 }
 
 export interface CharacterForm {

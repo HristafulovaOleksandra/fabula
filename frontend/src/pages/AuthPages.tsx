@@ -77,8 +77,9 @@ export function LoginPage() {
 export function RegisterPage() {
   const { register } = useAuth()
   const navigate = useNavigate()
-  const [form, setForm] = useState({ email: '', username: '', displayName: '', password: '', role: 'Student' as UserRole })
+  const [form, setForm] = useState({ email: '', username: '', displayName: '', password: '', birthDate: '', role: 'Student' as UserRole })
   const [error, setError] = useState<string | null>(null)
+  const [today] = useState(() => new Date().toISOString().slice(0, 10))
   const [busy, setBusy] = useState(false)
   const update = (key: keyof typeof form) => (event: { target: { value: string } }) => setForm({ ...form, [key]: event.target.value })
 
@@ -123,6 +124,11 @@ export function RegisterPage() {
           Ім'я
           <input required minLength={2} maxLength={100} autoComplete="name" value={form.displayName} onChange={update('displayName')} />
           <small>За замовчуванням приховане. Відкрити його можна в профілі.</small>
+        </label>
+        <label className="field">
+          Дата народження
+          <input type="date" required max={today} autoComplete="bday" value={form.birthDate} onChange={update('birthDate')} />
+          <small>Її ніхто не бачить. Потрібна, щоб показувати історії, які підходять за віком.</small>
         </label>
         <label className="field">
           Пароль

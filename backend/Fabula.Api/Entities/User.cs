@@ -14,6 +14,8 @@ public class User
     public double AvatarZoom { get; set; } = 1;
     public UserRole Role { get; set; }
     public CefrLevel? Level { get; set; }
+    public DateOnly? BirthDate { get; set; }
+    public bool IsBlocked { get; set; }
     public List<string> FavoriteTopics { get; set; } = [];
     public int CrystalBalance { get; set; }
     public DateTime CreatedAt { get; set; }

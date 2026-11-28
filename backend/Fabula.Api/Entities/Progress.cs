@@ -104,12 +104,24 @@ public class ModerationItem
     public Guid Id { get; set; }
     public ModerationTarget TargetType { get; set; }
     public Guid TargetId { get; set; }
+    public int? TagId { get; set; }
     public required string Reason { get; set; }
     public double Score { get; set; }
     public ModerationStatus Status { get; set; }
     public DateTime CreatedAt { get; set; }
     public Guid? ReviewedById { get; set; }
     public DateTime? ReviewedAt { get; set; }
+    public string AuthorMessage { get; set; } = "";
+    public string ResolutionNote { get; set; } = "";
+}
+
+public class ImageCheck
+{
+    public required string Path { get; set; }
+    public ModerationVerdict Verdict { get; set; }
+    public AgeRating Age { get; set; }
+    public List<string> Reasons { get; set; } = [];
+    public DateTime CheckedAt { get; set; }
 }
 
 public class EmailChangeCode

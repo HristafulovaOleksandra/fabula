@@ -3,6 +3,7 @@ using Fabula.Api.Contracts;
 using Fabula.Api.Data;
 using Fabula.Api.Economy;
 using Fabula.Api.Entities;
+using Fabula.Api.Moderation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -263,8 +264,28 @@ public class PlayController(FabulaDbContext db, WalletService wallet, EconomySet
     {
         var userId = User.UserId();
         var story = await db.Stories.AsNoTracking().SingleOrDefaultAsync(s => s.Id == storyId, cancellationToken);
-        var canPreview = story is not null && (story.AuthorId == userId || User.IsAdmin());
-        return story is null || (story.Status != StoryStatus.Published && !canPreview) ? null : story;
+        if (story is null)
+        {
+            return null;
+        }
+
+        if (story.AuthorId == userId || User.IsAdmin())
+        {
+            return story;
+        }
+
+        if (story.Status != StoryStatus.Published)
+        {
+            return null;
+        }
+
+        var assigned = await db.Assignments.AnyAsync(a => a.StudentId == userId && a.StoryId == storyId, cancellationToken);
+        if (story.Visibility == StoryVisibility.Private && !assigned)
+        {
+            return null;
+        }
+
+        return story.AgeRating <= await db.ViewerAllowedAsync(User, cancellationToken) ? story : null;
     }
 
     private async Task<bool> OwnsStoryAsync(Story story, Guid userId, CancellationToken cancellationToken) =>

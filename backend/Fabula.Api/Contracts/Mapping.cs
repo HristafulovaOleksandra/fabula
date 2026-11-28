@@ -43,7 +43,9 @@ public static class Mapping
         story.Scenes.Count,
         story.UpdatedAt,
         story.RatingCount == 0 ? null : Math.Round((double)story.RatingSum / story.RatingCount, 1),
-        story.RatingCount);
+        story.RatingCount,
+        story.AgeRating,
+        story.Visibility);
 
     public static StoryDetailDto ToDetail(this Story story, bool forEditor = false) => new(
         story.Id,
@@ -65,7 +67,10 @@ public static class Mapping
         story.Scenes.OrderBy(s => s.Order).Select(s => s.ToDto()).ToList(),
         story.Author?.Username ?? "",
         story.RatingCount == 0 ? null : Math.Round((double)story.RatingSum / story.RatingCount, 1),
-        story.RatingCount);
+        story.RatingCount,
+        story.AgeRating,
+        story.Visibility,
+        forEditor ? story.ModerationNote : "");
 
     public static StoryCharacterDto ToDto(this StoryCharacter character) =>
         new(character.Id, character.Name, character.States.OrderBy(s => s.Order)

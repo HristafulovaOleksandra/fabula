@@ -45,6 +45,18 @@ public class ImageStorage(string rootPath)
 
 public static class ImageStorageExtensions
 {
+    public static string? LocalPath(this ImageStorage storage, string? publicPath)
+    {
+        if (publicPath is null || !publicPath.StartsWith(ImageStorage.PublicPrefix + "/"))
+        {
+            return null;
+        }
+
+        var relative = publicPath[(ImageStorage.PublicPrefix.Length + 1)..].Replace('/', Path.DirectorySeparatorChar);
+        var fullPath = Path.GetFullPath(Path.Combine(storage.RootPath, relative));
+        return fullPath.StartsWith(storage.RootPath + Path.DirectorySeparatorChar) && File.Exists(fullPath) ? fullPath : null;
+    }
+
     public static void DeleteIfOwned(this ImageStorage storage, string? publicPath)
     {
         if (publicPath is null || !publicPath.StartsWith(ImageStorage.PublicPrefix + "/"))

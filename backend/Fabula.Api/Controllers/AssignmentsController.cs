@@ -4,6 +4,7 @@ using Fabula.Api.Contracts;
 using Fabula.Api.Data;
 using Fabula.Api.Economy;
 using Fabula.Api.Entities;
+using Fabula.Api.Moderation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -47,10 +48,16 @@ public class AssignmentsController(FabulaDbContext db, WalletService wallet) : C
             return ValidationProblem("Призначати історії можна лише своїм учням, які прийняли запрошення.");
         }
 
-        var published = await db.Stories.AnyAsync(s => s.Id == request.StoryId && s.Status == StoryStatus.Published, cancellationToken);
-        if (!published)
+        var story = await db.Stories.AsNoTracking().SingleOrDefaultAsync(s => s.Id == request.StoryId && s.Status == StoryStatus.Published, cancellationToken);
+        if (story is null || (story.Visibility == StoryVisibility.Private && story.AuthorId != teacherId))
         {
-            return ValidationProblem("Призначити можна лише опубліковану історію.");
+            return ValidationProblem("Призначити можна лише опубліковану історію (приватну — тільки свою).");
+        }
+
+        var studentBirth = await db.Users.Where(u => u.Id == request.StudentId).Select(u => u.BirthDate).SingleAsync(cancellationToken);
+        if (story.AgeRating > AgePolicy.Allowed(studentBirth, wallet.Today()))
+        {
+            return ValidationProblem($"Ця історія для віку {AgePolicy.Label(story.AgeRating)} і не підходить цьому учневі за віком.");
         }
 
         if (request.DueDate is not null && request.DueDate < wallet.Today())

@@ -4,7 +4,7 @@ from functools import lru_cache
 from threading import Lock
 from typing import Literal
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from pydantic import BaseModel, Field
 
 from . import settings
@@ -14,6 +14,7 @@ nltk.data.path.insert(0, str(settings.NLTK_DATA_DIR))
 
 from fabula_features import FeatureExtractor
 from .cefr_model import CefrModel
+from .moderation import ImageModerator, TextModerator
 from .words import WordAnalyzer
 
 Level = Literal["A1", "A2", "B1", "B2", "C"]
@@ -27,6 +28,8 @@ async def lifespan(_: FastAPI):
     state["extractor"] = extractor
     state["model"] = CefrModel()
     state["words"] = WordAnalyzer(extractor.lexicon)
+    state["moderator"] = TextModerator()
+    state["images"] = ImageModerator()
     yield
     state.clear()
 
@@ -58,7 +61,37 @@ class SentenceResult(BaseModel):
     score: float
 
 
+class FlaggedWordResult(BaseModel):
+    text: str
+    start: int
+    end: int
+    kind: Literal["mild", "strong", "sexual", "hate"]
+
+
+class TextModerationResult(BaseModel):
+    age: Literal["6+", "12+", "16+"]
+    verdict: Literal["ok", "review", "blocked"]
+    reasons: list[str]
+    words: list[FlaggedWordResult]
+
+
+class ModerateTextsRequest(BaseModel):
+    texts: list[str] = Field(max_length=300)
+
+
+class ModerateTextsResponse(BaseModel):
+    results: list[TextModerationResult]
+
+
+class ImageModerationResult(BaseModel):
+    age: Literal["6+", "12+", "16+"]
+    verdict: Literal["ok", "review", "blocked"]
+    reasons: list[str]
+    detections: list[dict]
+
+
 class LineResult(BaseModel):
+    moderation: TextModerationResult | None = None
     level: str | None
     score: float | None
     confidence: float | None
@@ -77,6 +110,17 @@ def word_count(features: dict[str, float]) -> int:
     return int(features["n_words"])
 
 
+@lru_cache(maxsize=8192)
+def moderate_one(text: str) -> TextModerationResult:
+    verdict = state["moderator"].judge(text[: settings.MAX_TEXT_CHARS])
+    return TextModerationResult(
+        age=verdict.age,
+        verdict=verdict.verdict,
+        reasons=verdict.reasons,
+        words=[FlaggedWordResult(**vars(word)) for word in verdict.words],
+    )
+
+
 @lru_cache(maxsize=4096)
 def analyze_one(text: str, target: str, narration: bool) -> LineResult:
     extractor: FeatureExtractor = state["extractor"]
@@ -87,8 +131,9 @@ def analyze_one(text: str, target: str, narration: bool) -> LineResult:
     split = narration or word_count(whole) > settings.MAX_WORDS_WHOLE_DIALOGUE
     units = [(span.start_char, span.end_char, extractor.features(span.as_doc())) for span in doc.sents] if split else [(0, len(doc.text), whole)]
     units = [unit for unit in units if word_count(unit[2]) >= settings.MIN_WORDS_FOR_LEVEL]
+    moderation = moderate_one(text)
     if not units:
-        return LineResult(level=None, score=None, confidence=None, scale=scale, too_short=True, sentences=[], words=words)
+        return LineResult(moderation=moderation, level=None, score=None, confidence=None, scale=scale, too_short=True, sentences=[], words=words)
     predictions = state["model"].predict(
         [doc.text[start:end] for start, end, _ in units], [features for _, _, features in units], [not narration] * len(units)
     )
@@ -98,6 +143,7 @@ def analyze_one(text: str, target: str, narration: bool) -> LineResult:
         for (start, end, _), p in zip(units, predictions)
     ]
     return LineResult(
+        moderation=moderation,
         level=hardest.level,
         score=round(hardest.score, 4),
         confidence=round(hardest.confidence, 4),
@@ -128,6 +174,21 @@ def calibration() -> dict:
             for scale in ("dialogue", "narration")
         },
     }
+
+
+@app.post("/moderate/texts", response_model=ModerateTextsResponse)
+def moderate_texts(request: ModerateTextsRequest) -> ModerateTextsResponse:
+    with analysis_lock:
+        results = [moderate_one(text.strip()) for text in request.texts]
+    return ModerateTextsResponse(results=results)
+
+
+@app.post("/moderate/image", response_model=ImageModerationResult)
+async def moderate_image(request: Request) -> ImageModerationResult:
+    data = await request.body()
+    with analysis_lock:
+        verdict = state["images"].judge(data)
+    return ImageModerationResult(**vars(verdict))
 
 
 @app.post("/analyze", response_model=AnalyzeResponse, response_model_by_alias=True)

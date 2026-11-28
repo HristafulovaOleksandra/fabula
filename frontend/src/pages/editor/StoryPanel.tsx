@@ -29,6 +29,7 @@ function toStoryForm(story: StoryDetail): StoryForm {
     tagIds: story.tags.map((t) => t.id),
     words: story.words,
     startSceneId: story.startSceneId,
+    visibility: story.visibility,
   }
 }
 
@@ -185,6 +186,25 @@ export function StoryPanel({ story, economy, tags, onTagCreated, onSaved, onDirt
   return (
     <form className={styles.panel} onSubmit={save}>
       <h2>Про історію</h2>
+      <div className={styles.visibility} role="radiogroup" aria-label="Хто бачить історію">
+        {(['Public', 'Private'] as const).map((value) => (
+          <button
+            key={value}
+            type="button"
+            role="radio"
+            aria-checked={form.visibility === value}
+            className={form.visibility === value ? styles.visibilityOn : ''}
+            onClick={() => update({ ...form, visibility: value })}
+          >
+            {value === 'Public' ? 'Для всіх' : 'Приватно'}
+          </button>
+        ))}
+        <small>
+          {form.visibility === 'Public'
+            ? 'Після публікації історія з’явиться в бібліотеці.'
+            : 'Історії не буде в бібліотеці — її можна лише призначити своїм учням як домашнє завдання.'}
+        </small>
+      </div>
       <div className={styles.twoColumns}>
         <div className={styles.stack}>
           <label className="field">

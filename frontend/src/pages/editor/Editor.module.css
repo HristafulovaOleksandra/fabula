@@ -1057,3 +1057,192 @@
   min-height: 36px;
   padding: 4px 14px;
 }
+
+.visibility {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.visibility button {
+  min-height: 38px;
+  padding: 4px 16px;
+  border: var(--line) solid var(--color-primary);
+  border-radius: 999px;
+  background: var(--color-paper);
+  color: var(--color-primary);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.visibility .visibilityOn {
+  background: var(--color-primary);
+  color: var(--color-paper);
+}
+
+.visibility small {
+  color: var(--color-text-soft);
+}
+
+.moderationNotice {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 18px;
+  padding: 12px 16px;
+  border: var(--line) solid;
+  border-radius: var(--radius-sm);
+  background: var(--color-paper);
+}
+
+.noticeBlocked {
+  border-color: var(--color-accent);
+}
+
+.noticeBlocked b {
+  color: var(--color-accent);
+}
+
+.noticeReview {
+  border-color: var(--color-warning);
+}
+
+.noticeReview b {
+  color: var(--color-warning-text);
+}
+
+.noticeActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+
+.appealForm {
+  display: grid;
+  gap: 8px;
+}
+
+.appealForm textarea {
+  font: inherit;
+  padding: 8px 10px;
+  border: var(--line) solid var(--color-primary);
+  border-radius: var(--radius-sm);
+}
+
+.ageVerdict {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 10px;
+  font-weight: 700;
+}
+
+.ageBig {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--color-paper);
+  background: var(--color-primary);
+  border-radius: 999px;
+  padding: 2px 14px;
+}
+
+.verdictBox {
+  margin: 0 0 10px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+}
+
+.verdictBlocked {
+  color: #fff;
+  background: var(--color-accent);
+}
+
+.verdictReview {
+  color: var(--color-text);
+  background: var(--color-warning);
+}
+
+.findingList {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.findingList li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.findingAge {
+  flex-shrink: 0;
+  min-width: 82px;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 800;
+  border: var(--line) solid var(--color-primary);
+  border-radius: 999px;
+  padding: 1px 8px;
+  background: var(--color-paper);
+}
+
+.findingBad {
+  color: #fff;
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+}
+
+.findingBody {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.findingText {
+  overflow-wrap: anywhere;
+}
+
+.findingImage {
+  width: 140px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: var(--line) solid var(--color-surface);
+}
+
+.flag_mild,
+.flag_strong,
+.flag_sexual,
+.flag_hate {
+  color: inherit;
+  border-radius: 3px;
+  padding: 0 1px;
+}
+
+.flag_mild {
+  background: rgba(242, 163, 58, 0.35);
+}
+
+.flag_strong {
+  background: rgba(229, 72, 59, 0.3);
+}
+
+.flag_sexual,
+.flag_hate {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.flagChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+}

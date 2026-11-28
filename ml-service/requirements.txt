@@ -9,3 +9,5 @@ en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_
 pyphen==0.18.1
 wordfreq==3.1.1
 nltk==3.10.4
+onnxruntime==1.32.0
+nudenet==3.4.2

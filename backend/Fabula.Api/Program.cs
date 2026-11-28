@@ -3,6 +3,7 @@ using Fabula.Api.Data;
 using Fabula.Api.Dictionary;
 using Fabula.Api.Economy;
 using Fabula.Api.Ml;
+using Fabula.Api.Moderation;
 using Fabula.Api.Placement;
 using Fabula.Api.Email;
 using Fabula.Api.Entities;
@@ -52,6 +53,8 @@ builder.Services.AddSingleton<EmailSender>();
 builder.Services.AddScoped<PasswordResetService>();
 builder.Services.AddScoped<EmailChangeService>();
 builder.Services.AddScoped<WalletService>();
+builder.Services.AddScoped<StoryModeration>();
+builder.Services.AddHostedService<PublishedStoriesCheck>();
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -65,18 +68,37 @@ builder.Services.AddRateLimiter(options =>
 builder.Services.AddHttpClient<MlClient>(client =>
 {
     client.BaseAddress = new Uri(Environment.GetEnvironmentVariable("ML_SERVICE_URL") is { Length: > 0 } url ? url : "http://localhost:8000");
-    client.Timeout = TimeSpan.FromSeconds(15);
+    client.Timeout = TimeSpan.FromSeconds(90);
 });
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters
+    .AddJwtBearer(options =>
     {
-        ValidIssuer = jwt.Issuer,
-        ValidAudience = jwt.Audience,
-        IssuerSigningKey = jwt.SigningKey,
-        ValidateIssuerSigningKey = true,
-        ClockSkew = TimeSpan.FromMinutes(1)
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidIssuer = jwt.Issuer,
+            ValidAudience = jwt.Audience,
+            IssuerSigningKey = jwt.SigningKey,
+            ValidateIssuerSigningKey = true,
+            ClockSkew = TimeSpan.FromMinutes(1)
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = async context =>
+            {
+                var db = context.HttpContext.RequestServices.GetRequiredService<FabulaDbContext>();
+                var userId = context.Principal!.UserId();
+                var account = await db.Users.AsNoTracking()
+                    .Where(u => u.Id == userId)
+                    .Select(u => new { u.IsBlocked, u.Role })
+                    .SingleOrDefaultAsync(context.HttpContext.RequestAborted);
+                if (account is null || account.IsBlocked || !context.Principal!.IsInRole(account.Role.ToString()))
+                {
+                    context.Fail("Обліковий запис заблоковано або змінено.");
+                }
+            }
+        };
     });
 
 builder.Services.AddAuthorizationBuilder()

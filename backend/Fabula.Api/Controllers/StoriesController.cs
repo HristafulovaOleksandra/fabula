@@ -3,6 +3,7 @@ using Fabula.Api.Contracts;
 using Fabula.Api.Data;
 using Fabula.Api.Economy;
 using Fabula.Api.Entities;
+using Fabula.Api.Moderation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ namespace Fabula.Api.Controllers;
 
 [ApiController]
 [Route("api/stories")]
-public class StoriesController(FabulaDbContext db, EconomySettings economy) : ControllerBase
+public class StoriesController(FabulaDbContext db, EconomySettings economy, StoryModeration moderation) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<StorySummaryDto>>> List(
@@ -37,7 +38,8 @@ public class StoriesController(FabulaDbContext db, EconomySettings economy) : Co
         }
         else
         {
-            query = query.Where(s => s.Status == StoryStatus.Published);
+            var allowed = await db.ViewerAllowedAsync(User, cancellationToken);
+            query = query.Where(s => s.Status == StoryStatus.Published && s.Visibility == StoryVisibility.Public && AgePolicy.Upto(allowed).Contains(s.AgeRating));
         }
 
         if (level is not null)
@@ -88,7 +90,9 @@ public class StoriesController(FabulaDbContext db, EconomySettings economy) : Co
 
         var query = db.Stories.AsNoTracking()
             .Include(s => s.Author).Include(s => s.Tags).Include(s => s.Scenes)
-            .Where(s => s.Status == StoryStatus.Published && s.AuthorId != userId && !playedIds.Contains(s.Id));
+            .Where(s => s.Status == StoryStatus.Published && s.Visibility == StoryVisibility.Public && s.AuthorId != userId && !playedIds.Contains(s.Id));
+        var allowedAge = AgePolicy.Allowed(user.BirthDate, DateOnly.FromDateTime(DateTime.UtcNow));
+        query = query.Where(s => AgePolicy.Upto(allowedAge).Contains(s.AgeRating));
         if (level is not null)
         {
             query = query.Where(s => s.Level == level);
@@ -143,6 +147,24 @@ public class StoriesController(FabulaDbContext db, EconomySettings economy) : Co
             return NotFound();
         }
 
+        if (!CanEdit(story))
+        {
+            var viewerId = User.Identity?.IsAuthenticated == true ? User.UserId() : (Guid?)null;
+            var assigned = viewerId is not null && await db.Assignments.AnyAsync(a => a.StudentId == viewerId && a.StoryId == story.Id, cancellationToken);
+            if (story.Visibility == StoryVisibility.Private && !assigned)
+            {
+                return NotFound();
+            }
+
+            if (story.AgeRating > await db.ViewerAllowedAsync(User, cancellationToken))
+            {
+                return Problem(statusCode: StatusCodes.Status403Forbidden,
+                    detail: viewerId is null
+                        ? $"Ця історія для віку {AgePolicy.Label(story.AgeRating)}. Увійди, щоб перевірити, чи вона тобі підходить."
+                        : $"Ця історія для віку {AgePolicy.Label(story.AgeRating)}.");
+            }
+        }
+
         return Ok(story.ToDetail(forEditor: CanEdit(story)));
     }
 
@@ -188,7 +210,63 @@ public class StoriesController(FabulaDbContext db, EconomySettings economy) : Co
 
         story.UpdatedAt = DateTime.UtcNow;
         await db.SaveChangesAsync(cancellationToken);
-        return Ok(story.ToDetail(forEditor: CanEdit(story)));
+        await RecheckPublishedAsync(story.Id, story.Status, cancellationToken);
+        var saved = await StoryRepository.LoadFullAsync(db, id, cancellationToken);
+        return Ok(saved!.ToDetail(forEditor: true));
+    }
+
+    [Authorize(Policy = Policies.CanAuthor)]
+    [HttpPost("{id:guid}/moderation")]
+    public async Task<ActionResult<ModerationReport>> Check(Guid id, CancellationToken cancellationToken)
+    {
+        var story = await db.Stories.AsNoTracking().SingleOrDefaultAsync(s => s.Id == id, cancellationToken);
+        if (story is null || !CanEdit(story))
+        {
+            return NotFound();
+        }
+
+        var report = await moderation.ApplyAsync(id, publishing: false, cancellationToken);
+        return report is { Available: true }
+            ? Ok(report)
+            : Problem(statusCode: StatusCodes.Status503ServiceUnavailable, detail: "Перевірка вмісту зараз недоступна: ML-сервіс не відповідає.");
+    }
+
+    [Authorize(Policy = Policies.CanAuthor)]
+    [HttpPost("{id:guid}/appeal")]
+    public async Task<IActionResult> Appeal(Guid id, AppealRequest request, CancellationToken cancellationToken)
+    {
+        var story = await db.Stories.SingleOrDefaultAsync(s => s.Id == id, cancellationToken);
+        if (story is null || !CanEdit(story))
+        {
+            return NotFound();
+        }
+
+        if (story.Status != StoryStatus.Blocked)
+        {
+            return ValidationProblem("Оскаржити можна лише заблоковану історію.");
+        }
+
+        var item = await db.ModerationItems.FirstOrDefaultAsync(
+            m => m.TargetType == ModerationTarget.Story && m.TargetId == id && (m.Status == ModerationStatus.Pending || m.Status == ModerationStatus.Appealed),
+            cancellationToken);
+        if (item is null)
+        {
+            item = new ModerationItem { TargetType = ModerationTarget.Story, TargetId = id, Reason = story.ModerationNote, CreatedAt = DateTime.UtcNow };
+            db.ModerationItems.Add(item);
+        }
+
+        item.Status = ModerationStatus.Appealed;
+        item.AuthorMessage = request.Message.Trim();
+        await db.SaveChangesAsync(cancellationToken);
+        return NoContent();
+    }
+
+    private async Task RecheckPublishedAsync(Guid storyId, StoryStatus status, CancellationToken cancellationToken)
+    {
+        if (status is StoryStatus.Published or StoryStatus.PendingModeration)
+        {
+            await moderation.ApplyAsync(storyId, publishing: false, cancellationToken);
+        }
     }
 
     [Authorize(Policy = Policies.CanAuthor)]
@@ -206,10 +284,17 @@ public class StoriesController(FabulaDbContext db, EconomySettings economy) : Co
             return ValidationProblem("Історію без сцен або без початкової сцени не можна опублікувати.");
         }
 
-        story.Status = StoryStatus.Published;
         story.UpdatedAt = DateTime.UtcNow;
         await db.SaveChangesAsync(cancellationToken);
-        return Ok(story.ToDetail(forEditor: CanEdit(story)));
+        var report = await moderation.ApplyAsync(id, publishing: true, cancellationToken);
+        if (report is not { Available: true })
+        {
+            return Problem(statusCode: StatusCodes.Status503ServiceUnavailable,
+                detail: "Не вдалося перевірити вміст історії: ML-сервіс не відповідає. Спробуй опублікувати трохи пізніше.");
+        }
+
+        var published = await StoryRepository.LoadFullAsync(db, id, cancellationToken);
+        return Ok(published!.ToDetail(forEditor: true));
     }
 
     [Authorize(Policy = Policies.CanAuthor)]
@@ -222,6 +307,7 @@ public class StoriesController(FabulaDbContext db, EconomySettings economy) : Co
             return NotFound();
         }
 
+        await db.ModerationItems.Where(m => m.TargetType == ModerationTarget.Story && m.TargetId == story.Id).ExecuteDeleteAsync(cancellationToken);
         db.Stories.Remove(story);
         await db.SaveChangesAsync(cancellationToken);
         return NoContent();
@@ -302,6 +388,7 @@ public class StoriesController(FabulaDbContext db, EconomySettings economy) : Co
         story.CoverFocusY = request.CoverFocusY;
         story.CoverZoom = request.CoverZoom;
         story.Level = request.Level;
+        story.Visibility = request.Visibility;
         story.PriceCrystals = request.PriceCrystals;
         story.StartSceneId = request.StartSceneId ?? story.StartSceneId;
         story.Tags.Clear();

@@ -10,6 +10,14 @@ import uuid
 import zlib
 
 B = sys.argv[1] if len(sys.argv) > 1 else "http://localhost:5080/api"
+ML = "http://localhost:8000/health"
+for _ in range(60):
+    try:
+        with urllib.request.urlopen(ML, timeout=3) as response:
+            if response.status == 200:
+                break
+    except OSError:
+        time.sleep(3)
 failures = []
 checks = 0
 
@@ -71,11 +79,11 @@ def form(fields, fname, content):
 
 
 mp = f"multipart/form-data; boundary={bnd}"
-s, author = call("POST", "/auth/register", {"email": f"author{sfx}@test.local", "username": f"author_{sfx}", "password": "secret-pass-1", "displayName": "Test Author", "role": "Author"})
+s, author = call("POST", "/auth/register", {"email": f"author{sfx}@test.local", "username": f"author_{sfx}", "password": "secret-pass-1", "birthDate": "2000-01-01", "displayName": "Test Author", "role": "Author"})
 ok(f"реєстрація автора ({s})", s == 200 and author["user"]["role"] == "Author")
-s, _ = call("POST", "/auth/register", {"email": f"author{sfx}@test.local", "username": f"author_{sfx}", "password": "secret-pass-1", "displayName": "Second", "role": "Author"})
+s, _ = call("POST", "/auth/register", {"email": f"author{sfx}@test.local", "username": f"author_{sfx}", "password": "secret-pass-1", "birthDate": "2000-01-01", "displayName": "Second", "role": "Author"})
 ok(f"повторна пошта відхилена ({s})", s == 409)
-s, _ = call("POST", "/auth/register", {"email": f"adm{sfx}@test.local", "username": f"adm_{sfx}", "password": "secret-pass-1", "displayName": "Admin", "role": "Admin"})
+s, _ = call("POST", "/auth/register", {"email": f"adm{sfx}@test.local", "username": f"adm_{sfx}", "password": "secret-pass-1", "birthDate": "2000-01-01", "displayName": "Admin", "role": "Admin"})
 ok(f"самореєстрація адміністратора заборонена ({s})", s == 400)
 s, _ = call("POST", "/auth/register", {"email": "not-an-email", "username": "a b", "password": "123", "displayName": "X"})
 ok(f"неправильні дані реєстрації відхилено ({s})", s == 400)
@@ -98,8 +106,8 @@ sid = story["id"]
 ok(f"створення історії ({s})", s == 201 and story["status"] == "Draft" and len(story["words"]) == 2)
 s, tr = call("GET", "/dictionary?word=tickets", token=tok)
 ok(f"переклад зі словника ({s}, {tr and tr['translations'][:1]})", s == 200 and tr["translations"][:1] == ["квиток"])
-s, own = call("POST", "/tags", {"name": f"  smoke   tag {sfx} ", "kind": "Topic"}, token=tok)
-ok(f"власний тег чекає на модерацію ({s})", s == 200 and own["status"] == "Pending" and own["name"] == f"Smoke tag {sfx}")
+s, own = call("POST", "/tags", {"name": f"  idiot   tag {sfx} ", "kind": "Topic"}, token=tok)
+ok(f"власний тег чекає на модерацію ({s})", s == 200 and own["status"] == "Pending" and own["name"] == f"Idiot tag {sfx}")
 s, _ = call("POST", "/tags", {"name": "<b>x</b>", "kind": "Genre"}, token=tok)
 ok(f"некоректну назву тегу відхилено ({s})", s == 400)
 s, public_tags = call("GET", "/tags")
@@ -206,7 +214,7 @@ s, renamed = call("PUT", f"/stories/{sid}/characters/{guard['id']}", {"name": "O
 s2, full_story = call("GET", f"/stories/{sid}", token=tok)
 first = [x for x in full_story["scenes"] if x["id"] == sc1["id"]][0]
 ok(f"перейменування персонажа оновлює репліки й сцену ({s})", s == 200 and first["lines"][1]["speaker"] == "Officer" and first["characters"][1]["name"] == "Officer")
-s, student = call("POST", "/auth/register", {"email": f"student{sfx}@test.local", "username": f"student_{sfx}", "password": "secret-pass-1", "displayName": "Student", "role": "Student"})
+s, student = call("POST", "/auth/register", {"email": f"student{sfx}@test.local", "username": f"student_{sfx}", "password": "secret-pass-1", "birthDate": "2000-01-01", "displayName": "Student", "role": "Student"})
 st = student["token"]
 s, _ = call("POST", "/stories", {"title": "X", "level": "A1", "priceCrystals": 0}, token=st)
 ok(f"учень не може створити історію ({s})", s == 403)
@@ -247,6 +255,12 @@ free_choice, paid_choice = after["scenes"][0]["choices"][0]["id"], after["scenes
 def sql(statement):
     subprocess.run(["docker", "compose", "exec", "-T", "postgres", "sh", "-c",
                     'psql -q -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "$0"', statement], check=True, capture_output=True)
+
+
+def sql_value(statement):
+    result = subprocess.run(["docker", "compose", "exec", "-T", "postgres", "sh", "-c",
+                             'psql -q -t -A -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "$0"', statement], check=True, capture_output=True, text=True)
+    return result.stdout.strip()
 
 
 def play(token, choice=None):
@@ -378,9 +392,9 @@ sql(f"""UPDATE "Streaks" SET "CurrentDays" = 4, "LastActiveDate" = (now() at tim
 s, wallet = call("GET", "/wallet", token=st)
 ok(f"два пропущені дні: серія обнуляється без відновлення ({s})", wallet["streak"]["current"] == 0 and wallet["streak"]["rescueDays"] == 0)
 call("PUT", f"/stories/{sid}", {"title": "Lost at the Station", "level": "A2", "priceCrystals": 0, "tagIds": [1, 8], "words": story["words"]}, token=tok)
-s, _ = call("POST", "/auth/register", {"email": f"t{sfx}@test.local", "username": f"t_{sfx}", "password": "secret-pass-1", "displayName": "Teacher", "role": "Teacher"})
+s, _ = call("POST", "/auth/register", {"email": f"t{sfx}@test.local", "username": f"t_{sfx}", "password": "secret-pass-1", "birthDate": "2000-01-01", "displayName": "Teacher", "role": "Teacher"})
 ok(f"роль Teacher під час реєстрації не існує ({s})", s == 400)
-s, _ = call("POST", "/auth/register", {"email": f"other{sfx}@test.local", "username": f"student_{sfx}", "password": "secret-pass-1", "displayName": "Other", "role": "Student"})
+s, _ = call("POST", "/auth/register", {"email": f"other{sfx}@test.local", "username": f"student_{sfx}", "password": "secret-pass-1", "birthDate": "2000-01-01", "displayName": "Other", "role": "Student"})
 ok(f"зайнятий нік відхилено ({s})", s == 409)
 s, inv = call("POST", "/teaching/invitations", {"emailOrUsername": f"@student_{sfx}"}, token=tok)
 ok(f"автор запрошує учня за ніком ({s})", s == 200 and inv["status"] == "Pending")
@@ -439,7 +453,7 @@ s, _ = call("DELETE", f"/assignments/{given[0]['id']}", token=tok)
 s2, mine = call("GET", "/assignments/mine", token=st)
 ok(f"автор прибрав завдання ({s})", s == 204 and mine == [])
 call("PUT", f"/stories/{sid}", {"title": "Lost at the Station", "level": "A2", "priceCrystals": 0, "tagIds": [1, 8], "words": story["words"]}, token=tok)
-s, other = call("POST", "/auth/register", {"email": f"other{sfx}@test.local", "username": f"other_{sfx}", "password": "secret-pass-1", "displayName": "Other Author", "role": "Author"})
+s, other = call("POST", "/auth/register", {"email": f"other{sfx}@test.local", "username": f"other_{sfx}", "password": "secret-pass-1", "birthDate": "2000-01-01", "displayName": "Other Author", "role": "Author"})
 s, _ = call("POST", "/assignments", {"studentId": student_id, "storyId": sid}, token=other["token"])
 ok(f"чужий автор не може призначити історію не своєму учневі ({s})", s == 400)
 s, prof_view = call("GET", f"/authors/author_{sfx}", token=other["token"])
@@ -513,6 +527,95 @@ s3, moved = call("POST", "/profile/email/confirm", {"code": email_code}, token=s
 s4, _ = call("POST", "/auth/login", {"email": new_email, "password": "changed-pass-1"})
 ok(f"зміна пошти через код на нову адресу ({s}, {s2}, {s3}, {s4})",
    s == 202 and email_code is not None and s2 == 400 and s3 == 200 and moved["email"] == new_email and s4 == 200)
+s, _ = call("POST", "/auth/register", {"email": f"nobirth{sfx}@test.local", "username": f"nobirth_{sfx}", "password": "secret-pass-1", "displayName": "No Birth"})
+s2, _ = call("POST", "/auth/register", {"email": f"baby{sfx}@test.local", "username": f"baby_{sfx}", "password": "secret-pass-1", "birthDate": "2025-01-01", "displayName": "Baby"})
+s3, kid = call("POST", "/auth/register", {"email": f"kid{sfx}@test.local", "username": f"kid_{sfx}", "password": "secret-pass-1", "birthDate": "2017-03-01", "displayName": "Kid"})
+ok(f"дата народження обов'язкова й правдоподібна ({s}, {s2}, {s3})", s == 400 and s2 == 400 and s3 == 200 and kid["user"]["birthDate"] == "2017-03-01")
+kid_token = kid["token"]
+s, mod_story = call("POST", "/stories", {"title": "Rude Station", "level": "A2", "priceCrystals": 0, "tagIds": [1]}, token=tok)
+mod_id = mod_story["id"]
+s, mod_scene = call("POST", f"/stories/{mod_id}/scenes", {"title": "Platform"}, token=tok)
+rude_scene = {"title": "Platform", "characters": [], "choices": [],
+              "lines": [{"speaker": None, "text": "Anna waits for the train."}, {"speaker": None, "text": "Shut up, you idiot! The train is late again."}]}
+call("PUT", f"/stories/{mod_id}/scenes/{mod_scene['id']}", rude_scene, token=tok)
+s, report = call("POST", f"/stories/{mod_id}/moderation", token=tok)
+if s == 503:
+    print("SKIP ML-сервіс не запущено — перевірки модерації пропущено")
+else:
+    flagged = [w["text"] for f in report["findings"] for w in f["words"]]
+    ok(f"«Перевірка»: груба репліка дає 12+ і підсвічує слова ({s}, {flagged})",
+       s == 200 and report["age"] == "Teen" and report["verdict"] == "Ok" and "idiot" in flagged)
+    s, published = call("POST", f"/stories/{mod_id}/publish", token=tok)
+    s2, kid_list = call("GET", "/stories", token=kid_token)
+    s3, _ = call("GET", f"/stories/{mod_id}", token=kid_token)
+    s4, adult_list = call("GET", "/stories", token=st)
+    ok(f"історія 12+ опублікована, дитина її не бачить, дорослий бачить ({s}, {s3})",
+       s == 200 and published["status"] == "Published" and published["ageRating"] == "Teen"
+       and all(x["id"] != mod_id for x in kid_list) and s3 == 403 and any(x["id"] == mod_id for x in adult_list))
+    explicit_scene = dict(rude_scene, lines=[*rude_scene["lines"], {"speaker": None, "text": "He wanted to have sex with her right there."}])
+    s, _ = call("PUT", f"/stories/{mod_id}/scenes/{mod_scene['id']}", explicit_scene, token=tok)
+    s2, hidden = call("GET", f"/stories/{mod_id}", token=tok)
+    s3, adult_list = call("GET", "/stories", token=st)
+    ok(f"неприпустиме в опублікованій історії — вона ховається до перевірки ({s2})",
+       s == 200 and hidden["status"] == "PendingModeration" and all(x["id"] != mod_id for x in adult_list))
+    s, blocked = call("POST", f"/stories/{mod_id}/publish", token=tok)
+    s2, _ = call("POST", f"/stories/{mod_id}/appeal", {"message": "This is a test appeal message."}, token=tok)
+    ok(f"публікація з неприпустимим змістом блокується, можна оскаржити ({s}, {s2})",
+       s == 200 and blocked["status"] == "Blocked" and "сексуальний" in blocked["moderationNote"] and s2 == 204)
+    s, _ = call("GET", "/admin/queue", token=tok)
+    s2, adm = call("POST", "/auth/register", {"email": f"adm{sfx}@test.local", "username": f"adm_{sfx}", "password": "secret-pass-1", "birthDate": "1990-01-01", "displayName": "Admin"})
+    made = subprocess.run(["powershell", "-NoProfile", "-File", "scripts/make-admin.ps1", "-Login", f"adm_{sfx}"], capture_output=True, text=True, encoding="utf-8", errors="replace")
+    s3, _ = call("GET", "/admin/queue", token=adm["token"])
+    s4, admin_login = call("POST", "/auth/login", {"login": f"adm_{sfx}", "password": "secret-pass-1"})
+    admin_token = admin_login["token"]
+    ok(f"черга лише для адміна; make-admin робить адміна, старий токен перестає діяти ({s}, {made.returncode}, {s3}, {s4})",
+       s == 403 and made.returncode == 0 and s3 == 401 and admin_login["user"]["role"] == "Admin")
+    s, queue = call("GET", "/admin/queue", token=admin_token)
+    appeal = next((item for item in queue if item["story"] and item["story"]["id"] == mod_id), None)
+    ok(f"оскарження в черзі з поясненням автора ({s})", appeal is not None and appeal["status"] == "Appealed" and appeal["authorMessage"].startswith("This is a test"))
+    s, _ = call("POST", f"/admin/queue/{appeal['id']}/approve", {"note": "Allowed for the test"}, token=admin_token)
+    s2, approved_story = call("GET", f"/stories/{mod_id}", token=tok)
+    call("PUT", f"/stories/{mod_id}/scenes/{mod_scene['id']}", explicit_scene, token=tok)
+    s3, still = call("GET", f"/stories/{mod_id}", token=tok)
+    s4, history = call("GET", "/admin/queue?history=true", token=admin_token)
+    ok(f"адмін схвалив оскарження: історія опублікована і не ховається після збереження того самого ({s}, {s3})",
+       s == 204 and approved_story["status"] == "Published" and still["status"] == "Published"
+       and any(item["id"] == appeal["id"] and item["status"] == "Approved" and item["reviewedBy"] == f"adm_{sfx}" for item in history))
+    s, found_users = call("GET", f"/admin/users?q=kid_{sfx}", token=admin_token)
+    kid_id = found_users[0]["id"]
+    s2, _ = call("PUT", f"/admin/users/{kid_id}/blocked", {"blocked": True}, token=admin_token)
+    s3, _ = call("GET", "/auth/me", token=kid_token)
+    s4, _ = call("POST", "/auth/login", {"login": f"kid_{sfx}", "password": "secret-pass-1"})
+    call("PUT", f"/admin/users/{kid_id}/blocked", {"blocked": False}, token=admin_token)
+    s5, _ = call("POST", "/auth/login", {"login": f"kid_{sfx}", "password": "secret-pass-1"})
+    ok(f"заблокований не входить, його токен не діє; розблокування повертає вхід ({s2}, {s3}, {s4}, {s5})",
+       s2 == 204 and s3 == 401 and s4 == 403 and s5 == 200)
+    s, _ = call("PUT", f"/admin/users/{admin_login['user']['id']}/role", {"role": "Student"}, token=admin_token)
+    ok(f"адмін не може змінити власну роль ({s})", s == 400)
+    s, _ = call("GET", "/admin/ml-stats", token=tok)
+    s2, ml_stats = call("GET", "/admin/ml-stats", token=admin_token)
+    ml_row = next((row for row in ml_stats.get("stories", []) if row["id"] == mod_id), None) if s2 == 200 else None
+    ok(f"статистика ML лише для адміна, рахує репліки й історії ({s}, {s2})",
+       s == 403 and s2 == 200 and ml_stats["modelName"] and ml_stats["totalLines"] >= ml_stats["ratedLines"] + ml_stats["shortLines"]
+       and len(ml_stats["checkedPerDay"]) == 14 and ml_row is not None and ml_stats["adminApproved"] >= 1)
+    s, ml_detail = call("GET", f"/admin/ml-stats/stories/{mod_id}", token=admin_token)
+    ok(f"оцінки моделі по репліках історії ({s})",
+       s == 200 and ml_detail["story"]["id"] == mod_id and len(ml_detail["lines"]) == ml_row["totalLines"]
+       and all("level" in line and "score" in line for line in ml_detail["lines"]))
+    call("DELETE", "/profile", {"password": "secret-pass-1"}, token=admin_token)
+    call("PUT", f"/stories/{mod_id}/scenes/{mod_scene['id']}", rude_scene, token=tok)
+    s, again = call("POST", f"/stories/{mod_id}/publish", token=tok)
+    ok(f"після виправлення історія публікується знову ({s})", s == 200 and again["status"] == "Published")
+    call("PUT", f"/stories/{mod_id}", {"title": "Rude Station", "level": "A2", "priceCrystals": 0, "tagIds": [1], "visibility": "Private"}, token=tok)
+    s, adult_list = call("GET", "/stories", token=st)
+    s2, _ = call("GET", f"/stories/{mod_id}", token=st)
+    ok(f"приватна історія не видна в бібліотеці й за посиланням ({s2})", all(x["id"] != mod_id for x in adult_list) and s2 == 404)
+    s, clean_tag = call("POST", "/tags", {"name": f"Pirates {sfx}", "kind": "Topic"}, token=tok)
+    s2, rude_tag = call("POST", "/tags", {"name": f"Stupid idiots {sfx}", "kind": "Topic"}, token=tok)
+    ok(f"чистий тег схвалено одразу, грубий — на перевірку ({s}, {s2})",
+       clean_tag["status"] == "Approved" and rude_tag["status"] == "Pending")
+call("DELETE", f"/stories/{mod_id}", token=tok)
+call("DELETE", "/profile", {"password": "secret-pass-1"}, token=kid_token)
 s, _ = call("DELETE", f"/stories/{sid}", token=tok)
 ok(f"видалення історії ({s})", s == 204)
 s, _ = call("DELETE", "/profile", {"password": "wrong-password"}, token=tok)
@@ -525,7 +628,7 @@ try:
 except urllib.error.HTTPError as e:
     gone = e.code
 ok(f"фон автора видалено разом з акаунтом ({gone})", gone == 404)
-s, again = call("POST", "/tags", {"name": f"Smoke tag {sfx}", "kind": "Topic"}, token=other["token"])
+s, again = call("POST", "/tags", {"name": f"Idiot tag {sfx}", "kind": "Topic"}, token=other["token"])
 ok(f"власні теги видаленого автора прибрано ({s})", s == 200 and again["id"] != own["id"])
 s, _ = call("DELETE", "/profile", {"password": "changed-pass-1"}, token=st)
 try:
@@ -535,5 +638,9 @@ except urllib.error.HTTPError as e:
 s2, _ = call("DELETE", "/profile", {"password": "secret-pass-1"}, token=other["token"])
 ok(f"тестові учень і автор видалені ({s}, {s2})", s == 204 and s2 == 204)
 ok(f"фото профілю видалено разом з акаунтом ({avatar_gone})", avatar_gone == 404)
+orphan_tag_items = sql_value("""SELECT count(*) FROM "ModerationItems" m WHERE m."TagId" IS NOT NULL AND NOT EXISTS (SELECT 1 FROM "Tags" t WHERE t."Id" = m."TagId")""")
+ok(f"у черзі немає записів про видалені теги ({orphan_tag_items})", orphan_tag_items == "0")
+sql(f"""DELETE FROM "ModerationItems" WHERE "TagId" IN (SELECT "Id" FROM "Tags" WHERE "Name" LIKE '% {sfx}' AND "Id" > 19)""")
+sql(f"""DELETE FROM "Tags" WHERE "Name" LIKE '% {sfx}' AND "Id" > 19""")
 print(f"\nПеревірок: {checks}, помилок: {len(failures)}")
 sys.exit(1 if failures else 0)

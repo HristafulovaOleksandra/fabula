@@ -585,6 +585,37 @@ function DeleteSection() {
   )
 }
 
+function BirthDateSection({ onChanged }: { onChanged: () => Promise<void> }) {
+  const [value, setValue] = useState('')
+  const [today] = useState(() => new Date().toISOString().slice(0, 10))
+  const [message, setMessage] = useState<Message>(null)
+
+  const save = async (event: FormEvent) => {
+    event.preventDefault()
+    if (!window.confirm('Дату народження вказують один раз — змінити її потім не можна. Зберегти?')) return
+    try {
+      await api('/profile', { method: 'PATCH', body: { birthDate: value } })
+      await onChanged()
+    } catch (caught) {
+      setMessage({ ok: false, text: errorText(caught) })
+    }
+  }
+
+  return (
+    <section className={`sticker ${styles.card} ${styles.attention}`}>
+      <h2>Дата народження</h2>
+      <p className={styles.hint}>
+        Поки її не вказано, бібліотека показує лише історії 6+. Дату ніхто не бачить, вона потрібна лише для вікових позначок.
+      </p>
+      <form className={styles.inviteRow} onSubmit={save}>
+        <input type="date" required max={today} value={value} onChange={(e) => setValue(e.target.value)} />
+        <button className="btn">Зберегти</button>
+      </form>
+      <Status message={message} />
+    </section>
+  )
+}
+
 function LevelSection({ user }: { user: User }) {
   return (
     <section className={`sticker ${styles.card}`}>
@@ -662,6 +693,7 @@ export function ProfilePage() {
   return (
     <div className={`page ${styles.page}`}>
       <AvatarSection user={user} onChanged={refresh} />
+      {!user.birthDate && <BirthDateSection onChanged={refresh} />}
       {user.role === 'Student' && <LevelSection user={user} />}
       <WalletSection />
       <NameSection key={`${user.displayName}-${user.nameVisibility}`} user={user} onChanged={refresh} />

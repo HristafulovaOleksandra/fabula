@@ -1,5 +1,5 @@
 import type { ChangeEvent } from 'react'
-import type { AnalyzedWord, CefrLevel } from '../../api/types'
+import type { AnalyzedWord, CefrLevel, FlaggedWord } from '../../api/types'
 import { findTargetWords } from '../../components/targetWords'
 import { AutoGrowTextarea } from './AutoGrowTextarea'
 import { aboveTarget, aboveTitle, useCalibration } from './certainty'
@@ -15,6 +15,13 @@ interface AnalyzedLineProps {
   allowedWords: string[]
   onChange: (text: string) => void
   onAllow: (lemma: string) => void
+}
+
+const FLAG_LABELS: Record<FlaggedWord['kind'], string> = {
+  mild: 'груба лексика → 12+',
+  strong: 'сильна лайка → 16+',
+  sexual: 'сексуальний зміст — заборонено',
+  hate: 'ненависть до групи — заборонено',
 }
 
 export function LevelBadge({ text, target, narration }: { text: string; target: CefrLevel; narration: boolean }) {
@@ -64,12 +71,16 @@ export function AnalyzedLine({ text, target, narration, placeholder, targetWords
       !targets.has(word.lemma) &&
       !insideTarget(word.start + offset, word.end + offset),
   )
-  const marked = [
+  const flagged = state.status === 'ready' ? (state.analysis.moderation?.words ?? []) : []
+  type MarkKind = 'target' | 'hard' | FlaggedWord['kind']
+  const priority = (kind: MarkKind) => (kind === 'target' || kind === 'hard' ? 1 : 0)
+  const marked: { start: number; end: number; kind: MarkKind }[] = [
+    ...flagged.map((word) => ({ start: word.start + offset, end: word.end + offset, kind: word.kind })),
     ...targetMatches.map((m) => ({ start: m.start, end: m.end, kind: 'target' as const })),
     ...hard.map((word) => ({ start: word.start + offset, end: word.end + offset, kind: 'hard' as const })),
-  ].sort((a, b) => a.start - b.start)
+  ].sort((a, b) => a.start - b.start || priority(a.kind) - priority(b.kind))
 
-  const segments: { text: string; kind: 'target' | 'hard' | null }[] = []
+  const segments: { text: string; kind: MarkKind | null }[] = []
   let cursor = 0
   marked.forEach(({ start, end, kind }) => {
     if (start < cursor || end > text.length) return
@@ -84,7 +95,10 @@ export function AnalyzedLine({ text, target, narration, placeholder, targetWords
         <div className={styles.highlightMirror} aria-hidden="true">
           {segments.map((segment, index) =>
             segment.kind ? (
-              <mark key={index} className={segment.kind === 'target' ? styles.targetMark : undefined}>
+              <mark
+                key={index}
+                className={segment.kind === 'target' ? styles.targetMark : segment.kind === 'hard' ? undefined : styles[`flag_${segment.kind}`]}
+              >
                 {segment.text}
               </mark>
             ) : (
@@ -116,6 +130,15 @@ ${aboveTitle(above, target)}` : ''}`}
               </span>
             )
           })}
+        </div>
+      )}
+      {flagged.length > 0 && (
+        <div className={styles.hardWords}>
+          {flagged.map((word, index) => (
+            <span key={`flag-${word.start}-${index}`} className={`${styles.flagChip} ${styles[`flag_${word.kind}`]}`}>
+              <b>{word.text}</b> {FLAG_LABELS[word.kind]}
+            </span>
+          ))}
         </div>
       )}
       {hard.length > 0 && (

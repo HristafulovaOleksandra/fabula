@@ -1,6 +1,7 @@
 import type { StoryDetail } from '../../api/types'
 import { aboveTarget, aboveTitle, useCalibration } from './certainty'
 import { LEVEL_ORDER } from './lineAnalysis'
+import { ModerationSummary } from './ModerationSummary'
 import { storyIssues } from './storyIssues'
 import styles from './Editor.module.css'
 
@@ -116,6 +117,7 @@ export function CheckPanel({ story, onOpenScene }: { story: StoryDetail; onOpenS
         <span>Виборів: {choices}</span>
         <span>Цільових слів: {story.words.length}</span>
       </div>
+      <ModerationSummary story={story} onOpenScene={onOpenScene} />
       <LevelSummary story={story} onOpenScene={onOpenScene} />
       <section className={styles.fieldset}>
         <h3>{problems.length === 0 ? 'Проблем не знайдено' : `Проблеми (${problems.length})`}</h3>

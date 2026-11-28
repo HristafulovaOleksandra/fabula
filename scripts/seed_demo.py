@@ -168,7 +168,7 @@ def account(profile):
     status, body = call("POST", "/auth/login", {"email": profile["email"], "password": PASSWORD})
     if status == 200:
         return body["token"]
-    status, body = call("POST", "/auth/register", dict(profile, password=PASSWORD))
+    status, body = call("POST", "/auth/register", dict(profile, password=PASSWORD, birthDate="2000-01-01"))
     if status != 200:
         raise SystemExit(f"Не вдалося створити {profile['username']}: {status} {body}")
     return body["token"]
