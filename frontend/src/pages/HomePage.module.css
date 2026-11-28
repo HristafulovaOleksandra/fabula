@@ -164,3 +164,31 @@
   color: var(--color-accent);
   font-weight: 700;
 }
+
+.onboarding {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 22px;
+  margin-bottom: 28px;
+  background: var(--color-highlight);
+}
+
+.onboarding h2 {
+  margin: 0 0 4px;
+}
+
+.onboarding p {
+  margin: 0;
+}
+
+.onboarding > div {
+  flex: 1;
+}
+
+@media (max-width: 560px) {
+  .onboarding {
+    flex-direction: column;
+    text-align: center;
+  }
+}

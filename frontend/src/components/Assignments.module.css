@@ -1,0 +1,117 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(30, 39, 102, 0.45);
+}
+
+.dialog {
+  display: grid;
+  gap: 12px;
+  width: min(480px, 100%);
+  padding: 22px 24px;
+  background: var(--color-paper);
+}
+
+.dialog h3 {
+  margin: 0;
+}
+
+.dialog p {
+  margin: 0;
+}
+
+.fixed {
+  font-weight: 600;
+}
+
+.hint {
+  color: var(--color-text-soft);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  border: var(--line) solid var(--color-surface);
+  border-radius: var(--radius-sm);
+  background: var(--color-paper);
+}
+
+.body {
+  display: grid;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-weight: 800;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: var(--color-text-soft);
+}
+
+.note {
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.remove {
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--color-primary);
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.state {
+  flex-shrink: 0;
+  min-width: 96px;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 800;
+  border-radius: 999px;
+  padding: 2px 10px;
+  border: var(--line) solid var(--color-primary);
+  background: var(--color-paper);
+}
+
+.done {
+  color: #fff;
+  border-color: var(--color-success);
+  background: var(--color-success);
+}
+
+.overdue {
+  color: #fff;
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+}

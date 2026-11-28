@@ -1,6 +1,6 @@
 import { api } from './client'
 import { upload } from './studio'
-import type { NameVisibility, PublicUser, TeachingLink, User } from './types'
+import type { Assignment, NameVisibility, PublicUser, TeachingLink, User } from './types'
 
 export const profileApi = {
   update: (displayName: string, nameVisibility: NameVisibility) =>
@@ -25,5 +25,10 @@ export const profileApi = {
   acceptLink: (id: string) => api<TeachingLink>(`/teaching/links/${id}/accept`, { method: 'POST' }),
   removeLink: (id: string) => api<void>(`/teaching/links/${id}`, { method: 'DELETE' }),
   follows: () => api<PublicUser[]>('/follows'),
+  givenAssignments: () => api<Assignment[]>('/assignments/given'),
+  myAssignments: () => api<Assignment[]>('/assignments/mine'),
+  assign: (studentId: string, storyId: string, dueDate: string | null, note: string) =>
+    api<Assignment>('/assignments', { method: 'POST', body: { studentId, storyId, dueDate, note } }),
+  removeAssignment: (id: string) => api<void>(`/assignments/${id}`, { method: 'DELETE' }),
   unfollow: (username: string) => api<void>(`/authors/${encodeURIComponent(username)}/follow`, { method: 'DELETE' }),
 }

@@ -37,6 +37,7 @@ export function Layout() {
           <NavLink to="/library">Бібліотека</NavLink>
           {user ? (
             <>
+              <NavLink to="/words">Словник</NavLink>
               {user.role !== 'Student' && <NavLink to="/studio">Мої історії</NavLink>}
               {wallet && streak && (
                 <Link to="/profile#wallet" className={styles.wallet} title="Кристали і щоденна серія">

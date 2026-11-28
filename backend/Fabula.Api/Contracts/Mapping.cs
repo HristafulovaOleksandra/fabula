@@ -41,7 +41,9 @@ public static class Mapping
         story.Author is null ? null : NamePolicy.PublicName(story.Author),
         VisibleTags(story, includePending: false),
         story.Scenes.Count,
-        story.UpdatedAt);
+        story.UpdatedAt,
+        story.RatingCount == 0 ? null : Math.Round((double)story.RatingSum / story.RatingCount, 1),
+        story.RatingCount);
 
     public static StoryDetailDto ToDetail(this Story story, bool forEditor = false) => new(
         story.Id,
@@ -60,7 +62,10 @@ public static class Mapping
         story.Words.OrderBy(w => w.Word).Select(w => new StoryWordDto(w.Word, w.Translation)).ToList(),
         story.AllowedWords.Order().ToList(),
         story.Cast.OrderBy(c => c.Order).ThenBy(c => c.Name).Select(c => c.ToDto()).ToList(),
-        story.Scenes.OrderBy(s => s.Order).Select(s => s.ToDto()).ToList());
+        story.Scenes.OrderBy(s => s.Order).Select(s => s.ToDto()).ToList(),
+        story.Author?.Username ?? "",
+        story.RatingCount == 0 ? null : Math.Round((double)story.RatingSum / story.RatingCount, 1),
+        story.RatingCount);
 
     public static StoryCharacterDto ToDto(this StoryCharacter character) =>
         new(character.Id, character.Name, character.States.OrderBy(s => s.Order)

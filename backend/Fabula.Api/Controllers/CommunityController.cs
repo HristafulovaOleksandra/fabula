@@ -66,6 +66,15 @@ public class CommunityController(FabulaDbContext db, ImageStorage storage) : Con
         imagePaths.AddRange(cast.SelectMany(c => c.States).Select(s => s.ImagePath).OfType<string>());
 
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
+        var ratings = await db.StoryRatings.Where(r => r.UserId == user.Id).ToListAsync(cancellationToken);
+        foreach (var rating in ratings)
+        {
+            await db.Stories.Where(s => s.Id == rating.StoryId).ExecuteUpdateAsync(update => update
+                .SetProperty(s => s.RatingCount, s => s.RatingCount - 1)
+                .SetProperty(s => s.RatingSum, s => s.RatingSum - rating.Stars), cancellationToken);
+        }
+
+        await db.StoryRatings.Where(r => r.UserId == user.Id).ExecuteDeleteAsync(cancellationToken);
         await db.GameSessions.Where(g => g.UserId == user.Id).ExecuteDeleteAsync(cancellationToken);
         await db.Transactions.Where(t => t.UserId == user.Id).ExecuteDeleteAsync(cancellationToken);
         await db.EmailChangeCodes.Where(c => c.UserId == user.Id).ExecuteDeleteAsync(cancellationToken);
@@ -106,7 +115,51 @@ public class CommunityController(FabulaDbContext db, ImageStorage storage) : Con
         var profile = new PublicUserDto(
             author.Id, author.Username, NamePolicy.VisibleName(author, viewerId, false), await db.IsTeacherAsync(author.Id, cancellationToken),
             AvatarDto.From(author));
-        return Ok(new AuthorProfileDto(profile, followers, followed, stories.Select(s => s.ToSummary()).ToList()));
+        var storyIds = stories.Select(s => s.Id).ToList();
+        var readers = await db.GameSessions.AsNoTracking()
+            .Where(g => storyIds.Contains(g.StoryId) && g.FinishedAt != null && g.UserId != author.Id)
+            .Select(g => g.UserId)
+            .Distinct()
+            .CountAsync(cancellationToken);
+        var ratingCount = stories.Sum(s => s.RatingCount);
+        var stats = new AuthorStatsDto(
+            stories.Count,
+            readers,
+            ratingCount == 0 ? null : Math.Round((double)stories.Sum(s => s.RatingSum) / ratingCount, 1),
+            ratingCount,
+            stories.GroupBy(s => s.Level).OrderBy(g => g.Key).Select(g => new CountDto(g.Key.ToString(), g.Count())).ToList(),
+            stories.SelectMany(s => s.Tags).Where(t => t.Kind == TagKind.Genre && t.Status == ModerationStatus.Approved)
+                .GroupBy(t => t.Name).OrderByDescending(g => g.Count()).ThenBy(g => g.Key)
+                .Select(g => new CountDto(g.Key, g.Count())).ToList());
+        return Ok(new AuthorProfileDto(profile, followers, followed, stories.Select(s => s.ToSummary()).ToList(), stats));
+    }
+
+    [HttpGet("authors")]
+    public async Task<ActionResult<IReadOnlyList<PublicUserDto>>> SearchAuthors([FromQuery] string? q, CancellationToken cancellationToken)
+    {
+        var search = q?.Trim().TrimStart('@').ToLowerInvariant();
+        if (string.IsNullOrEmpty(search) || search.Length < 2)
+        {
+            return Ok(Array.Empty<PublicUserDto>());
+        }
+
+        Guid? viewerId = User.Identity?.IsAuthenticated == true ? User.UserId() : null;
+        var pattern = LikePattern.Contains(search);
+        var authors = await db.Users.AsNoTracking()
+            .Where(u => EF.Functions.ILike(u.Username, pattern, LikePattern.Escape)
+                        && db.Stories.Any(s => s.AuthorId == u.Id && s.Status == StoryStatus.Published))
+            .OrderBy(u => u.Username)
+            .Take(8)
+            .ToListAsync(cancellationToken);
+        var result = new List<PublicUserDto>();
+        foreach (var author in authors)
+        {
+            result.Add(new PublicUserDto(
+                author.Id, author.Username, NamePolicy.VisibleName(author, viewerId, false),
+                await db.IsTeacherAsync(author.Id, cancellationToken), AvatarDto.From(author)));
+        }
+
+        return Ok(result);
     }
 
     [Authorize]

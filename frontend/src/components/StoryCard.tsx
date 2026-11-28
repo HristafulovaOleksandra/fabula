@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import type { StorySummary } from '../api/types'
 import { Crystals } from './Brand'
+import { RatingBadge } from './StarRating'
 import { StoryCover } from './StoryCover'
 import styles from './StoryCard.module.css'
 
@@ -21,11 +22,10 @@ export function StoryCard({ story, to, badge, footer }: StoryCardProps) {
           <span className="level-badge">{story.level}</span>
           {badge}
         </span>
-        {story.priceCrystals > 0 && (
-          <span className={styles.price}>
-            <Crystals amount={story.priceCrystals} />
-          </span>
-        )}
+        <span className={styles.price}>
+          <RatingBadge rating={story.rating} count={story.ratingCount} />
+          {story.priceCrystals > 0 && <Crystals amount={story.priceCrystals} />}
+        </span>
       </div>
       <h3>{story.title}</h3>
       <p className={styles.small}>

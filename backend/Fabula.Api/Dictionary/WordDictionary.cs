@@ -3,6 +3,7 @@ namespace Fabula.Api.Dictionary;
 public class WordDictionary
 {
     private readonly Dictionary<string, string[]> entries = new(StringComparer.Ordinal);
+    private string[] words = [];
 
     public WordDictionary(string path)
     {
@@ -19,20 +20,38 @@ public class WordDictionary
                 entries[parts[0]] = parts[1].Split('|', StringSplitOptions.RemoveEmptyEntries);
             }
         }
+
+        words = entries.Keys.Where(key => key.Length >= 4 && key.All(char.IsLetter)).ToArray();
     }
 
-    public IReadOnlyList<string> Translate(string word)
+    public IReadOnlyList<string> Translate(string word) => Lookup(word).Translations;
+
+    public (string Lemma, IReadOnlyList<string> Translations) Lookup(string word)
     {
         var normalized = word.Trim().ToLowerInvariant();
-        foreach (var candidate in Candidates(normalized))
+        var found = Candidates(normalized)
+            .Where(entries.ContainsKey)
+            .Select(candidate => (Lemma: candidate, Translations: entries[candidate]))
+            .ToList();
+        if (found.Count == 0)
         {
-            if (entries.TryGetValue(candidate, out var translations))
-            {
-                return translations;
-            }
+            return (normalized, []);
         }
 
-        return [];
+        var exact = found[0];
+        var baseForm = found.Skip(1).FirstOrDefault(candidate => candidate.Translations.Intersect(exact.Translations).Any());
+        return baseForm.Lemma is null ? exact : baseForm;
+    }
+
+    public (string Word, string Translation)? RandomEntry(Random random)
+    {
+        if (words.Length == 0)
+        {
+            return null;
+        }
+
+        var word = words[random.Next(words.Length)];
+        return (word, entries[word][0]);
     }
 
     private static IEnumerable<string> Candidates(string word)

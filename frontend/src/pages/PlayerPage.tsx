@@ -7,6 +7,7 @@ import { Crystals, Mascot, StreakFlame } from '../components/Brand'
 import { COVER_COLORS } from '../components/coverColors'
 import { framedImageStyle, sceneBackgroundFraming } from '../components/coverFraming'
 import { placementStyle } from '../components/stageLayout'
+import { RateStory } from '../components/StarRating'
 import { findTargetWords } from '../components/targetWords'
 import styles from './PlayerPage.module.css'
 
@@ -15,17 +16,40 @@ type Phase = 'loading' | 'lines' | 'choices' | 'summary' | 'error'
 interface Segment {
   text: string
   word?: StoryWord
+  plain?: boolean
+}
+
+interface WordPopup {
+  word: string
+  translations: string[]
+  target: boolean
+  status: 'loading' | 'ready' | 'saving' | 'saved' | 'error'
+}
+
+const ENGLISH_WORD = /[A-Za-z]+(?:['’][A-Za-z]+)*/g
+
+function splitPlain(text: string): Segment[] {
+  const segments: Segment[] = []
+  let last = 0
+  for (const match of text.matchAll(ENGLISH_WORD)) {
+    const start = match.index ?? 0
+    if (start > last) segments.push({ text: text.slice(last, start) })
+    segments.push({ text: match[0], plain: true })
+    last = start + match[0].length
+  }
+  if (last < text.length) segments.push({ text: text.slice(last) })
+  return segments
 }
 
 function splitByWords(text: string, words: StoryWord[]): Segment[] {
   const segments: Segment[] = []
   let last = 0
   for (const match of findTargetWords(text, words.map((w) => w.word))) {
-    if (match.start > last) segments.push({ text: text.slice(last, match.start) })
+    if (match.start > last) segments.push(...splitPlain(text.slice(last, match.start)))
     segments.push({ text: text.slice(match.start, match.end), word: words.find((w) => w.word.trim() === match.word) })
     last = match.end
   }
-  if (last < text.length) segments.push({ text: text.slice(last) })
+  if (last < text.length) segments.push(...splitPlain(text.slice(last)))
   return segments
 }
 
@@ -53,7 +77,7 @@ export function PlayerPage() {
   const [phase, setPhase] = useState<Phase>('loading')
   const [summary, setSummary] = useState<PlaySummary | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [popup, setPopup] = useState<{ word: StoryWord; saved: boolean } | null>(null)
+  const [popup, setPopup] = useState<WordPopup | null>(null)
   const [busy, setBusy] = useState(false)
   const [bought, setBought] = useState<Set<string>>(new Set())
   const [pending, setPending] = useState<string | null>(null)
@@ -155,12 +179,35 @@ export function PlayerPage() {
 
   const openWord = async (event: MouseEvent | KeyboardEvent, word: StoryWord) => {
     event.stopPropagation()
-    setPopup({ word, saved: false })
+    const base = { word: word.word, translations: [word.translation], target: true }
+    setPopup({ ...base, status: 'saving' })
     try {
       await api('/words', { method: 'POST', body: { word: word.word, translation: word.translation, storyId } })
-      setPopup({ word, saved: true })
+      setPopup({ ...base, status: 'saved' })
     } catch {
-      setPopup({ word, saved: false })
+      setPopup({ ...base, status: 'error' })
+    }
+  }
+
+  const openPlainWord = async (event: MouseEvent, text: string) => {
+    event.stopPropagation()
+    setPopup({ word: text, translations: [], target: false, status: 'loading' })
+    try {
+      const found = await api<{ word: string; translations: string[] }>(`/dictionary?word=${encodeURIComponent(text)}`)
+      setPopup({ word: found.word, translations: found.translations.slice(0, 3), target: false, status: 'ready' })
+    } catch {
+      setPopup({ word: text, translations: [], target: false, status: 'error' })
+    }
+  }
+
+  const addToDictionary = async () => {
+    if (!popup || popup.translations.length === 0) return
+    setPopup({ ...popup, status: 'saving' })
+    try {
+      await api('/words', { method: 'POST', body: { word: popup.word, translation: popup.translations[0], storyId } })
+      setPopup({ ...popup, status: 'saved' })
+    } catch {
+      setPopup({ ...popup, status: 'error' })
     }
   }
 
@@ -235,6 +282,7 @@ export function PlayerPage() {
             </p>
           )}
         </div>
+        {summary.canRate && <RateStory storyId={story.id} initial={summary.myRating} />}
         {summary.wordsSaved.length > 0 && (
           <ul className={styles.savedWords}>
             {summary.wordsSaved.map((word) => (
@@ -299,6 +347,10 @@ export function PlayerPage() {
                   <button key={index} className={styles.word} onClick={(event) => openWord(event, segment.word!)}>
                     {segment.text}
                   </button>
+                ) : segment.plain ? (
+                  <span key={index} className={styles.plainWord} onClick={(event) => openPlainWord(event, segment.text)}>
+                    {segment.text}
+                  </span>
                 ) : (
                   <span key={index}>{segment.text}</span>
                 ),
@@ -352,12 +404,27 @@ export function PlayerPage() {
       {popup && (
         <div className={styles.popupBackdrop} onClick={() => setPopup(null)}>
           <div className={`sticker ${styles.popup}`} role="dialog" aria-label="Переклад слова" onClick={(event) => event.stopPropagation()}>
-            <b>{popup.word.word}</b>
-            <span className={styles.translation}>{popup.word.translation}</span>
-            <small>{popup.saved ? 'Додано у твій словник' : 'Зберігаємо…'}</small>
-            <button className="btn btn-ghost" onClick={() => setPopup(null)}>
-              Зрозуміло
-            </button>
+            <b>{popup.word}</b>
+            {popup.status === 'loading' ? (
+              <span className={styles.translation}>Шукаємо переклад…</span>
+            ) : popup.translations.length > 0 ? (
+              <span className={styles.translation}>{popup.translations.join(', ')}</span>
+            ) : (
+              <span className={styles.translation}>Цього слова немає в офлайн-словнику</span>
+            )}
+            {popup.status === 'saved' && <small>Додано у твій словник</small>}
+            {popup.status === 'saving' && <small>Зберігаємо…</small>}
+            {popup.status === 'error' && <small>Не вдалося зберегти, спробуй ще раз</small>}
+            <div className={styles.popupActions}>
+              {!popup.target && popup.translations.length > 0 && popup.status !== 'saved' && (
+                <button className="btn" disabled={popup.status === 'saving'} onClick={addToDictionary}>
+                  Додати в словник
+                </button>
+              )}
+              <button className="btn btn-ghost" onClick={() => setPopup(null)}>
+                Зрозуміло
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -71,7 +71,11 @@ public record AuthResponse(string Token, UserDto User);
 
 public record PublicUserDto(Guid Id, string Username, string? DisplayName, bool IsTeacher, AvatarDto? Avatar = null);
 
-public record AuthorProfileDto(PublicUserDto Author, int FollowerCount, bool IsFollowedByMe, IReadOnlyList<StorySummaryDto> Stories);
+public record AuthorProfileDto(PublicUserDto Author, int FollowerCount, bool IsFollowedByMe, IReadOnlyList<StorySummaryDto> Stories, AuthorStatsDto Stats);
+
+public record CountDto(string Name, int Count);
+
+public record AuthorStatsDto(int StoryCount, int ReaderCount, double? Rating, int RatingCount, IReadOnlyList<CountDto> Levels, IReadOnlyList<CountDto> Genres);
 
 public record InviteStudentRequest([Required, MinLength(3), MaxLength(256)] string EmailOrUsername);
 

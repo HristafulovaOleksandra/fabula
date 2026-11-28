@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <None Update="Resources\en-uk.tsv" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\placement-test.csv" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

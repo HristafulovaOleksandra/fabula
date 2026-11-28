@@ -240,3 +240,27 @@
   text-align: right;
 }
 
+
+.levelLine {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 10px;
+}
+
+.topicChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.topicChip {
+  padding: 2px 12px;
+  border: var(--line) solid var(--color-primary);
+  border-radius: 999px;
+  background: var(--color-paper);
+  font-weight: 700;
+  font-size: 0.9rem;
+}

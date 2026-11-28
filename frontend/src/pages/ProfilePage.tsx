@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { api, ApiError } from '../api/client'
 import { profileApi } from '../api/profile'
-import type { NameVisibility, PublicUser, TeachingLink, User, WalletTransaction } from '../api/types'
+import type { Assignment, NameVisibility, PublicUser, TeachingLink, User, WalletTransaction } from '../api/types'
+import { AssignDialog, AssignmentList } from '../components/Assignments'
 import { REASON_LABELS, useWallet } from '../api/wallet'
 import { Crystals } from '../components/Brand'
 import { StreakWeek } from '../components/StreakWeek'
@@ -303,19 +304,19 @@ function PasswordSection() {
   )
 }
 
-function PeopleList({ people, empty, action }: { people: { key: string; person: PublicUser; note?: string; actions: React.ReactNode }[]; empty: string; action?: React.ReactNode }) {
+function PeopleList({ people, empty, action }: { people: { key: string; person: PublicUser; note?: string; href?: string; actions: React.ReactNode }[]; empty: string; action?: React.ReactNode }) {
   return (
     <>
       {people.length === 0 ? (
         empty && <p className={styles.hint}>{empty}</p>
       ) : (
         <ul className={styles.people}>
-          {people.map(({ key, person, note, actions }) => (
+          {people.map(({ key, person, note, href, actions }) => (
             <li key={key}>
               <Avatar avatar={person.avatar} username={person.username} size={40} />
               <span className={styles.personName}>
                 <span className={styles.nameLine}>
-                  {personName(person)}
+                  {href ? <Link to={href}>{personName(person)}</Link> : personName(person)}
                   {person.isTeacher && <span className={`${styles.badge} ${styles.teacherBadge}`}>Викладач</span>}
                 </span>
                 {note && <small>{note}</small>}
@@ -364,6 +365,7 @@ function TeachersSection({ onChanged }: { onChanged: () => Promise<void> }) {
             people={pending.map((link) => ({
               key: link.id,
               person: link.teacher,
+              href: `/authors/${link.teacher.username}`,
               note: 'хоче бути твоїм викладачем',
               actions: (
                 <>
@@ -386,6 +388,7 @@ function TeachersSection({ onChanged }: { onChanged: () => Promise<void> }) {
         people={accepted.map((link) => ({
           key: link.id,
           person: link.teacher,
+          href: `/authors/${link.teacher.username}`,
           actions: (
             <button
               type="button"
@@ -402,8 +405,9 @@ function TeachersSection({ onChanged }: { onChanged: () => Promise<void> }) {
   )
 }
 
-function StudentsSection({ onChanged }: { onChanged: () => Promise<void> }) {
+function StudentsSection({ onChanged, onAssigned }: { onChanged: () => Promise<void>; onAssigned: () => void }) {
   const [links, setLinks] = useState<TeachingLink[] | null>(null)
+  const [assignTo, setAssignTo] = useState<PublicUser | null>(null)
   const [invitee, setInvitee] = useState('')
   const [message, setMessage] = useState<Message>(null)
   const load = useCallback(() => profileApi.students().then(setLinks), [])
@@ -445,17 +449,65 @@ function StudentsSection({ onChanged }: { onChanged: () => Promise<void> }) {
           person: link.student,
           note: link.status === 'Pending' ? 'запрошення очікує відповіді' : undefined,
           actions: (
-            <button type="button" className={styles.linkButton} onClick={() => remove(link.id)}>
-              {link.status === 'Pending' ? 'Скасувати' : 'Прибрати'}
-            </button>
+            <>
+              {link.status === 'Accepted' && (
+                <button type="button" className={styles.linkButton} onClick={() => setAssignTo(link.student)}>
+                  Призначити історію
+                </button>
+              )}
+              <button type="button" className={styles.linkButton} onClick={() => remove(link.id)}>
+                {link.status === 'Pending' ? 'Скасувати' : 'Прибрати'}
+              </button>
+            </>
           ),
         }))}
       />
+      {assignTo && <AssignDialog student={assignTo} onClose={() => setAssignTo(null)} onAssigned={onAssigned} />}
       <form className={styles.inviteRow} onSubmit={invite}>
         <input placeholder="Пошта або нік учня" required minLength={3} value={invitee} onChange={(e) => setInvitee(e.target.value)} />
         <button className="btn">Запросити</button>
       </form>
       <Status message={message} />
+    </section>
+  )
+}
+
+function GivenAssignmentsSection({ version }: { version: number }) {
+  const [items, setItems] = useState<Assignment[] | null>(null)
+
+  useEffect(() => {
+    profileApi.givenAssignments().then(setItems).catch(() => setItems([]))
+  }, [version])
+
+  const remove = async (id: string) => {
+    if (!window.confirm('Прибрати це завдання?')) return
+    await profileApi.removeAssignment(id)
+    setItems((list) => (list ?? []).filter((item) => item.id !== id))
+  }
+
+  if (!items || items.length === 0) return null
+
+  return (
+    <section className={`sticker ${styles.card}`}>
+      <h2>Домашні завдання учням</h2>
+      <AssignmentList assignments={items} viewer="teacher" onRemove={remove} />
+    </section>
+  )
+}
+
+function MyAssignmentsSection() {
+  const [items, setItems] = useState<Assignment[] | null>(null)
+
+  useEffect(() => {
+    profileApi.myAssignments().then(setItems).catch(() => setItems([]))
+  }, [])
+
+  if (!items || items.length === 0) return null
+
+  return (
+    <section className={`sticker ${styles.card}`}>
+      <h2>Мої домашні завдання</h2>
+      <AssignmentList assignments={items} viewer="student" />
     </section>
   )
 }
@@ -475,6 +527,7 @@ function FollowsSection() {
         people={(authors ?? []).map((author) => ({
           key: author.id,
           person: author,
+          href: `/authors/${author.username}`,
           actions: (
             <button
               type="button"
@@ -532,6 +585,37 @@ function DeleteSection() {
   )
 }
 
+function LevelSection({ user }: { user: User }) {
+  return (
+    <section className={`sticker ${styles.card}`}>
+      <h2>Мій рівень і теми</h2>
+      <p className={styles.levelLine}>
+        Рівень англійської:{' '}
+        {user.level ? <span className="level-badge">{user.level}</span> : <b>ще не визначено — пройди вступний тест</b>}
+      </p>
+      <div className={styles.topicChips}>
+        {user.favoriteTopics.length === 0 ? (
+          <span className={styles.hint}>Улюблені теми ще не обрано.</span>
+        ) : (
+          user.favoriteTopics.map((topic) => (
+            <span key={topic} className={styles.topicChip}>
+              {topic}
+            </span>
+          ))
+        )}
+      </div>
+      <div className={styles.inlineActions}>
+        <Link to="/welcome?step=test" className="btn">
+          {user.level ? 'Пройти тест ще раз' : 'Пройти тест'}
+        </Link>
+        <Link to="/welcome?step=topics" className="btn btn-ghost">
+          Змінити теми
+        </Link>
+      </div>
+    </section>
+  )
+}
+
 function WalletSection() {
   const wallet = useWallet(true)
   const [history, setHistory] = useState<WalletTransaction[] | null>(null)
@@ -572,14 +656,26 @@ function WalletSection() {
 
 export function ProfilePage() {
   const { user, refresh } = useAuth()
+  const [assignmentsVersion, setAssignmentsVersion] = useState(0)
   if (!user) return null
 
   return (
     <div className={`page ${styles.page}`}>
       <AvatarSection user={user} onChanged={refresh} />
+      {user.role === 'Student' && <LevelSection user={user} />}
       <WalletSection />
       <NameSection key={`${user.displayName}-${user.nameVisibility}`} user={user} onChanged={refresh} />
-      {user.role === 'Student' ? <TeachersSection onChanged={refresh} /> : <StudentsSection onChanged={refresh} />}
+      {user.role === 'Student' ? (
+        <>
+          <TeachersSection onChanged={refresh} />
+          <MyAssignmentsSection />
+        </>
+      ) : (
+        <>
+          <StudentsSection onChanged={refresh} onAssigned={() => setAssignmentsVersion((v) => v + 1)} />
+          <GivenAssignmentsSection version={assignmentsVersion} />
+        </>
+      )}
       <FollowsSection />
       <EmailSection user={user} onChanged={refresh} />
       <PasswordSection />

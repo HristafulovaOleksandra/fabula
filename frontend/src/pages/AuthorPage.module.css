@@ -1,0 +1,138 @@
+.header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 20px;
+  align-items: center;
+  padding: 20px 24px;
+  margin: 28px 0 20px;
+}
+
+.identity h1 {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.name {
+  margin: 2px 0 0;
+  color: var(--color-text-soft);
+  font-weight: 700;
+}
+
+.badges {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.badge {
+  font-size: 0.8rem;
+  font-weight: 800;
+  border: var(--line) solid var(--color-primary);
+  border-radius: 999px;
+  padding: 1px 10px;
+  background: var(--color-paper);
+}
+
+.teacher {
+  background: var(--color-primary);
+  color: var(--color-paper);
+}
+
+.follow {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.stats > div {
+  display: grid;
+  gap: 2px;
+  padding: 14px 16px;
+}
+
+.stats b {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--color-primary);
+}
+
+.stats span {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.distributions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  padding: 16px 20px;
+  margin-bottom: 28px;
+}
+
+.distribution h3 {
+  margin: 0 0 8px;
+}
+
+.distribution ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.distribution li {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr) 28px;
+  gap: 10px;
+  align-items: center;
+  font-weight: 700;
+}
+
+.distName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.distTrack {
+  height: 12px;
+  border-radius: 999px;
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.distFill {
+  display: block;
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 999px;
+}
+
+@media (max-width: 720px) {
+  .header {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .badges {
+    justify-content: center;
+  }
+
+  .follow {
+    justify-items: center;
+  }
+
+  .stats,
+  .distributions {
+    grid-template-columns: 1fr;
+  }
+}

@@ -13,6 +13,11 @@ public class UserWord
     public int HistoryCorrect { get; set; }
     public int SessionSeen { get; set; }
     public int SessionCorrect { get; set; }
+    public int TimesTapped { get; set; }
+    public int CorrectInRow { get; set; }
+    public bool MarkedKnown { get; set; }
+    public DateTime? LearnedAt { get; set; }
+    public DateTime? LastPracticedAt { get; set; }
     public DateTime FirstSeenAt { get; set; }
     public DateTime LastSeenAt { get; set; }
     public Guid? SourceStoryId { get; set; }
@@ -89,6 +94,7 @@ public class Assignment
     public Guid StudentId { get; set; }
     public Guid StoryId { get; set; }
     public DateOnly? DueDate { get; set; }
+    public string Note { get; set; } = "";
     public DateTime CreatedAt { get; set; }
     public DateTime? CompletedAt { get; set; }
 }

@@ -30,7 +30,9 @@ public record StorySummaryDto(
     string? AuthorDisplayName,
     IReadOnlyList<TagDto> Tags,
     int SceneCount,
-    DateTime UpdatedAt);
+    DateTime UpdatedAt,
+    double? Rating,
+    int RatingCount);
 
 public record StoryDetailDto(
     Guid Id,
@@ -49,7 +51,10 @@ public record StoryDetailDto(
     IReadOnlyList<StoryWordDto> Words,
     IReadOnlyList<string> AllowedWords,
     IReadOnlyList<StoryCharacterDto> Characters,
-    IReadOnlyList<SceneDto> Scenes);
+    IReadOnlyList<SceneDto> Scenes,
+    string AuthorUsername,
+    double? Rating,
+    int RatingCount);
 
 public record StoryUpsertRequest(
     [Required, MinLength(1), MaxLength(200)] string Title,
@@ -136,3 +141,7 @@ public record StudioOverviewDto(
     int StudentCount,
     int PendingInvitationCount,
     int FollowerCount);
+
+public record ForYouStoryDto(StorySummaryDto Story, IReadOnlyList<string> Reasons);
+
+public record ForYouDto(CefrLevel? Level, bool LevelFromTest, IReadOnlyList<ForYouStoryDto> Stories);

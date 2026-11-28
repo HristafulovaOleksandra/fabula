@@ -3,6 +3,7 @@ using Fabula.Api.Data;
 using Fabula.Api.Dictionary;
 using Fabula.Api.Economy;
 using Fabula.Api.Ml;
+using Fabula.Api.Placement;
 using Fabula.Api.Email;
 using Fabula.Api.Entities;
 using Fabula.Api.Storage;
@@ -45,6 +46,7 @@ builder.Services.AddSingleton(new ImageStorage(uploadsPath));
 builder.Services.AddSingleton(builder.Configuration.GetSection("Economy").Get<EconomySettings>()
     ?? throw new InvalidOperationException("У appsettings.json немає розділу Economy."));
 builder.Services.AddSingleton(new WordDictionary(Path.Combine(AppContext.BaseDirectory, "Resources", "en-uk.tsv")));
+builder.Services.AddSingleton(PlacementTest.Load(Path.Combine(AppContext.BaseDirectory, "Resources", "placement-test.csv")));
 builder.Services.AddSingleton(SmtpSettings.FromEnvironment());
 builder.Services.AddSingleton<EmailSender>();
 builder.Services.AddScoped<PasswordResetService>();

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Fabula.Api.Controllers;
 
 [ApiController]
-[Authorize(Policy = Policies.CanAuthor)]
+[Authorize]
 [Route("api/dictionary")]
 public class DictionaryController(WordDictionary dictionary) : ControllerBase
 {
@@ -19,6 +19,7 @@ public class DictionaryController(WordDictionary dictionary) : ControllerBase
             return ValidationProblem("Вкажи слово до 64 символів.");
         }
 
-        return Ok(new TranslationDto(word.Trim(), dictionary.Translate(word)));
+        var (lemma, translations) = dictionary.Lookup(word);
+        return Ok(new TranslationDto(lemma, translations));
     }
 }

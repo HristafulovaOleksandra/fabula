@@ -7,6 +7,9 @@ import { Layout } from './components/Layout'
 import { RequireAuth } from './components/RequireAuth'
 import { ForgotPasswordPage, LoginPage, RegisterPage } from './pages/AuthPages'
 import { HomePage } from './pages/HomePage'
+import { AuthorPage } from './pages/AuthorPage'
+import { DictionaryPage } from './pages/DictionaryPage'
+import { WelcomePage } from './pages/WelcomePage'
 import { LibraryPage } from './pages/LibraryPage'
 import { EditorPage } from './pages/EditorPage'
 import { NotFoundPage } from './pages/NotFoundPage'
@@ -24,9 +27,26 @@ createRoot(document.getElementById('root')!).render(
             <Route index element={<HomePage />} />
             <Route path="library" element={<LibraryPage />} />
             <Route path="stories/:storyId" element={<StoryIntroPage />} />
+            <Route path="authors/:username" element={<AuthorPage />} />
             <Route path="login" element={<LoginPage />} />
             <Route path="register" element={<RegisterPage />} />
             <Route path="forgot-password" element={<ForgotPasswordPage />} />
+            <Route
+              path="words"
+              element={
+                <RequireAuth>
+                  <DictionaryPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="welcome"
+              element={
+                <RequireAuth>
+                  <WelcomePage />
+                </RequireAuth>
+              }
+            />
             <Route
               path="profile"
               element={

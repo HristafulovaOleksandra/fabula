@@ -46,6 +46,8 @@ export interface StorySummary {
   tags: Tag[]
   sceneCount: number
   updatedAt: string
+  rating: number | null
+  ratingCount: number
 }
 
 export interface StoryWord {
@@ -134,6 +136,9 @@ export interface StoryDetail {
   allowedWords: string[]
   characters: StoryCharacter[]
   scenes: Scene[]
+  authorUsername: string
+  rating: number | null
+  ratingCount: number
 }
 
 export interface PlaySession {
@@ -210,6 +215,9 @@ export interface StoryAccess {
   completed: boolean
   reward: number
   balance: number
+  canRate: boolean
+  myRating: number | null
+  assignment: AssignmentInfo | null
 }
 
 export interface PlaySummary {
@@ -223,6 +231,8 @@ export interface PlaySummary {
   rewards: Reward[]
   balance: number
   streak: StreakInfo
+  canRate: boolean
+  myRating: number | null
 }
 
 export interface Economy {
@@ -299,4 +309,120 @@ export interface StudioOverview {
   studentCount: number
   pendingInvitationCount: number
   followerCount: number
+}
+
+export interface ForYouStory {
+  story: StorySummary
+  reasons: string[]
+}
+
+export interface ForYou {
+  level: CefrLevel | null
+  levelFromTest: boolean
+  stories: ForYouStory[]
+}
+
+export interface CountItem {
+  name: string
+  count: number
+}
+
+export interface AuthorStats {
+  storyCount: number
+  readerCount: number
+  rating: number | null
+  ratingCount: number
+  levels: CountItem[]
+  genres: CountItem[]
+}
+
+export interface AuthorProfile {
+  author: PublicUser
+  followerCount: number
+  isFollowedByMe: boolean
+  stories: StorySummary[]
+  stats: AuthorStats
+}
+
+export interface StoryRatingResult {
+  stars: number
+  rating: number | null
+  ratingCount: number
+}
+
+export interface PlacementQuestion {
+  id: number
+  instruction: string
+  text: string
+  options: { id: number; text: string }[]
+}
+
+export interface PlacementTest {
+  questions: PlacementQuestion[]
+  minTopics: number
+  maxTopics: number
+}
+
+export interface PlacementLevelScore {
+  level: CefrLevel
+  correct: number
+  total: number
+}
+
+export interface PlacementResult {
+  level: CefrLevel
+  levels: PlacementLevelScore[]
+  user: User
+}
+
+export type AssignmentState = 'Open' | 'Overdue' | 'Done'
+
+export interface Assignment {
+  id: string
+  teacher: PublicUser
+  student: PublicUser
+  story: StorySummary
+  dueDate: string | null
+  note: string
+  createdAt: string
+  completedAt: string | null
+  state: AssignmentState
+}
+
+export interface AssignmentInfo {
+  teacher: string
+  dueDate: string | null
+  note: string
+  done: boolean
+}
+
+export interface UserWord {
+  id: string
+  word: string
+  translation: string
+  storyTitle: string | null
+  timesTapped: number
+  attempts: number
+  correct: number
+  correctInRow: number
+  learned: boolean
+  markedKnown: boolean
+  firstSeenAt: string
+  lastSeenAt: string
+}
+
+export type QuizDirection = 'EnglishToUkrainian' | 'UkrainianToEnglish'
+
+export interface QuizQuestion {
+  wordId: string
+  direction: QuizDirection
+  prompt: string
+  options: string[]
+}
+
+export interface QuizAnswer {
+  correct: boolean
+  correctAnswer: string
+  correctInRow: number
+  learned: boolean
 }

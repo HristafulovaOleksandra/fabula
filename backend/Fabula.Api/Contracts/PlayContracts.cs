@@ -19,11 +19,39 @@ public record PlaySummaryDto(
     bool Free,
     IReadOnlyList<Reward> Rewards,
     int Balance,
-    StreakDto Streak);
+    StreakDto Streak,
+    bool CanRate,
+    int? MyRating);
 
 public record SaveWordRequest(
     [Required, MinLength(1), MaxLength(64)] string Word,
     [MaxLength(128)] string? Translation,
     Guid? StoryId);
 
-public record UserWordDto(string Word, string Translation, int TimesSeen, DateTime FirstSeenAt, DateTime LastSeenAt);
+public record UserWordDto(
+    Guid Id,
+    string Word,
+    string Translation,
+    string? StoryTitle,
+    int TimesTapped,
+    int Attempts,
+    int Correct,
+    int CorrectInRow,
+    bool Learned,
+    bool MarkedKnown,
+    DateTime FirstSeenAt,
+    DateTime LastSeenAt);
+
+public enum QuizDirection
+{
+    EnglishToUkrainian,
+    UkrainianToEnglish
+}
+
+public record QuizQuestionDto(Guid WordId, QuizDirection Direction, string Prompt, IReadOnlyList<string> Options);
+
+public record QuizAnswerRequest(QuizDirection Direction, [Required, MaxLength(200)] string Answer);
+
+public record QuizAnswerDto(bool Correct, string CorrectAnswer, int CorrectInRow, bool Learned);
+
+public record WordKnownRequest(bool Known);

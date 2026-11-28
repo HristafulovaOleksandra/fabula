@@ -2,8 +2,11 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import { DEFAULT_STORY_TITLE, errorText, studio } from '../api/studio'
-import type { RecentStory, StoryStatus, StudioOverview, StudioStory, User } from '../api/types'
+import type { Assignment, RecentStory, StoryStatus, StudioOverview, StudioStory, User } from '../api/types'
+import { profileApi } from '../api/profile'
 import { useWallet } from '../api/wallet'
+import { formatDue } from '../components/assignmentFormat'
+import { StateBadge } from '../components/Assignments'
 import { Mascot } from '../components/Brand'
 import { StoryCard, StoryGrid } from '../components/StoryCard'
 import { StreakWeek } from '../components/StreakWeek'
@@ -57,6 +60,36 @@ function RecentReading({ hideWhenEmpty = false }: { hideWhenEmpty?: boolean }) {
   )
 }
 
+function Homework() {
+  const [items, setItems] = useState<Assignment[]>([])
+
+  useEffect(() => {
+    profileApi
+      .myAssignments()
+      .then((list) => setItems(list.filter((item) => item.state !== 'Done')))
+      .catch(() => setItems([]))
+  }, [])
+
+  if (items.length === 0) return null
+
+  return (
+    <section className={styles.section}>
+      <h2>Домашні завдання</h2>
+      <StoryGrid>
+        {items.map((item) => (
+          <StoryCard
+            key={item.id}
+            story={item.story}
+            to={`/stories/${item.story.id}`}
+            badge={<StateBadge state={item.state} />}
+            footer={`від ${item.teacher.username} · ${formatDue(item.dueDate)}`}
+          />
+        ))}
+      </StoryGrid>
+    </section>
+  )
+}
+
 function StreakBox() {
   const wallet = useWallet(true)
   return <div className={`sticker ${styles.streakBox}`}>{wallet ? <StreakWeek wallet={wallet} /> : <p>Завантажуємо серію…</p>}</div>
@@ -85,6 +118,23 @@ export function StudentHome({ user }: { user: User }) {
         </div>
         <StreakBox />
       </section>
+      {(!user.level || user.favoriteTopics.length === 0) && (
+        <section className={`sticker ${styles.onboarding}`}>
+          <Mascot mood="thinking" size={90} />
+          <div>
+            <h2>Познайомимось?</h2>
+            <p>
+              {user.favoriteTopics.length === 0
+                ? 'Обери улюблені теми і пройди короткий тест — так добірка «Для тебе» підбере історії саме твого рівня.'
+                : 'Пройди короткий тест рівня — так добірка «Для тебе» підбере історії саме твого рівня.'}
+            </p>
+          </div>
+          <Link to="/welcome" className="btn">
+            Почати
+          </Link>
+        </section>
+      )}
+      <Homework />
       <RecentReading />
     </div>
   )

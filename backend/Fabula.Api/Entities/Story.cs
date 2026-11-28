@@ -17,12 +17,23 @@ public class Story
     public Guid? StartSceneId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+    public int RatingCount { get; set; }
+    public int RatingSum { get; set; }
 
     public List<Tag> Tags { get; set; } = [];
     public List<Scene> Scenes { get; set; } = [];
     public List<StoryCharacter> Cast { get; set; } = [];
     public List<StoryWord> Words { get; set; } = [];
     public List<string> AllowedWords { get; set; } = [];
+}
+
+public class StoryRating
+{
+    public Guid UserId { get; set; }
+    public Guid StoryId { get; set; }
+    public int Stars { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 }
 
 public class Tag

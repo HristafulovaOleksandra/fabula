@@ -436,3 +436,19 @@
   justify-content: center;
   gap: 6px;
 }
+
+.plainWord {
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.plainWord:hover {
+  background: var(--color-highlight);
+}
+
+.popupActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}

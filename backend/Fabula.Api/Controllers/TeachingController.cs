@@ -89,6 +89,9 @@ public class TeachingController(FabulaDbContext db) : ControllerBase
         }
 
         db.TeachingLinks.Remove(link);
+        await db.Assignments
+            .Where(a => a.TeacherId == link.TeacherId && a.StudentId == link.StudentId && a.CompletedAt == null)
+            .ExecuteDeleteAsync(cancellationToken);
         await db.SaveChangesAsync(cancellationToken);
         return NoContent();
     }

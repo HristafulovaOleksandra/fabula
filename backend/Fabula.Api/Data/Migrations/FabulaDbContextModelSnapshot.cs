@@ -37,6 +37,11 @@ namespace Fabula.Api.Data.Migrations
                     b.Property<DateOnly?>("DueDate")
                         .HasColumnType("date");
 
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
                     b.Property<Guid>("StoryId")
                         .HasColumnType("uuid");
 
@@ -435,6 +440,12 @@ namespace Fabula.Api.Data.Migrations
                     b.Property<int>("PriceCrystals")
                         .HasColumnType("integer");
 
+                    b.Property<int>("RatingCount")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RatingSum")
+                        .HasColumnType("integer");
+
                     b.Property<Guid?>("StartSceneId")
                         .HasColumnType("uuid");
 
@@ -511,6 +522,30 @@ namespace Fabula.Api.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("StoryCharacterStates");
+                });
+
+            modelBuilder.Entity("Fabula.Api.Entities.StoryRating", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("StoryId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Stars")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("UserId", "StoryId");
+
+                    b.HasIndex("StoryId");
+
+                    b.ToTable("StoryRatings");
                 });
 
             modelBuilder.Entity("Fabula.Api.Entities.StoryWord", b =>
@@ -877,6 +912,9 @@ namespace Fabula.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<int>("CorrectInRow")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("FirstSeenAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -886,7 +924,13 @@ namespace Fabula.Api.Data.Migrations
                     b.Property<int>("HistorySeen")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime?>("LastPracticedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime>("LastSeenAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("LearnedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("LearningLanguage")
@@ -896,6 +940,9 @@ namespace Fabula.Api.Data.Migrations
                     b.Property<string>("Lemma")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("MarkedKnown")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("SessionCorrect")
                         .HasColumnType("integer");
@@ -909,6 +956,9 @@ namespace Fabula.Api.Data.Migrations
                     b.Property<string>("SurfaceForm")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("TimesTapped")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Translation")
                         .IsRequired()
@@ -1078,6 +1128,21 @@ namespace Fabula.Api.Data.Migrations
                     b.HasOne("Fabula.Api.Entities.StoryCharacter", null)
                         .WithMany("States")
                         .HasForeignKey("StoryCharacterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Fabula.Api.Entities.StoryRating", b =>
+                {
+                    b.HasOne("Fabula.Api.Entities.Story", null)
+                        .WithMany()
+                        .HasForeignKey("StoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Fabula.Api.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

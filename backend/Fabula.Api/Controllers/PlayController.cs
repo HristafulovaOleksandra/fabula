@@ -191,6 +191,13 @@ public class PlayController(FabulaDbContext db, WalletService wallet, EconomySet
                 rewards.AddRange(wallet.RecordActivity(user, streak));
                 session.CrystalsEarned = rewards.Sum(r => r.Amount);
             }
+
+            if (completed)
+            {
+                await db.Assignments
+                    .Where(a => a.StudentId == user.Id && a.StoryId == story.Id && a.CompletedAt == null)
+                    .ExecuteUpdateAsync(update => update.SetProperty(a => a.CompletedAt, DateTime.UtcNow), cancellationToken);
+            }
         }
 
         await db.SaveChangesAsync(cancellationToken);
@@ -210,54 +217,43 @@ public class PlayController(FabulaDbContext db, WalletService wallet, EconomySet
             IsFree(story),
             rewards,
             user.CrystalBalance,
-            wallet.DescribeStreak(streak)));
+            wallet.DescribeStreak(streak),
+            await CanRateAsync(story, user.Id, cancellationToken),
+            await MyRatingAsync(story.Id, user.Id, cancellationToken)));
     }
 
-    [HttpPost("words")]
-    public async Task<ActionResult<UserWordDto>> SaveWord(SaveWordRequest request, CancellationToken cancellationToken)
+    [HttpPut("stories/{storyId:guid}/rating")]
+    public async Task<ActionResult<StoryRatingDto>> Rate(Guid storyId, RateStoryRequest request, CancellationToken cancellationToken)
     {
         var userId = User.UserId();
-        var surface = request.Word.Trim();
-        var lemma = surface.ToLowerInvariant();
-        var now = DateTime.UtcNow;
-        var word = await db.UserWords.SingleOrDefaultAsync(w => w.UserId == userId && w.Lemma == lemma, cancellationToken);
-        if (word is null)
+        var story = await db.Stories.SingleOrDefaultAsync(s => s.Id == storyId && s.Status == StoryStatus.Published, cancellationToken);
+        if (story is null)
         {
-            word = new UserWord
-            {
-                UserId = userId,
-                Lemma = lemma,
-                SurfaceForm = surface,
-                Translation = request.Translation?.Trim() ?? "",
-                FirstSeenAt = now,
-                SourceStoryId = request.StoryId
-            };
-            db.UserWords.Add(word);
+            return NotFound();
         }
 
-        word.HistorySeen++;
-        word.SessionSeen++;
-        word.LastSeenAt = now;
-        word.SourceStoryId = request.StoryId ?? word.SourceStoryId;
-        if (string.IsNullOrEmpty(word.Translation) && !string.IsNullOrWhiteSpace(request.Translation))
+        if (!await CanRateAsync(story, userId, cancellationToken))
         {
-            word.Translation = request.Translation.Trim();
+            return Problem(statusCode: StatusCodes.Status403Forbidden, detail: "Оцінити історію можна після того, як пройдеш її до кінця.");
+        }
+
+        var now = DateTime.UtcNow;
+        var rating = await db.StoryRatings.SingleOrDefaultAsync(r => r.UserId == userId && r.StoryId == storyId, cancellationToken);
+        if (rating is null)
+        {
+            db.StoryRatings.Add(new StoryRating { UserId = userId, StoryId = storyId, Stars = request.Stars, CreatedAt = now, UpdatedAt = now });
+            story.RatingCount++;
+            story.RatingSum += request.Stars;
+        }
+        else
+        {
+            story.RatingSum += request.Stars - rating.Stars;
+            rating.Stars = request.Stars;
+            rating.UpdatedAt = now;
         }
 
         await db.SaveChangesAsync(cancellationToken);
-        return Ok(new UserWordDto(word.SurfaceForm, word.Translation, word.HistorySeen, word.FirstSeenAt, word.LastSeenAt));
-    }
-
-    [HttpGet("words")]
-    public async Task<ActionResult<IReadOnlyList<UserWordDto>>> Words(CancellationToken cancellationToken)
-    {
-        var userId = User.UserId();
-        var words = await db.UserWords.AsNoTracking()
-            .Where(w => w.UserId == userId)
-            .OrderByDescending(w => w.LastSeenAt)
-            .Select(w => new UserWordDto(w.SurfaceForm, w.Translation, w.HistorySeen, w.FirstSeenAt, w.LastSeenAt))
-            .ToListAsync(cancellationToken);
-        return Ok(words);
+        return Ok(new StoryRatingDto(request.Stars, Math.Round((double)story.RatingSum / story.RatingCount, 1), story.RatingCount));
     }
 
     private bool IsFree(Story story) =>
@@ -274,6 +270,7 @@ public class PlayController(FabulaDbContext db, WalletService wallet, EconomySet
     private async Task<bool> OwnsStoryAsync(Story story, Guid userId, CancellationToken cancellationToken) =>
         story.PriceCrystals == 0
         || IsFree(story)
+        || await db.Assignments.AnyAsync(a => a.StudentId == userId && a.StoryId == story.Id, cancellationToken)
         || await db.Transactions.AnyAsync(
             t => t.UserId == userId && t.StoryId == story.Id && t.Reason == TransactionReason.PaidStory, cancellationToken);
 
@@ -288,8 +285,22 @@ public class PlayController(FabulaDbContext db, WalletService wallet, EconomySet
             free,
             completed,
             free || completed ? 0 : economy.StoryReward(story.Level),
-            user.CrystalBalance);
+            user.CrystalBalance,
+            await CanRateAsync(story, user.Id, cancellationToken),
+            await MyRatingAsync(story.Id, user.Id, cancellationToken),
+            await db.Assignments.AsNoTracking()
+                .Where(a => a.StudentId == user.Id && a.StoryId == story.Id)
+                .Join(db.Users, a => a.TeacherId, u => u.Id, (a, u) => new AssignmentInfoDto(u.Username, a.DueDate, a.Note, a.CompletedAt != null))
+                .SingleOrDefaultAsync(cancellationToken));
     }
+
+    private async Task<bool> CanRateAsync(Story story, Guid userId, CancellationToken cancellationToken) =>
+        story.Status == StoryStatus.Published
+        && story.AuthorId != userId
+        && await db.GameSessions.AnyAsync(g => g.UserId == userId && g.StoryId == story.Id && g.FinishedAt != null, cancellationToken);
+
+    private Task<int?> MyRatingAsync(Guid storyId, Guid userId, CancellationToken cancellationToken) =>
+        db.StoryRatings.Where(r => r.UserId == userId && r.StoryId == storyId).Select(r => (int?)r.Stars).SingleOrDefaultAsync(cancellationToken);
 
     private async Task<bool> ReachedEndingAsync(GameSession session, CancellationToken cancellationToken)
     {

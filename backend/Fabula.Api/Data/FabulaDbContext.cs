@@ -19,6 +19,7 @@ public class FabulaDbContext(DbContextOptions<FabulaDbContext> options) : DbCont
     public DbSet<UserWord> UserWords => Set<UserWord>();
     public DbSet<GameSession> GameSessions => Set<GameSession>();
     public DbSet<Transaction> Transactions => Set<Transaction>();
+    public DbSet<StoryRating> StoryRatings => Set<StoryRating>();
     public DbSet<Streak> Streaks => Set<Streak>();
     public DbSet<TeachingLink> TeachingLinks => Set<TeachingLink>();
     public DbSet<Follow> Follows => Set<Follow>();
@@ -63,6 +64,14 @@ public class FabulaDbContext(DbContextOptions<FabulaDbContext> options) : DbCont
             story.HasMany(s => s.Words).WithOne().HasForeignKey(w => w.StoryId);
             story.HasMany(s => s.Cast).WithOne().HasForeignKey(c => c.StoryId);
             story.HasIndex(s => new { s.Status, s.Level });
+        });
+
+        model.Entity<StoryRating>(rating =>
+        {
+            rating.HasKey(r => new { r.UserId, r.StoryId });
+            rating.HasOne<Story>().WithMany().HasForeignKey(r => r.StoryId).OnDelete(DeleteBehavior.Cascade);
+            rating.HasOne<User>().WithMany().HasForeignKey(r => r.UserId).OnDelete(DeleteBehavior.Cascade);
+            rating.HasIndex(r => r.StoryId);
         });
 
         model.Entity<Tag>(tag =>
@@ -136,6 +145,7 @@ public class FabulaDbContext(DbContextOptions<FabulaDbContext> options) : DbCont
         model.Entity<Assignment>(assignment =>
         {
             assignment.HasIndex(a => new { a.StudentId, a.StoryId }).IsUnique();
+            assignment.Property(a => a.Note).HasMaxLength(300);
             assignment.HasOne<User>().WithMany().HasForeignKey(a => a.TeacherId);
             assignment.HasOne<User>().WithMany().HasForeignKey(a => a.StudentId);
             assignment.HasOne<Story>().WithMany().HasForeignKey(a => a.StoryId);

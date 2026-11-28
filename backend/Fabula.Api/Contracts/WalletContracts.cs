@@ -24,4 +24,10 @@ public record TransactionDto(Guid Id, int Amount, TransactionReason Reason, stri
 
 public record RescueResultDto(WalletDto Wallet, IReadOnlyList<Reward> Rewards);
 
-public record StoryAccessDto(int Price, bool Owned, bool Free, bool Completed, int Reward, int Balance);
+public record AssignmentInfoDto(string Teacher, DateOnly? DueDate, string Note, bool Done);
+
+public record StoryAccessDto(int Price, bool Owned, bool Free, bool Completed, int Reward, int Balance, bool CanRate, int? MyRating, AssignmentInfoDto? Assignment);
+
+public record RateStoryRequest([System.ComponentModel.DataAnnotations.Range(1, 5)] int Stars);
+
+public record StoryRatingDto(int Stars, double? Rating, int RatingCount);

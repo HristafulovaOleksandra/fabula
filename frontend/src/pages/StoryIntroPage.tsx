@@ -4,7 +4,10 @@ import { api, ApiError } from '../api/client'
 import type { StoryAccess, StoryDetail } from '../api/types'
 import { notifyWalletChanged } from '../api/wallet'
 import { useAuth } from '../auth/useAuth'
+import { formatDue } from '../components/assignmentFormat'
+import { AssignDialog } from '../components/Assignments'
 import { Crystals, Mascot } from '../components/Brand'
+import { RateStory, RatingBadge } from '../components/StarRating'
 import { StoryCover } from '../components/StoryCover'
 import styles from './StoryIntroPage.module.css'
 
@@ -17,6 +20,7 @@ export function StoryIntroPage() {
   const [access, setAccess] = useState<StoryAccess | null>(null)
   const [confirming, setConfirming] = useState(false)
   const [buyError, setBuyError] = useState<string | null>(null)
+  const [assigning, setAssigning] = useState(false)
 
   useEffect(() => {
     api<StoryDetail>(`/stories/${storyId}`)
@@ -109,6 +113,14 @@ export function StoryIntroPage() {
           ))}
         </div>
         <h1>{story.title}</h1>
+        <p className={styles.byline}>
+          {story.authorUsername && (
+            <span>
+              Автор: <Link to={`/authors/${story.authorUsername}`}>{story.authorUsername}</Link>
+            </span>
+          )}
+          <RatingBadge rating={story.rating} count={story.ratingCount} />
+        </p>
         {story.description && <p>{story.description}</p>}
         <p className={styles.small}>
           {story.scenes.length} сцен
@@ -121,7 +133,29 @@ export function StoryIntroPage() {
           {access && access.reward > 0 && <> · за перше проходження +{access.reward} кристалів</>}
           {access?.completed && <> · уже пройдено</>}
         </p>
+        {access?.assignment && (
+          <div className={styles.homework}>
+            <b>{access.assignment.done ? 'Домашнє завдання виконано' : 'Домашнє завдання'}</b>
+            <span>
+              від {access.assignment.teacher} · {formatDue(access.assignment.dueDate)}
+            </span>
+            {access.assignment.note && <span className={styles.homeworkNote}>«{access.assignment.note}»</span>}
+          </div>
+        )}
         {action}
+        {user && user.role !== 'Student' && story.status === 'Published' && (
+          <button type="button" className={`btn btn-ghost ${styles.assign}`} onClick={() => setAssigning(true)}>
+            Призначити учневі
+          </button>
+        )}
+        {assigning && <AssignDialog story={story} onClose={() => setAssigning(false)} />}
+        {access?.canRate && (
+          <RateStory
+            storyId={story.id}
+            initial={access.myRating}
+            onRated={(result) => setStory({ ...story, rating: result.rating, ratingCount: result.ratingCount })}
+          />
+        )}
       </section>
 
       <section className={`sticker ${styles.words}`}>

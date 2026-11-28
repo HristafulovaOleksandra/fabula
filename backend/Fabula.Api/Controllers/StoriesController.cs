@@ -15,7 +15,14 @@ public class StoriesController(FabulaDbContext db, EconomySettings economy) : Co
 {
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<StorySummaryDto>>> List(
-        [FromQuery] CefrLevel? level, [FromQuery] int? tagId, [FromQuery] bool mine, CancellationToken cancellationToken)
+        [FromQuery] CefrLevel? level,
+        [FromQuery] int? tagId,
+        [FromQuery] bool mine,
+        [FromQuery] int? genreId,
+        [FromQuery] int? topicId,
+        [FromQuery] string? q,
+        [FromQuery] string? sort,
+        CancellationToken cancellationToken)
     {
         var query = db.Stories.AsNoTracking().Include(s => s.Author).Include(s => s.Tags).Include(s => s.Scenes).AsQueryable();
         if (mine)
@@ -38,13 +45,93 @@ public class StoriesController(FabulaDbContext db, EconomySettings economy) : Co
             query = query.Where(s => s.Level == level);
         }
 
-        if (tagId is not null)
+        foreach (var id in new[] { tagId, genreId, topicId }.OfType<int>())
         {
-            query = query.Where(s => s.Tags.Any(t => t.Id == tagId));
+            query = query.Where(s => s.Tags.Any(t => t.Id == id));
         }
 
-        var stories = await query.OrderByDescending(s => s.UpdatedAt).AsSplitQuery().ToListAsync(cancellationToken);
+        var search = q?.Trim();
+        if (!string.IsNullOrEmpty(search))
+        {
+            var pattern = LikePattern.Contains(search);
+            var username = search.TrimStart('@').ToLowerInvariant();
+            query = query.Where(s => EF.Functions.ILike(s.Title, pattern, LikePattern.Escape)
+                                     || EF.Functions.ILike(s.Description, pattern, LikePattern.Escape)
+                                     || s.Author!.Username == username);
+        }
+
+        query = sort == "rating"
+            ? query.OrderByDescending(s => s.RatingCount == 0 ? 0 : (double)s.RatingSum / s.RatingCount).ThenByDescending(s => s.RatingCount).ThenByDescending(s => s.UpdatedAt)
+            : query.OrderByDescending(s => s.UpdatedAt);
+        var stories = await query.AsSplitQuery().ToListAsync(cancellationToken);
         return Ok(stories.Select(s => s.ToSummary()).ToList());
+    }
+
+    [Authorize]
+    [HttpGet("for-you")]
+    public async Task<ActionResult<ForYouDto>> ForYou(CancellationToken cancellationToken)
+    {
+        var userId = User.UserId();
+        var user = await db.Users.AsNoTracking().SingleAsync(u => u.Id == userId, cancellationToken);
+        var playedIds = await db.GameSessions.AsNoTracking()
+            .Where(g => g.UserId == userId && g.FinishedAt != null)
+            .Select(g => g.StoryId)
+            .Distinct()
+            .ToListAsync(cancellationToken);
+        var played = await db.Stories.AsNoTracking().Include(s => s.Tags)
+            .Where(s => playedIds.Contains(s.Id))
+            .ToListAsync(cancellationToken);
+        var level = user.Level ?? played.GroupBy(s => s.Level).OrderByDescending(g => g.Count()).Select(g => (CefrLevel?)g.Key).FirstOrDefault();
+        var favorite = user.FavoriteTopics.Select(t => t.ToLowerInvariant()).ToHashSet();
+        var playedTags = played.SelectMany(s => s.Tags).Select(t => t.Id).ToHashSet();
+        var followed = (await db.Follows.AsNoTracking().Where(f => f.FollowerId == userId).Select(f => f.AuthorId).ToListAsync(cancellationToken)).ToHashSet();
+
+        var query = db.Stories.AsNoTracking()
+            .Include(s => s.Author).Include(s => s.Tags).Include(s => s.Scenes)
+            .Where(s => s.Status == StoryStatus.Published && s.AuthorId != userId && !playedIds.Contains(s.Id));
+        if (level is not null)
+        {
+            query = query.Where(s => s.Level == level);
+        }
+
+        var candidates = await query.AsSplitQuery().ToListAsync(cancellationToken);
+        var picks = candidates
+            .Select(story =>
+            {
+                var favoriteMatches = story.Tags.Where(t => favorite.Contains(t.Name.ToLowerInvariant())).Select(t => t.Name).ToList();
+                var playedMatches = story.Tags.Where(t => playedTags.Contains(t.Id) && !favoriteMatches.Contains(t.Name)).Select(t => t.Name).ToList();
+                var fromFollowed = followed.Contains(story.AuthorId);
+                var reasons = new List<string>();
+                if (level is not null)
+                {
+                    reasons.Add($"Твій рівень {level}");
+                }
+
+                if (favoriteMatches.Count > 0)
+                {
+                    reasons.Add($"Улюблені теми: {string.Join(", ", favoriteMatches)}");
+                }
+
+                if (playedMatches.Count > 0)
+                {
+                    reasons.Add($"Схоже на прочитане: {string.Join(", ", playedMatches.Take(2))}");
+                }
+
+                if (fromFollowed)
+                {
+                    reasons.Add("Автор, на якого ти підписаний(-а)");
+                }
+
+                var score = 2 * favoriteMatches.Count + playedMatches.Count + (fromFollowed ? 2 : 0);
+                return (story, score, reasons);
+            })
+            .OrderByDescending(p => p.score)
+            .ThenByDescending(p => p.story.RatingCount == 0 ? 0 : (double)p.story.RatingSum / p.story.RatingCount)
+            .ThenByDescending(p => p.story.UpdatedAt)
+            .Take(8)
+            .Select(p => new ForYouStoryDto(p.story.ToSummary(), p.reasons))
+            .ToList();
+        return Ok(new ForYouDto(level, user.Level is not null, picks));
     }
 
     [HttpGet("{id:guid}")]

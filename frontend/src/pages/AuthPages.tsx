@@ -88,7 +88,7 @@ export function RegisterPage() {
     setError(null)
     try {
       await register(form)
-      navigate('/library', { replace: true })
+      navigate(form.role === 'Student' ? '/welcome' : '/', { replace: true })
     } catch (caught) {
       setError(errorText(caught))
     } finally {
